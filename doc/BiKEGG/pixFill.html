@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pixFill</title>
+  <meta name="keywords" content="pixFill">
+  <meta name="description" content="pixFill">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; pixFill.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>pixFill
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>pixFill</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> pixFill
+ is a subfunction of NetDraw for generating pixel data points
+ based on the specified line width for reactions. 
+ 
+ Inputs:
+ I: An array containing the customized metabolic map.
+ pixx, pixy: Reaction coordinates.
+ ColSpec: Color code of the specified reaction.
+ 
+ Outputs:
+ I: Customized metabolic map after adjustments.
+ pixx,pixy,pixx1,pixy1: Boundary pixel data based on the specified
+ reactions' width.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)</a>
+0002 <span class="comment">% pixFill</span>
+0003 <span class="comment">% is a subfunction of NetDraw for generating pixel data points</span>
+0004 <span class="comment">% based on the specified line width for reactions.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% I: An array containing the customized metabolic map.</span>
+0008 <span class="comment">% pixx, pixy: Reaction coordinates.</span>
+0009 <span class="comment">% ColSpec: Color code of the specified reaction.</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Outputs:</span>
+0012 <span class="comment">% I: Customized metabolic map after adjustments.</span>
+0013 <span class="comment">% pixx,pixy,pixx1,pixy1: Boundary pixel data based on the specified</span>
+0014 <span class="comment">% reactions' width.</span>
+0015 
+0016 <span class="comment">% O. Jamialahmadi</span>
+0017 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0018 <span class="comment">% July 2016</span>
+0019 
+0020 <span class="keyword">if</span> ~std(pixx)
+0021     pixx1 = pixx + LineStrength/2;
+0022     pixx = pixx - LineStrength/2;
+0023     pixy1 = pixy;
+0024 <span class="keyword">elseif</span> ~std(pixy)
+0025     pixy1 = pixy + LineStrength/2;
+0026     pixy = pixy - LineStrength/2;
+0027     pixx1 = pixx;
+0028 <span class="keyword">else</span>
+0029     pixx1 = pixx + LineStrength/2;
+0030     pixx = pixx - LineStrength/2;
+0031     pixy1 = pixy + LineStrength/2;
+0032     pixy = pixy - LineStrength/2;
+0033 <span class="keyword">end</span>
+0034 pixx1 = round(pixx1); pixx = round(pixx);
+0035 pixy1 = round(pixy1); pixy = round(pixy);
+0036 <span class="keyword">for</span> i5 = 1:numel(pixx)
+0037     I(pixy(i5):pixy1(i5),pixx(i5),1) = ColSpec(1);
+0038     I(pixy(i5),pixx(i5):pixx1(i5),1) = ColSpec(1); 
+0039     I(pixy(i5):pixy1(i5),pixx(i5),2) = ColSpec(2);
+0040     I(pixy(i5),pixx(i5):pixx1(i5),2) = ColSpec(2); 
+0041     I(pixy(i5):pixy1(i5),pixx(i5),3) = ColSpec(3);
+0042     I(pixy(i5),pixx(i5):pixx1(i5),3) = ColSpec(3); 
+0043 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

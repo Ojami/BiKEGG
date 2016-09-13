@@ -1,0 +1,848 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Bigg2Kegg</title>
+  <meta name="keywords" content="Bigg2Kegg">
+  <meta name="description" content="BiKEGG">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; Bigg2Kegg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Bigg2Kegg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BiKEGG</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Bigg2Kegg(Idfier) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BiKEGG
+ generates corresponding reactions in KEGG and BiGG/HMR
+ databases and saves the output as a *.mat file in BiGG2KEGG folder.
+ Input:
+     - Idfier : a string of either 'bigg' or 'hmr'
+ Full documentation can be found in the user manual
+ 
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Oct. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="Bigg2KeggRestricted.html" class="code" title="function [BiGGID,AllRxn] = Bigg2KeggRestricted(D,Metkegg,rxnData,cpds,cpd2rxn)">Bigg2KeggRestricted</a>	Bigg2KeggRestricted</li><li><a href="Bigg2KeggTable.html" class="code" title="function varargout = Bigg2KeggTable(varargin)">Bigg2KeggTable</a>	BIGG2KEGGTABLE MATLAB code for Bigg2KeggTable.fig</li><li><a href="MultiRxns.html" class="code" title="function [Po,Hout1] = MultiRxns(K)">MultiRxns</a>	MultiRxns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function Cbs = MetCombs(Metkegg,Prd)</a></li><li><a href="#_sub2" class="code">function [Bg,Ar,Bg2,Ar2] = RxnPrune(BiGGID, AllRxn, RxnNames)</a></li><li><a href="#_sub3" class="code">function Keggrm = KeggApiMatch(TempMet)</a></li><li><a href="#_sub4" class="code">function Metkegg = ModelMoidfy (Metkegg,MetAbr)</a></li><li><a href="#_sub5" class="code">function [BiGGID,AllRxn] = AddLumpRxns(Steprxns,Insteprxns,BiGGID1,AllRxn1)</a></li><li><a href="#_sub6" class="code">function [TransKeggT,TransBiggT] = CheckTransRxns(TransKegg,TransBiGG)</a></li><li><a href="#_sub7" class="code">function[boutref,koutref,bout,kout] = biggref(bin,kin)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Bigg2Kegg(Idfier)</a>
+0002 <span class="comment">% BiKEGG</span>
+0003 <span class="comment">% generates corresponding reactions in KEGG and BiGG/HMR</span>
+0004 <span class="comment">% databases and saves the output as a *.mat file in BiGG2KEGG folder.</span>
+0005 <span class="comment">% Input:</span>
+0006 <span class="comment">%     - Idfier : a string of either 'bigg' or 'hmr'</span>
+0007 <span class="comment">% Full documentation can be found in the user manual</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% O. Jamialahmadi</span>
+0010 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0011 <span class="comment">% Oct. 2015</span>
+0012 
+0013 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0014 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0015 Pth = Pth1(1:tind-1);
+0016 <span class="keyword">if</span> strcmp(Idfier,<span class="string">'hmr'</span>)
+0017     [pname,fname]=uigetfile(<span class="string">'*.xlsx'</span>,<span class="string">'Select the HMRdatabase xlsx file'</span>);
+0018     [~,dat2]=xlsread([fname,pname],<span class="string">'RXNS'</span>);
+0019     ind=dat2(:,1);
+0020     ind1=ismember(ind,<span class="string">'#'</span>);
+0021     ind2=find(ind1,3,<span class="string">'first'</span>);
+0022     hdrs=dat2(1,:);
+0023     <span class="comment">% Reading the BIGG IDs:</span>
+0024     BIGG=dat2(2:ind2(3)-1,ismember(hdrs,<span class="string">'BIGG DATABASE ID'</span>)); 
+0025     <span class="comment">% Reading the KEGG rxn IDs:</span>
+0026     KEGG=dat2(2:ind2(3)-1,ismember(hdrs,<span class="string">'KEGG ID'</span>));
+0027     <span class="comment">% Reading the rxn equations:</span>
+0028     Eqn=dat2(2:ind2(3)-1,ismember(hdrs,<span class="string">'EQUATION'</span>));
+0029     <span class="comment">% Locating empty cells</span>
+0030     r1= ~ismember(KEGG,<span class="string">''</span>);
+0031     r2= ~ismember(BIGG,<span class="string">''</span>);
+0032     r3 = find(r1 &amp; r2);
+0033     KEGG=KEGG(r3);BIGG=BIGG(r3);Eqn=Eqn(r3);
+0034     B2Kegg.Kegg=KEGG;B2Kegg.Bigg=BIGG;B2Kegg.Eqn=Eqn;
+0035     fname = fullfile(Pth,<span class="string">'BiGG2KEGG'</span>,<span class="string">'BiGG2KEGG_HMRbased-RECON1.mat'</span>);
+0036     save (fname,<span class="string">'B2Kegg'</span>)
+0037     <span class="keyword">return</span>
+0038 <span class="keyword">end</span>
+0039 
+0040 <span class="keyword">if</span> ~strcmp(Idfier,<span class="string">'bigg'</span>)
+0041     msgbox(<span class="string">'Unknown identifier: bigg/hmr'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0042     <span class="keyword">return</span>
+0043 <span class="keyword">end</span>
+0044 <span class="comment">% Read text file extracted from http://rest.kegg.jp/link/rn/cpd, which</span>
+0045 <span class="comment">% contains corresponding rxns for each metabolite.</span>
+0046 Fileid = fopen(fullfile(Pth,<span class="string">'cpd2rxn.txt'</span>),<span class="string">'r'</span>);
+0047 cpd2rxn = textscan(Fileid,<span class="string">'%s %[^\n]'</span>);
+0048 rxnData = cell2mat(cpd2rxn{2}); <span class="comment">% KEGG rxn IDs</span>
+0049 cpds = strrep(cpd2rxn{1},<span class="string">'cpd:'</span>,<span class="string">''</span>); <span class="comment">% KEGG Cpds</span>
+0050 fclose(Fileid);
+0051 <span class="comment">% Read the model file======================================================</span>
+0052 [pname,fname1]=uigetfile({<span class="string">'*.*'</span>},<span class="string">'Select the input model file (mat|xml)'</span>);
+0053 Testname=pname(strfind(pname,<span class="string">'.'</span>)+1:end);
+0054 <span class="keyword">if</span> strcmp(Testname,<span class="string">'mat'</span>)
+0055     D = importdata([fname1,pname]);
+0056     keggloc1 = fieldnames(D);
+0057     keggid = strcmpi(keggloc1,<span class="string">'metkeggid'</span>);
+0058     <span class="keyword">if</span> ~any(keggid)
+0059         msgbox(<span class="string">'There is no metKeggID field in the model!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0060         <span class="keyword">return</span>
+0061     <span class="keyword">end</span>
+0062     Metkegg = D.(keggloc1{keggid});
+0063 <span class="comment">%     NOTE: following commented lines can be activated to retrieve the</span>
+0064 <span class="comment">%     Metkegg online form BiGG database</span>
+0065 <span class="comment">%     Mets = D.mets;</span>
+0066 <span class="comment">%     for counter = 1:length(Mets)</span>
+0067 <span class="comment">%         BiggMet = urlread(['http://bigg.ucsd.edu/api/v2/models/',...</span>
+0068 <span class="comment">%             D.description,'/metabolites/',Mets{counter}]);</span>
+0069 <span class="comment">%         KeggLoci = strfind(BiggMet,'KEGG');</span>
+0070 <span class="comment">%         if ~isempty(KeggLoci)</span>
+0071 <span class="comment">%             Metkegg{counter} = BiggMet(KeggLoci+62:KeggLoci+67);</span>
+0072 <span class="comment">%         else</span>
+0073 <span class="comment">%             Metkegg{counter} = '';</span>
+0074 <span class="comment">%         end</span>
+0075 <span class="comment">%     end</span>
+0076 <span class="keyword">elseif</span> strcmp(Testname,<span class="string">'xml'</span>)
+0077     Idf = fopen([fname1,pname]);
+0078     D = textscan(Idf,<span class="string">'%s'</span>);
+0079     CbModel = readCbModel([fname1,pname]);
+0080 <span class="keyword">else</span>
+0081     msgbox(<span class="string">'Unknown filetype!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0082     <span class="keyword">return</span>
+0083 <span class="keyword">end</span>
+0084 <span class="comment">% =========================================================================</span>
+0085 <span class="keyword">if</span> strcmp(Testname,<span class="string">'xml'</span>)
+0086     <span class="comment">% Reading xml</span>
+0087     <span class="comment">% Find listOfSpecies which contains metabolite annotations</span>
+0088     SpeciesLoci1 = strfind(D{1},<span class="string">'listOfSpecies'</span>);
+0089     SpeciesLoci = find(~cellfun(<span class="string">'isempty'</span>, SpeciesLoci1));
+0090     <span class="comment">% Discard other data in the model:</span>
+0091     SpeciesData = D{1}(SpeciesLoci(1):SpeciesLoci(2));
+0092     clear D
+0093     <span class="comment">% Find each metabolite-------------------------------------------------</span>
+0094     SpeciesStart1 = strfind(SpeciesData,<span class="string">'&lt;species'</span>);
+0095     SpeciesStart = find(~cellfun(<span class="string">'isempty'</span>, SpeciesStart1));
+0096     SpeciesEnd1 = strfind(SpeciesData,<span class="string">'&lt;/species&gt;'</span>);
+0097     SpeciesEnd = find(~cellfun(<span class="string">'isempty'</span>, SpeciesEnd1));
+0098     <span class="keyword">if</span> numel(SpeciesStart) ~= numel(SpeciesEnd)
+0099         msgbox(<span class="string">'SBML format error:Species have wrong format!'</span>,<span class="string">'Error'</span>,<span class="keyword">...</span>
+0100             <span class="string">'error'</span>);
+0101         <span class="keyword">return</span>
+0102     <span class="keyword">end</span>
+0103     <span class="comment">% ---------------------------------------------------------------------</span>
+0104     <span class="comment">% Search for KEGG compounds for each BiGG metabolite. Note that each BiGG</span>
+0105     <span class="comment">% metabolite may have more than one equivalent KEGG compund, and although</span>
+0106     <span class="comment">% HMR and RECON2 (Thiele lab.) do not provide more than one KEGG compound</span>
+0107     <span class="comment">% for each metabolite, here, we followed the format of BiGG models (i.e.</span>
+0108     <span class="comment">% several equivalent KEGG compounds for a specific metabolite).</span>
+0109     Metkegg = {<span class="string">''</span>}; <span class="comment">% KEGG compounds will fill this cell!</span>
+0110     <span class="keyword">for</span> count = 1:numel(SpeciesStart)
+0111         SpeciesTempStr = SpeciesData(SpeciesStart(count):SpeciesEnd(count));
+0112         SpeciesTempStr = [SpeciesTempStr{:}];
+0113         KeggCpdLoci = regexp(SpeciesTempStr,<span class="keyword">...</span>
+0114             <span class="string">'(?&lt;=http://identifiers.org/kegg.compound/)[CG]\d{5}'</span>,<span class="string">'match'</span>);
+0115         <span class="keyword">if</span> isempty(KeggCpdLoci)
+0116             Metkegg{count} = <span class="string">''</span>;
+0117             <span class="keyword">continue</span>
+0118         <span class="keyword">end</span>
+0119         <span class="keyword">for</span> count1 = 1:numel(KeggCpdLoci)
+0120             <span class="keyword">if</span> strcmp(KeggCpdLoci{count1},<span class="string">'C00001'</span>) <span class="comment">% H2O</span>
+0121                 Metkegg{count}= {<span class="string">'C00001'</span>};
+0122                 <span class="keyword">break</span>
+0123             <span class="keyword">elseif</span> strcmp(KeggCpdLoci{count1},<span class="string">'C00027'</span>) <span class="comment">% H2O2</span>
+0124                 Metkegg{count}= {<span class="string">'C00027'</span>};
+0125                 <span class="keyword">break</span>
+0126             <span class="keyword">else</span>
+0127                 Metkegg{count}{count1}= KeggCpdLoci{count1};
+0128             <span class="keyword">end</span>
+0129         <span class="keyword">end</span>
+0130     <span class="keyword">end</span>
+0131 <span class="keyword">end</span>
+0132 <span class="comment">% Model modification: some metabolites have wrong/absent KEGG annotations.</span>
+0133 <span class="comment">% Therefore, on the basis of modified KEGG compound IDs for RECON1.xml,</span>
+0134 <span class="comment">% these metabolites will be added to Metkegg separately.</span>
+0135 D = CbModel;
+0136 ModelName = D.description;
+0137 tind1 = find(ModelName==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0138 ModelName1 = ModelName(tind1+1:end-4);
+0139 <span class="keyword">if</span> ~strcmp(ModelName1,<span class="string">'RECON1'</span>)
+0140     MetAbr = CbModel.mets;
+0141     Metkegg = <a href="#_sub4" class="code" title="subfunction Metkegg = ModelMoidfy (Metkegg,MetAbr)">ModelMoidfy</a> (Metkegg,MetAbr);
+0142 <span class="keyword">end</span>
+0143 
+0144 <span class="comment">% Search for Metkegg components with numel &gt; 1, compare their names to</span>
+0145 <span class="comment">% BiGG metabolites, and remove other components with different names if a</span>
+0146 <span class="comment">% unique result is obtained. KEGGcpd.txt is used which contains all KEGG</span>
+0147 <span class="comment">% compounds.</span>
+0148 Fileid1 = fopen(fullfile(Pth,<span class="string">'KEGGcpd.txt'</span>),<span class="string">'r'</span>);
+0149 Keggcpd = textscan(Fileid1,<span class="string">'%s %[^\n]'</span>);
+0150 CpdData = strrep(Keggcpd{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0151 CpdNames = regexp(Keggcpd{2},<span class="string">';'</span>,<span class="string">'split'</span>);
+0152 BiGGmets = D.metNames;
+0153 <span class="keyword">for</span> count = 1:numel(Metkegg)
+0154     <span class="keyword">if</span> all(ismember({<span class="string">'C01326'</span>,<span class="string">'C00177'</span>},Metkegg{count})) <span class="comment">% For cyan</span>
+0155         <span class="keyword">continue</span>
+0156     <span class="keyword">end</span>
+0157 <span class="comment">% Second condition: L-carnitine definition discrepancy between KEGG and BiGG</span>
+0158     <span class="keyword">if</span> numel(Metkegg{count})&gt;1 &amp;&amp; ~all(ismember({<span class="string">'C00318'</span>,<span class="string">'C00487'</span>},<span class="keyword">...</span>
+0159             Metkegg{count}))
+0160         MatchLoci = find(ismember(CpdData,Metkegg{count}));
+0161         <span class="keyword">for</span> incount = 1:numel(MatchLoci)
+0162             CpdNames{MatchLoci(incount)}=strtrim(CpdNames{MatchLoci(incount)});
+0163             FoundL = find(ismember(BiGGmets,CpdNames{MatchLoci(incount)}));
+0164             <span class="keyword">if</span> FoundL
+0165                 <span class="comment">% Check if found cpd participates in any rxn</span>
+0166                 <span class="keyword">if</span> any(strcmp(CpdData(MatchLoci(incount)),cpds))
+0167                     Metkegg{count} = CpdData(MatchLoci(incount));
+0168                     <span class="keyword">break</span>
+0169                 <span class="keyword">end</span>
+0170             <span class="keyword">end</span>
+0171         <span class="keyword">end</span>
+0172     <span class="keyword">end</span>
+0173 <span class="keyword">end</span>
+0174 
+0175 <span class="comment">% Extract KEGG metabolites from BIGG API ==================================</span>
+0176 Fileid3 = fopen(fullfile(Pth,<span class="string">'bigg_models_metabolites.txt'</span>),<span class="string">'r'</span>);
+0177 biggmets = textscan(Fileid3,<span class="string">'%s %s %[^\n]'</span>);
+0178 fclose(Fileid3);
+0179 biggmetid = biggmets{1}; biggmetdes = biggmets{3}; clear biggmets
+0180 Metkegg1 = {<span class="string">''</span>};
+0181 modelm = D.mets;
+0182 modelm=strrep(modelm,<span class="string">'['</span>,<span class="string">'_'</span>);modelm=strrep(modelm,<span class="string">']'</span>,<span class="string">''</span>);
+0183 <span class="keyword">for</span> ct1 = 1:numel(modelm)
+0184     tempdes = biggmetdes(strcmp(biggmetid,modelm{ct1}));
+0185     temploci = regexp(tempdes,<span class="keyword">...</span>
+0186         <span class="string">'http://identifiers.org/kegg.compound/C\S{5}'</span>,<span class="string">'match'</span>);
+0187     temploci = temploci{1};
+0188     <span class="keyword">if</span> isempty(temploci)
+0189         Metkegg1{ct1} = <span class="string">''</span>;
+0190     <span class="keyword">else</span>
+0191         <span class="keyword">for</span> ct2 = 1:numel(temploci)
+0192             regtemp = regexp(temploci{ct2},<span class="string">'C\S{5}'</span>,<span class="string">'match'</span>);
+0193             Metkegg1{ct1}{ct2} = regtemp{1};
+0194         <span class="keyword">end</span>
+0195     <span class="keyword">end</span>
+0196 <span class="keyword">end</span>
+0197 <span class="comment">% Consensus Metkegg: Metkegg1 from BiGG API and Metkegg from COBRA models</span>
+0198 <span class="comment">% are mixed to generate the most complete set of KEGG metabolites for a</span>
+0199 <span class="comment">% SBML model.</span>
+0200 <span class="keyword">for</span> cp1 = 1:numel(Metkegg1)
+0201     <span class="keyword">if</span> isempty(Metkegg1{cp1}) || (numel(Metkegg1{cp1}) ~= numel(Metkegg{cp1}))
+0202         <span class="keyword">for</span> cp2 = 1:numel(Metkegg{cp1})
+0203             Metkegg1{cp1}{cp2} = Metkegg{cp1}{cp2};
+0204         <span class="keyword">end</span>
+0205     <span class="keyword">end</span>
+0206 <span class="keyword">end</span>
+0207 clear Metkegg
+0208 Metkegg = Metkegg1;
+0209 <span class="comment">% ==========================================================================</span>
+0210 <span class="comment">% Check the existence of metabolites participating in Bigg rxns and map the</span>
+0211 <span class="comment">% Bigg rxns to KEGG rxns if possible. To do so, metabolites in Bigg rxns are</span>
+0212 <span class="comment">% compared to KEGG metabolites, and KEGG metabolite IDs are located in KEGG</span>
+0213 <span class="comment">% databse to identify the KEGG rxn IDs they involve in KEGG databse. If all</span>
+0214 <span class="comment">% KEGG metabolites share a unique KEGG rxn ID, then that rxn ID corresponds</span>
+0215 <span class="comment">% to the Bigg rxn from which the metabolites were extracted (restricted</span>
+0216 <span class="comment">% condition).</span>
+0217 <span class="comment">% To reduce the CPU time, rxns are first compared to rxns in PrunedRxns.txt</span>
+0218 <span class="comment">% and those in UniModelKEGG to exclude them from search process.</span>
+0219 load(<span class="string">'UniModelKEGG.mat'</span>)
+0220 UniB = B2Kegg.B; UniK = B2Kegg.K;
+0221 Umulti = find(ismember(UniB,<span class="string">'MULTIR'</span>));
+0222 UniB = UniB(1:Umulti-1); UniK = UniK(1:Umulti-1);
+0223 clear B2Kegg
+0224 Fileid12 = fopen(<span class="string">'PrunedRxns.txt'</span>,<span class="string">'r'</span>);
+0225 Prunedata12 = textscan(Fileid12,<span class="string">'%s %s %d %[^\n]'</span>);
+0226 Testpruned = Prunedata12{1};
+0227 fclose(Fileid12);
+0228 RxnNames = D.rxns; <span class="comment">% BiGG rxn names</span>
+0229 Rxns = D.S; <span class="comment">% It is assumed that this field is universal.</span>
+0230 Keggrm = (0);
+0231 BiGGID = {0};
+0232 AllRxn = {0};
+0233 Uctr = 1; ChkTrans = 1; TransKegg = ({}); TransBiGG = ({});
+0234 <span class="keyword">for</span> rn = 1:size(Rxns,2) <span class="comment">% for all rxns</span>
+0235     fprintf(<span class="string">'Rxn %d of %d\n'</span>,rn,size(Rxns,2))
+0236     <span class="comment">% ---------------------------------------------------------------------</span>
+0237     <span class="comment">%if current reaction exists in pruned reactions, or UniModelKEGG there</span>
+0238     <span class="comment">%is no need to further search for potential equivalent reactions.</span>
+0239     <span class="keyword">if</span> any(ismember(Testpruned,RxnNames{rn}))
+0240         <span class="keyword">continue</span>
+0241     <span class="keyword">end</span>
+0242     <span class="keyword">if</span> any(ismember(UniB,RxnNames{rn}))
+0243         UniBloci = find(ismember(UniB,RxnNames{rn}));
+0244         <span class="keyword">for</span> u1 = 1:numel(UniBloci)
+0245             BiGGID{Uctr} = UniB{UniBloci(u1)};
+0246             AllRxn{Uctr} = UniK{UniBloci(u1)};
+0247             Uctr = Uctr + 1;
+0248         <span class="keyword">end</span>    
+0249         <span class="keyword">continue</span>
+0250     <span class="keyword">end</span>
+0251     <span class="comment">%----------------------------------------------------------------------</span>
+0252     Prd = find(Rxns(:,rn)); <span class="comment">% Find substrates and products for each rxn</span>
+0253     CheckTransport = [Metkegg{Prd}]; <span class="comment">% For transport rxns</span>
+0254     <span class="keyword">if</span> (numel(CheckTransport)/numel(unique(CheckTransport)) == 2) &amp;&amp; <span class="keyword">...</span>
+0255             numel(Prd) &gt; 2
+0256         <span class="keyword">continue</span>
+0257     <span class="keyword">end</span>
+0258     <span class="comment">% 1st condition: All reactants and products have metKeggIDs.</span>
+0259     <span class="comment">% 2nd condition: Exclude all one element rxns</span>
+0260     <span class="keyword">if</span> (~sum(strcmp (Metkegg(Prd),<span class="string">''</span>)) &amp;&amp; (length(Prd) &gt; 1))
+0261         Cbs = <a href="#_sub1" class="code" title="subfunction Cbs = MetCombs(Metkegg,Prd)">MetCombs</a>(Metkegg,Prd); <span class="comment">% All combinations (permutations) of</span>
+0262         <span class="comment">% KEGG compounds, regarding the fact that there is more than one</span>
+0263         <span class="comment">% KEGG cpd for some metabolites in the model.</span>
+0264         <span class="keyword">for</span> Outctr = 1:size(Cbs,1)
+0265             <span class="comment">% Contains all KEGG cpds in a certain rxn</span>
+0266             TempMet = unique(Cbs(Outctr,:));
+0267             ChkTempMet = Cbs(Outctr,:);
+0268             <span class="comment">% Transport rxns with 2 cpds</span>
+0269             <span class="comment">% 1st cond: finding a transport rxn; 3 is as a result of Cbs</span>
+0270             <span class="comment">% structure.</span>
+0271             <span class="comment">% 2nd cond: Transport reactions with 2 metabolites; the reason</span>
+0272             <span class="comment">% for 1 is similar to the 1st cond.</span>
+0273             <span class="comment">% 3rd cond: No redundancy</span>
+0274             <span class="keyword">if</span> (numel(ChkTempMet)/numel(TempMet) == 3) <span class="keyword">...</span>
+0275                     &amp;&amp; (numel(TempMet) == 1) <span class="keyword">...</span>
+0276                    &amp;&amp; ~any(ismember(TransBiGG,RxnNames{rn}))
+0277                 fprintf(<span class="string">'Transport rxn: %s\n'</span>,RxnNames{rn})
+0278                 TransKegg{ChkTrans}{1} = TempMet{1};
+0279                 TransKegg{ChkTrans}{2} = TempMet{1};
+0280                 TransBiGG{ChkTrans} = RxnNames{rn};
+0281                 ChkTrans = ChkTrans + 1;
+0282                 <span class="keyword">continue</span>
+0283             <span class="keyword">end</span>
+0284             <span class="keyword">if</span> (numel(TempMet) == 2) &amp;&amp; any(strcmp(TempMet,<span class="string">'C00080'</span>))
+0285                 <span class="keyword">continue</span>
+0286             <span class="keyword">end</span>
+0287 
+0288             <span class="keyword">if</span> length(TempMet) &gt; 1 <span class="comment">% Exclude all exchange rxns</span>
+0289                 KeggrmMethod = <span class="string">'off'</span>; <span class="comment">%Offline</span>
+0290                 <span class="keyword">switch</span> KeggrmMethod
+0291                     <span class="keyword">case</span> <span class="string">'off'</span>
+0292                         Id1 = ismember(cpds,TempMet);
+0293                         Keggrm = str2num(rxnData(Id1,5:end));
+0294                     <span class="keyword">case</span> <span class="string">'on'</span>
+0295                         Keggrm = <a href="#_sub3" class="code" title="subfunction Keggrm = KeggApiMatch(TempMet)">KeggApiMatch</a> (TempMet);
+0296                 <span class="keyword">end</span>
+0297                 <span class="comment">% Identify unique KEGG rxn ID</span>
+0298                 Uq = unique(Keggrm);
+0299                 N = histc(Keggrm, Uq);
+0300                 <span class="keyword">if</span> isempty(max(N))
+0301                     <span class="keyword">continue</span>
+0302                 <span class="keyword">end</span>
+0303                 <span class="keyword">if</span> (max(N) == numel(TempMet)) || <span class="keyword">...</span>
+0304                         (max(N) == numel(TempMet)-1) <span class="comment">% Found repeated rxns</span>
+0305                     UqTemp = Uq(N==max(N));
+0306                     <span class="comment">% Convert rxn codes to string</span>
+0307                     <span class="keyword">for</span> count = 1:numel(UqTemp)
+0308                         UqTemp1{count} = strcat(<span class="string">'rn:R'</span>,repmat(<span class="string">'0'</span>,<span class="keyword">...</span>
+0309                             [1,4- floor(log10(UqTemp(count)+eps))])<span class="keyword">...</span>
+0310                             ,num2str(UqTemp(count)));
+0311                     <span class="keyword">end</span>
+0312                     <span class="keyword">if</span> numel(UqTemp) &gt; 1
+0313                         <span class="keyword">for</span> count = 1:length(UqTemp1)
+0314                             UqTempSum(count) = sum(ismember(cpd2rxn{2},<span class="keyword">...</span>
+0315                                 UqTemp1{count}));
+0316                         <span class="keyword">end</span>
+0317                         <span class="comment">% Restrict condition: If only the number of metabolites</span>
+0318                         <span class="comment">% in min(UqTempSum)reaction are identical to those</span>
+0319                         <span class="comment">% of TempMet</span>
+0320                         <span class="keyword">if</span> min(UqTempSum)==numel(TempMet) || <span class="keyword">...</span>
+0321                                min(UqTempSum)+1 == numel(TempMet) || <span class="keyword">...</span>
+0322                                min(UqTempSum)-1 == numel(TempMet)  
+0323                             In1 = find(UqTempSum == min(UqTempSum(:)));
+0324                             <span class="keyword">for</span> Inctr = 1:numel(In1)
+0325                                 AllRxn{Uctr} = UqTemp1{In1(Inctr)}(4:end);
+0326                                 BiGGID {Uctr} = D.rxns{rn};
+0327                                 Uctr = Uctr + 1;
+0328                             <span class="keyword">end</span>
+0329                         <span class="keyword">end</span>
+0330                     <span class="keyword">else</span>
+0331                         UqTempSum = sum(ismember(cpd2rxn{2},UqTemp1{1}));
+0332                         <span class="keyword">if</span> min(UqTempSum)==numel(TempMet) || <span class="keyword">...</span>
+0333                                 min(UqTempSum)+1 == numel(TempMet) || <span class="keyword">...</span>
+0334                                 min(UqTempSum)-1 == numel(TempMet)
+0335                             AllRxn{Uctr} = UqTemp1{1}(4:end);
+0336                             BiGGID {Uctr} = D.rxns{rn};
+0337                             Uctr = Uctr + 1;
+0338                         <span class="keyword">end</span>
+0339                         
+0340                     <span class="keyword">end</span>
+0341                     UqTempSum = 0;
+0342                     UqTemp1 = {0};
+0343                     
+0344                 <span class="keyword">end</span>
+0345             <span class="keyword">end</span>
+0346             Keggrm = 0;
+0347         <span class="keyword">end</span>
+0348     <span class="keyword">end</span>
+0349 <span class="keyword">end</span>
+0350 <span class="comment">% Identify transport reactions (diffusion)</span>
+0351 [TransKeggT,TransBiggT] = <a href="#_sub6" class="code" title="subfunction [TransKeggT,TransBiggT] = CheckTransRxns(TransKegg,TransBiGG)">CheckTransRxns</a>(TransKegg,TransBiGG);
+0352 
+0353 <span class="keyword">if</span> ~isempty(TransBiggT{1})
+0354     BiGGID = [BiGGID,TransBiggT];
+0355     AllRxn = [AllRxn,TransKeggT];
+0356 <span class="keyword">end</span>
+0357 
+0358 <span class="comment">% Identify BiGG rxns for which there is more than one KEGG rxns, and prune</span>
+0359 <span class="comment">% BiGGIDs and AllRxns</span>
+0360 [BiGGID,AllRxn,MultiBID,MultiRxn] = <a href="#_sub2" class="code" title="subfunction [Bg,Ar,Bg2,Ar2] = RxnPrune(BiGGID, AllRxn, RxnNames)">RxnPrune</a>(BiGGID, AllRxn, RxnNames);
+0361 AllRxnTemp = {[]}; BiGGIDTemp = {[]}; Tctr = 1;
+0362 <span class="keyword">if</span> any ([MultiBID{:}])
+0363     <span class="keyword">for</span> ct = 1:numel(MultiBID)
+0364         <span class="keyword">for</span> ci = 1:numel(MultiRxn{ct})
+0365             BiGGIDTemp{Tctr} = MultiBID{ct};
+0366             AllRxnTemp{Tctr} = MultiRxn{ct}{ci};
+0367             Tctr = Tctr + 1;
+0368         <span class="keyword">end</span>
+0369     <span class="keyword">end</span>
+0370     BiGGID = [BiGGID,BiGGIDTemp];
+0371     AllRxn = [AllRxn,AllRxnTemp];
+0372 <span class="keyword">end</span>
+0373 <span class="comment">% Check with restricted condition</span>
+0374 [B1,K1] = <a href="Bigg2KeggRestricted.html" class="code" title="function [BiGGID,AllRxn] = Bigg2KeggRestricted(D,Metkegg,rxnData,cpds,cpd2rxn)">Bigg2KeggRestricted</a>(D,Metkegg,rxnData,cpds,cpd2rxn);
+0375 Bdiff = BiGGID(~ismember(BiGGID,B1));
+0376 Kdiff = AllRxn(~ismember(BiGGID,B1));
+0377 <span class="keyword">if</span> any ([MultiBID{:}])
+0378     Fileid = fopen(fullfile(Pth,<span class="string">'PrunedRxns.txt'</span>),<span class="string">'r'</span>);
+0379     Prunedata = textscan(Fileid,<span class="string">'%s %s %d %[^\n]'</span>);
+0380     Prunedrxns = Prunedata{1};
+0381     fclose(Fileid);
+0382     MultiBIDtemp = MultiBID(~ismember(MultiBID,Prunedrxns));
+0383     MultiRxntemp = MultiRxn(~ismember(MultiBID,Prunedrxns));
+0384     Bmultidiff = MultiBIDtemp(~ismember(MultiBIDtemp,Bdiff));
+0385     Kmultidiff = MultiRxntemp(~ismember(MultiBIDtemp,Bdiff));
+0386     Tctr = 1; BmultidiffT = {[]}; KmultidiffT = {[]};
+0387     <span class="keyword">for</span> ct = 1:numel(Bmultidiff)
+0388         <span class="keyword">for</span> ci = 1:numel(Kmultidiff{ct})
+0389             BmultidiffT{Tctr} = Bmultidiff{ct};
+0390             KmultidiffT{Tctr} = Kmultidiff{ct}{ci};
+0391             Tctr = Tctr + 1;
+0392         <span class="keyword">end</span>
+0393     <span class="keyword">end</span>
+0394     <span class="keyword">if</span> ~isempty(BmultidiffT{1})
+0395         Bdiff = [Bdiff,BmultidiffT];
+0396         Kdiff = [Kdiff,KmultidiffT];
+0397     <span class="keyword">end</span>
+0398 <span class="keyword">end</span>
+0399 <span class="comment">% Check with bigg rxn ref.</span>
+0400 [bref,kref,Bdiff,Kdiff] = <a href="#_sub7" class="code" title="subfunction[boutref,koutref,bout,kout] = biggref(bin,kin)">biggref</a>(Bdiff,Kdiff);
+0401 <span class="comment">% -----------------------------------</span>
+0402 <span class="keyword">if</span> ~isempty(Bdiff{1})
+0403     Diffdata = cell(numel(Bdiff),3);
+0404     Diffdata(:,1) = Bdiff; Diffdata(:,2) = Kdiff;
+0405     <span class="keyword">for</span> ct = 1:numel(Bdiff)
+0406         Diffdata{ct,3} = 0;
+0407     <span class="keyword">end</span>
+0408     setappdata(0,<span class="string">'Diffdata'</span>,Diffdata);
+0409     waitfor(<a href="Bigg2KeggTable.html" class="code" title="function varargout = Bigg2KeggTable(varargin)">Bigg2KeggTable</a>)
+0410     Finalv=getappdata(0,<span class="string">'Finalvalidity'</span>);
+0411     Fileid = fopen(fullfile(Pth,<span class="string">'PrunedRxns.txt'</span>),<span class="string">'a'</span>);
+0412     checkb = Finalv(:,1);
+0413     checkv = Finalv(:,3);
+0414     checkv = [checkv{:}]; checkb1 = ({});
+0415     <span class="keyword">for</span> ct = 1:size(Finalv,1)
+0416         <span class="keyword">if</span> any(strcmp(Finalv{ct,1},checkb1))
+0417             <span class="keyword">continue</span>
+0418         <span class="keyword">end</span>
+0419         checkb1{ct} = Finalv{ct,1};
+0420         checkloci = find(ismember(checkb,Finalv{ct,1}));
+0421         checkfinal = checkv(checkloci);
+0422         <span class="keyword">if</span> ~any(checkfinal)
+0423             <span class="keyword">for</span> ct1 = 1:numel(checkfinal)
+0424                 fprintf(Fileid,<span class="string">'\n%s\t%s\t%d'</span>,Finalv{checkloci(ct1),1},<span class="keyword">...</span>
+0425                     Finalv{checkloci(ct1),2},<span class="keyword">...</span>
+0426                     0);
+0427             <span class="keyword">end</span>
+0428         <span class="keyword">else</span>
+0429             <span class="keyword">for</span> ct1 = 1:numel(checkfinal)
+0430                 <span class="keyword">if</span> checkv(checkloci(ct1))
+0431                     fprintf(Fileid,<span class="string">'\n%s\t%s\t%d'</span>,Finalv{checkloci(ct1),1},<span class="keyword">...</span>
+0432                         Finalv{checkloci(ct1),2},1);
+0433                 <span class="keyword">end</span>
+0434             <span class="keyword">end</span>
+0435         <span class="keyword">end</span>
+0436     <span class="keyword">end</span>
+0437     fclose(Fileid);
+0438     AT=getappdata(0);
+0439     AT1 = fieldnames(AT);
+0440     <span class="keyword">for</span> co = 1:length(AT1)
+0441         <span class="keyword">if</span> strcmp(AT1{co},<span class="string">'Diffdata'</span>) || strcmp(AT1{co},<span class="string">'Finalvalidity'</span>)
+0442             rmappdata(0,AT1{co});
+0443         <span class="keyword">end</span>
+0444     <span class="keyword">end</span>
+0445 <span class="keyword">end</span>
+0446 <span class="keyword">if</span> ~isempty(bref{1})
+0447     rmvtemp = ismember(BiGGID,bref);
+0448     BiGGID(rmvtemp) = [];
+0449     AllRxn(rmvtemp) = [];
+0450     BiGGID = [BiGGID,bref];
+0451     AllRxn = [AllRxn,kref];
+0452 <span class="keyword">end</span>
+0453 <span class="comment">% Identify BiGG rxns for which there is more than one KEGG rxns, and prune</span>
+0454 <span class="comment">% BiGGIDs and AllRxns</span>
+0455 [BiGGID,AllRxn,MultiBID,MultiRxn] = <a href="#_sub2" class="code" title="subfunction [Bg,Ar,Bg2,Ar2] = RxnPrune(BiGGID, AllRxn, RxnNames)">RxnPrune</a>(BiGGID, AllRxn, RxnNames);
+0456 AllRxnTemp = {[]}; BiGGIDTemp = {[]}; Tctr = 1;
+0457 <span class="keyword">if</span> any ([MultiBID{:}])
+0458     <span class="keyword">for</span> ct = 1:numel(MultiBID)
+0459         <span class="keyword">for</span> ci = 1:numel(MultiRxn{ct})
+0460             BiGGIDTemp{Tctr} = MultiBID{ct};
+0461             AllRxnTemp{Tctr} = MultiRxn{ct}{ci};
+0462             Tctr = Tctr + 1;
+0463         <span class="keyword">end</span>
+0464     <span class="keyword">end</span>
+0465     BiGGID = [BiGGID,BiGGIDTemp];
+0466     AllRxn = [AllRxn,AllRxnTemp];
+0467 <span class="keyword">end</span>
+0468 
+0469 <span class="comment">% Extract multi-step reactions from KEGG. This step may need internet</span>
+0470 <span class="comment">% connection</span>
+0471 [Steprxns,Insteprxns] = <a href="MultiRxns.html" class="code" title="function [Po,Hout1] = MultiRxns(K)">MultiRxns</a>(AllRxn);
+0472 [BiGGID,AllRxn] = <a href="#_sub5" class="code" title="subfunction [BiGGID,AllRxn] = AddLumpRxns(Steprxns,Insteprxns,BiGGID1,AllRxn1)">AddLumpRxns</a>(Steprxns,Insteprxns,BiGGID,AllRxn);
+0473 
+0474 <span class="comment">% Save output data</span>
+0475 B2Kegg.B=BiGGID; B2Kegg.K=AllRxn;
+0476 FileName = [ModelName1,<span class="string">'KEGG.mat'</span>];
+0477 fname = fullfile(Pth,<span class="string">'BiGG2KEGG'</span>,FileName);
+0478 save (fname,<span class="string">'B2Kegg'</span>)
+0479 
+0480 <span class="keyword">if</span> any ([MultiBID{:}])
+0481     fprintf(<span class="string">'There exists %.0f BiGG rxns with multiple KEGG IDs:\n'</span>,<span class="keyword">...</span>
+0482         numel(MultiBID));
+0483     <span class="keyword">for</span> ct = 1:numel(MultiBID)
+0484         fprintf(<span class="string">'%s:\t'</span>,MultiBID{ct});
+0485         fprintf(<span class="string">'%s  '</span>,MultiRxn{ct}{:});
+0486         fprintf(<span class="string">'\n'</span>)
+0487     <span class="keyword">end</span>
+0488 <span class="keyword">else</span>
+0489     disp(<span class="string">'There exists no BiGG rxns with multiple KEGG IDs for this model'</span>)
+0490 <span class="keyword">end</span>
+0491 
+0492 <span class="comment">%==========================================================================</span>
+0493 <span class="comment">%%===========================Subfunctions==================================</span>
+0494 <span class="comment">%==========================================================================</span>
+0495 <a name="_sub1" href="#_subfunctions" class="code">function Cbs = MetCombs(Metkegg,Prd)</a>
+0496 <span class="comment">% OutMet = A 2D cell with rows and columns corresponding to combinations</span>
+0497 <span class="comment">% and compounds, respectively.</span>
+0498 <span class="comment">% OutMet generates all combinations among Metkegg components. This is done</span>
+0499 <span class="comment">% to search through KEGG REACTIONs for all possibilities.</span>
+0500 SizeCell = cell(1,numel(Prd));
+0501 <span class="keyword">for</span> count = 1:numel(Prd)
+0502     TempCounter = numel(Metkegg{Prd(count)});
+0503     SizeCell{count} = 1:TempCounter;
+0504 <span class="keyword">end</span>
+0505 MetkeggT = Metkegg(Prd);
+0506 MetkeggTemp = [MetkeggT{:}];
+0507 OutMet = combvec(SizeCell{:}).';
+0508 <span class="keyword">for</span> count = 1:size(OutMet,2)-1 <span class="comment">% Corresponds to linearized Metkegg(Prd)</span>
+0509     OutMet(:,count+1)=OutMet(:,count+1)+max(OutMet(:,count));
+0510 <span class="keyword">end</span>
+0511 CbsT = MetkeggTemp(OutMet);
+0512 <span class="comment">% Check if H+ is peresent in Cbs. As KEGG reactions are not charge</span>
+0513 <span class="comment">% balanced, several BiGG reactions will not be found. To resolve this</span>
+0514 <span class="comment">% issue, new rows withouth H+ will be appended to Cbs.</span>
+0515 <span class="keyword">if</span> any(strcmp(CbsT(:),<span class="string">'C00080'</span>))
+0516     Cbs1 = CbsT;
+0517     [N1,N2] = find(strcmp(Cbs1,<span class="string">'C00080'</span>));
+0518     LenCbs = 1:numel(Cbs1);
+0519     <span class="keyword">for</span> count = 1:numel(N1)
+0520         NonH2Cpd = find(~ismember(LenCbs,N2(count)));
+0521         Cbs1{N1(count),N2(count)} = CbsT{N1(count),NonH2Cpd(1)};
+0522     <span class="keyword">end</span>
+0523     Cbs = [CbsT;Cbs1];
+0524 <span class="keyword">else</span> 
+0525     <span class="comment">% On the contrary to above-mentioned case, the opposite case is also</span>
+0526     <span class="comment">% observed. In such a case, H+ will be added as an extra metabolite to</span>
+0527     <span class="comment">% each row in CbsT, and final Cbs will contain previous set of</span>
+0528     <span class="comment">% metabolites plus H+.</span>
+0529     Cbs1 = CbsT;
+0530     Cbs2 = Cbs1;
+0531     <span class="keyword">for</span> count = 1:size(CbsT,1)
+0532         Cbs1{count,size(CbsT,2)+1} = <span class="string">'C00080'</span>; <span class="comment">% Add H+</span>
+0533         <span class="comment">% Keep dimensional consistency:</span>
+0534         Cbs2{count,size(CbsT,2)+1} = Cbs2{count,size(CbsT,2)};
+0535     <span class="keyword">end</span>
+0536     Cbs = [Cbs1;Cbs2];
+0537 <span class="keyword">end</span>
+0538 <span class="comment">%--------------------------------------------------------------------------</span>
+0539 <a name="_sub2" href="#_subfunctions" class="code">function [Bg,Ar,Bg2,Ar2] = RxnPrune(BiGGID, AllRxn, RxnNames)</a>
+0540 <span class="comment">% This subfunction uses PrunedRxns.txt, a set of manually found equivalence</span>
+0541 <span class="comment">% KEGG rxn IDs, to prune current rxn mapping. This set of reactions are</span>
+0542 <span class="comment">% generated based on univeral reactions in BiGG databse, and can</span>
+0543 <span class="comment">% be utilized for every desired model.</span>
+0544 Fileid = fopen(<span class="string">'PrunedRxns.txt'</span>,<span class="string">'r'</span>);
+0545 PrAll = textscan(Fileid,<span class="string">'%s %s %d %[^\n]'</span>);
+0546 PrB = PrAll{3};
+0547 PrBY = find(PrB); <span class="comment">% To be added</span>
+0548 PrBN = ~PrB; <span class="comment">% To be removed</span>
+0549 TBrxns = PrAll{1}; TKrxns = PrAll{2};
+0550 BrxnY = TBrxns(PrBY); KrxnY = TKrxns(PrBY);
+0551 BrxnN = TBrxns(PrBN);
+0552 <span class="comment">% Which BiGGID elements are in BrxnY?</span>
+0553 <span class="comment">% [Fx1,Fx2] = ismember(BrxnY,BiGGID);</span>
+0554 <span class="comment">% Fx2(Fx2==0) = [];</span>
+0555 <span class="comment">% AllRxn(Fx2) = KrxnY(Fx1);</span>
+0556 BiGGInBrxnY = BiGGID(ismember(BiGGID,BrxnY)); 
+0557 KeggOfBrxnY = KrxnY(ismember(BrxnY,BiGGID));
+0558 BrxnYTemp = BrxnY(ismember(BrxnY,BiGGID));
+0559 SharedRxns = cell(1,numel(BiGGInBrxnY));
+0560 Tcount = 1; TempSharedRxns = ({}); TempBiGGID = ({});
+0561 <span class="keyword">for</span> count = 1:numel(BrxnYTemp)
+0562     T= find(ismember(BiGGInBrxnY,BrxnYTemp{count}));
+0563     T1 = find(ismember(BrxnYTemp,BiGGInBrxnY(T(1))));
+0564 
+0565     <span class="keyword">for</span> count2 = 1:numel(T)
+0566         <span class="comment">% Extract only the first element:: T1(1); others are stored in</span>
+0567         <span class="comment">% TempSharedRxns and will be added to AllRxn</span>
+0568         SharedRxns(T(count2)) = KeggOfBrxnY(T1(1));
+0569         <span class="keyword">if</span> numel(T1)&gt;1 &amp;&amp; ~any(ismember(TempBiGGID,BiGGInBrxnY(T(1))))
+0570             <span class="keyword">for</span> count3 = 2:numel(T1)
+0571                 TempSharedRxns{Tcount} = KeggOfBrxnY{T1(count3)};
+0572                 TempBiGGID{Tcount} = BrxnYTemp{T1(count3)};
+0573                 Tcount = Tcount + 1;
+0574             <span class="keyword">end</span>
+0575         <span class="keyword">end</span>
+0576     <span class="keyword">end</span>
+0577 
+0578 <span class="keyword">end</span>
+0579 AllRxn(ismember(BiGGID,BrxnY)) = SharedRxns;
+0580 <span class="keyword">if</span> ~isempty(TempSharedRxns)
+0581     Addlen = numel(AllRxn)+1:numel(AllRxn)+numel(TempSharedRxns);
+0582     AllRxn(Addlen) = TempSharedRxns;
+0583     BiGGID(Addlen) = TempBiGGID;
+0584 <span class="keyword">end</span>
+0585 <span class="comment">% Which BrxnY elements are not in BiGGID and should be added separately?</span>
+0586 NotInBiGG = BrxnY(~ismember(BrxnY,BiGGID));
+0587 RxnNot = KrxnY(~ismember(BrxnY,BiGGID));
+0588 <span class="comment">% Are NotInBiGG elements exist in the current model (Note: BrxnY contains</span>
+0589 <span class="comment">% universal BiGG reactions) ?</span>
+0590 YaLoci = find(ismember(NotInBiGG,RxnNames));
+0591 Yf1 = NotInBiGG(YaLoci);
+0592 AddedRxns = RxnNot(YaLoci);
+0593 ModLength = (1:numel(Yf1))+numel(BiGGID);
+0594 BiGGID(ModLength) = Yf1;
+0595 AllRxn(ModLength) = AddedRxns;
+0596 <span class="comment">% Remove other found rxns in BiGGID which their absence is manually</span>
+0597 <span class="comment">% confirmed.</span>
+0598 TobeRemovedRxns = ismember(BiGGID,BrxnN);
+0599 BiGGID(TobeRemovedRxns)=[]; AllRxn(TobeRemovedRxns)=[]; <span class="comment">% Remove other rxns</span>
+0600 <span class="comment">% Find BiGG IDs with more than one rxn id</span>
+0601 ct=1;cr=1;
+0602 Bg2={0};Ar2={0};Bg={0};Ar={0};
+0603 BiGGT = BiGGID; RxnT = AllRxn;
+0604 <span class="keyword">while</span> numel(BiGGT)
+0605     T = find(ismember(BiGGT,BiGGT(1))); R = RxnT(T);
+0606     <span class="keyword">if</span> numel(unique(R))~=1 <span class="comment">% Reactions with more than one KEGG ID</span>
+0607         Bg2{ct} = BiGGT{1};
+0608         Ar2{ct} = unique(R);      
+0609         ct = ct+1;
+0610     <span class="keyword">else</span>
+0611         Bg{cr}=BiGGT{1};
+0612         Ar{cr}=cell2mat(unique(R));
+0613         cr=cr+1;
+0614     <span class="keyword">end</span>
+0615     BiGGT(T)=[]; <span class="comment">%Remove</span>
+0616     RxnT(T)=[];
+0617 <span class="keyword">end</span>
+0618 <span class="comment">%--------------------------------------------------------------------------</span>
+0619 <a name="_sub3" href="#_subfunctions" class="code">function Keggrm = KeggApiMatch(TempMet)</a>
+0620 ctr=1;
+0621 Keggrm=(0);
+0622 <span class="keyword">for</span> mt = 1:length(TempMet)
+0623     Metstr = urlread([<span class="string">'http://rest.kegg.jp/link/rn/'</span>,TempMet{mt}]);
+0624     Id1 =  regexp(Metstr,<span class="string">'rn:R'</span>); <span class="comment">% All rxns containing a cpd</span>
+0625     <span class="keyword">if</span> Id1 <span class="comment">% KEGG rxn IDs are provided for this cpd</span>
+0626         <span class="keyword">for</span> di = 1:length(Id1) <span class="comment">% Extracts rxns</span>
+0627             Keggrm(ctr) = str2double(Metstr(Id1(di)+4:Id1(di)+9));
+0628             ctr = ctr+1;
+0629         <span class="keyword">end</span>
+0630     <span class="keyword">else</span>
+0631         <span class="keyword">break</span> <span class="comment">% Don't generate Metstr for other compounds</span>
+0632     <span class="keyword">end</span>
+0633 <span class="keyword">end</span>
+0634 <span class="comment">% -------------------------------------------------------------------------</span>
+0635 <a name="_sub4" href="#_subfunctions" class="code">function Metkegg = ModelMoidfy (Metkegg,MetAbr)</a>
+0636 <span class="comment">% Read Metkegg data for RECON1.xml</span>
+0637 Mdat = load(<span class="string">'RECON1Metkegg.mat'</span>);
+0638 RECON1k = Mdat.RECON1meta.K;
+0639 RECON1m = Mdat.RECON1meta.B;
+0640 [Fx1,Fx2] = ismember(RECON1m,MetAbr);
+0641 Fx2(Fx2==0) = [];
+0642 <span class="comment">% Metkegg(Fx2) = RECON1k(Fx1);</span>
+0643 Fx3 = find(Fx1);
+0644 <span class="keyword">for</span> i1 = 1:numel(Fx2)
+0645     <span class="keyword">if</span> numel(Metkegg{Fx2(i1)}) &gt; numel(RECON1k{Fx3(i1)})
+0646        Tempmet = Metkegg{Fx2(i1)};
+0647        whrc = ismember(Tempmet,RECON1k{Fx3(i1)});
+0648        <span class="keyword">if</span> isempty(whrc)
+0649         Metkegg{Fx2(i1)} = RECON1k(Fx3(i1));
+0650         <span class="keyword">end</span>
+0651     <span class="keyword">else</span>
+0652         Metkegg{Fx2(i1)} = RECON1k{Fx3(i1)};
+0653     <span class="keyword">end</span>
+0654 <span class="keyword">end</span>
+0655 <span class="comment">% -------------------------------------------------------------------------</span>
+0656 <a name="_sub5" href="#_subfunctions" class="code">function [BiGGID,AllRxn] = AddLumpRxns(Steprxns,Insteprxns,BiGGID1,AllRxn1)</a>
+0657 <span class="comment">% ExcRxns contains rxns which need to be removed manually from Steprxns</span>
+0658 ExcRxns = {<span class="string">'R03082'</span>,<span class="string">'R01651'</span>,<span class="string">'R01210'</span>,<span class="string">'R08767'</span>,<span class="string">'R01651'</span>,<span class="string">'R03171'</span>};
+0659 FindLocs = find(ismember(Steprxns,ExcRxns));
+0660 Steprxns(ismember(Steprxns,ExcRxns)) = [];
+0661 Insteprxns(FindLocs)=[];
+0662 PrevLen = numel(BiGGID1)+1;
+0663 BiGGID = BiGGID1; AllRxn = AllRxn1;
+0664 BiGGID{PrevLen} = <span class="string">'MULTIR'</span>; AllRxn{PrevLen} = <span class="string">'MULTIR'</span>;
+0665 CurrLen = numel(BiGGID1)+2;
+0666 <span class="keyword">for</span> count = 1:numel(Steprxns)
+0667     <span class="keyword">if</span> ~isempty(Insteprxns{count})
+0668         <span class="keyword">if</span> ~any(ismember(Insteprxns{count},AllRxn1)) <span class="comment">%No common rxns</span>
+0669             BiggTemp = BiGGID1(ismember(AllRxn1,Steprxns{count}));
+0670             <span class="keyword">for</span> count1 = 1:numel(BiggTemp)
+0671                 <span class="keyword">for</span> count2 = 1:numel(Insteprxns{count})
+0672                     BiGGID{CurrLen} = BiggTemp{count1};
+0673                     AllRxn{CurrLen} = Insteprxns{count}{count2};
+0674                     CurrLen = CurrLen+1;
+0675                 <span class="keyword">end</span>
+0676             <span class="keyword">end</span>
+0677         <span class="keyword">else</span>
+0678             TempLoc = find(~ismember(Insteprxns{count},AllRxn1));
+0679             BiggTemp = BiGGID1(ismember(AllRxn1,Steprxns{count}));
+0680             <span class="keyword">for</span> count1 = 1:numel(BiggTemp)
+0681                 <span class="keyword">for</span> count2 = 1:numel(TempLoc)
+0682                     BiGGID{CurrLen} = BiggTemp{count1};
+0683                     AllRxn{CurrLen} = Insteprxns{count}{TempLoc(count2)};
+0684                     CurrLen = CurrLen+1;
+0685                 <span class="keyword">end</span>
+0686             <span class="keyword">end</span>
+0687         <span class="keyword">end</span>
+0688     <span class="keyword">end</span>
+0689 <span class="keyword">end</span>
+0690 <span class="comment">%--------------------------------------------------------------------------</span>
+0691 <a name="_sub6" href="#_subfunctions" class="code">function [TransKeggT,TransBiggT] = CheckTransRxns(TransKegg,TransBiGG)</a>
+0692 <span class="comment">% Read cpd2weight ===================</span>
+0693 Fileid = fopen(<span class="string">'cpd2weight.txt'</span>,<span class="string">'r'</span>);
+0694 cpd2weight = textscan(Fileid,<span class="string">'%s %f'</span>);
+0695 cpd4weight = strrep(cpd2weight{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0696 Weight = cpd2weight{2};
+0697 fclose(Fileid);
+0698 <span class="comment">% Read rxns with 2, 4 and 6 components ========</span>
+0699 Fileid = fopen(<span class="string">'W4TranRxns2.txt'</span>,<span class="string">'r'</span>);
+0700 rxn2t = textscan(Fileid,<span class="string">'%s %f %f'</span>);
+0701 rxn2 = rxn2t{1};
+0702 W21T = rxn2t{2};
+0703 W22T = rxn2t{3};
+0704 W2 = zeros(numel(W22T),2);
+0705 <span class="keyword">for</span> ct = 1:numel(W21T)
+0706     W2(ct,1) = W21T(ct);
+0707     W2(ct,2) = W22T(ct);
+0708 <span class="keyword">end</span>
+0709 fclose(Fileid);
+0710 Fileid = fopen(<span class="string">'W4TranRxns4.txt'</span>,<span class="string">'r'</span>);
+0711 rxn4t = textscan(Fileid,<span class="string">'%s %f %f %f %f'</span>);
+0712 rxn4 = rxn4t{1};
+0713 W41T = rxn4t{2};
+0714 W42T = rxn4t{3};
+0715 W43T = rxn4t{4};
+0716 W44T = rxn4t{5};
+0717 W4 = zeros(numel(W44T),2);
+0718 <span class="keyword">for</span> ct = 1:numel(W44T)
+0719     W4(ct,1) = W41T(ct);
+0720     W4(ct,2) = W42T(ct);
+0721     W4(ct,3) = W43T(ct);
+0722     W4(ct,4) = W44T(ct);
+0723 <span class="keyword">end</span>
+0724 fclose(Fileid);
+0725 CurLen = 1;
+0726 TransKeggT = {[]}; TransBiggT = {[]};
+0727 <span class="keyword">for</span> ct = 1:numel(TransKegg)
+0728     Text1 = [<span class="string">'Checking equivalent transport reaction for '</span>,TransBiGG{ct},<span class="string">'\n'</span>];
+0729     fprintf(Text1)
+0730     RxnComNo = numel(TransKegg{ct});
+0731     RxnWeight = Weight(ismember(cpd4weight,TransKegg{ct}));
+0732     <span class="keyword">if</span> RxnComNo == 2
+0733         rxn24 = rxn2;
+0734         AllW = W2;
+0735     <span class="keyword">elseif</span> RxnComNo == 4
+0736         rxn24 = rxn4;
+0737         AllW = W4;
+0738     <span class="keyword">end</span>
+0739     <span class="keyword">if</span> isempty(RxnWeight)
+0740         <span class="keyword">continue</span>
+0741     <span class="keyword">end</span>
+0742     Reslt = bsxfun(@eq,AllW,RxnWeight);
+0743     [mID,~]=find(Reslt);
+0744     <span class="keyword">if</span> ~isempty(mID) &amp;&amp; (RxnComNo.*numel(unique(mID)) == numel(mID))
+0745         CandRxns1 = rxn24(unique(mID));
+0746         <span class="keyword">for</span> ct1 = 1:numel(CandRxns1)
+0747             TransBiggT{CurLen} = TransBiGG{ct};
+0748             TransKeggT{CurLen} = CandRxns1{ct1};
+0749             CurLen = CurLen + 1;
+0750         <span class="keyword">end</span>
+0751     <span class="keyword">end</span>
+0752 <span class="keyword">end</span>
+0753 <span class="comment">%--------------------------------------------------------------------------</span>
+0754 <a name="_sub7" href="#_subfunctions" class="code">function[boutref,koutref,bout,kout] = biggref(bin,kin)</a>
+0755 <span class="comment">% Read BiGG data</span>
+0756 bout = {[]}; kout = {[]};  boutref = {[]}; koutref = {[]};
+0757 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0758 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0759 Pth = Pth1(1:tind-1);
+0760 Fileid = fopen(fullfile(Pth,<span class="string">'bigg_models_reactions.txt'</span>),<span class="string">'r'</span>);
+0761 biggrxns = textscan(Fileid,<span class="string">'%s %[^\n]'</span>);
+0762 fclose(Fileid);
+0763 biggid = biggrxns{1}; biggdes = biggrxns{2};
+0764 clear biggrxns
+0765 ct1 = 1; ct11 = 1;
+0766 <span class="keyword">while</span> numel(bin)
+0767     bintemp = bin{1};
+0768     kintemp = kin(ismember(bin,bin{1}));
+0769     bin1loc = find(ismember(bin,bin{1}));
+0770     destemp = biggdes(ismember(biggid,bintemp));
+0771     temploci = regexp(destemp,<span class="keyword">...</span>
+0772         <span class="string">'http://identifiers.org/kegg.reaction/R\S{5}'</span>,<span class="string">'match'</span>);
+0773     <span class="keyword">if</span> isempty(temploci) || isempty(temploci{1})        
+0774         <span class="keyword">for</span> ct3 = 1:numel(bin1loc)
+0775             bout{ct1} = bintemp;
+0776             kout{ct1} = kintemp{ct3};
+0777             ct1 = ct1 + 1;
+0778         <span class="keyword">end</span>
+0779     <span class="keyword">else</span>
+0780         temploci = temploci{1};
+0781         <span class="keyword">for</span> ct2 = 1:numel(temploci)
+0782             regtemp = regexp(temploci{ct2},<span class="string">'R\S{5}'</span>,<span class="string">'match'</span>);
+0783             boutref{ct11} = bintemp;
+0784             koutref{ct11} = regtemp{1};
+0785             ct11 = ct11 + 1;
+0786         <span class="keyword">end</span>
+0787     <span class="keyword">end</span>
+0788     bin(bin1loc) = [];
+0789     kin(bin1loc) = [];
+0790 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

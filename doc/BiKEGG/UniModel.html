@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of UniModel</title>
+  <meta name="keywords" content="UniModel">
+  <meta name="description" content="UiModel">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; UniModel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>UniModel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>UiModel</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function UniModel </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> UiModel
+ generates one unified model containing all shared reaction among
+ all BiGG models in Bigg2Kegg folder. This model is of use in cases where
+ user wants not to use a special BiGG model, or a new model is in hand.
+ 
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Jan. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function UniModel</a>
+0002 <span class="comment">% UiModel</span>
+0003 <span class="comment">% generates one unified model containing all shared reaction among</span>
+0004 <span class="comment">% all BiGG models in Bigg2Kegg folder. This model is of use in cases where</span>
+0005 <span class="comment">% user wants not to use a special BiGG model, or a new model is in hand.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% O. Jamialahmadi</span>
+0008 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0009 <span class="comment">% Jan. 2015</span>
+0010 
+0011 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0012 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0013 Pth = Pth1(1:tind-1);
+0014 Pth2 = fullfile(Pth,<span class="string">'BiGG2KEGG\*.mat'</span>);
+0015 Pth3 = fullfile(Pth,<span class="string">'BiGG2KEGG'</span>);
+0016 BMatfiles = dir(Pth2);
+0017 BNames = cell(numel(BMatfiles)-2,1);
+0018 ct1 = 1; NewB = ({}); NewK = ({});
+0019 <span class="keyword">for</span> ct = 1:numel(BMatfiles)
+0020     <span class="keyword">if</span> ~strcmp(BMatfiles(ct).name,<span class="string">'BiGG2KEGG_HMRbased-RECON1.mat'</span>) &amp;&amp; <span class="keyword">...</span>
+0021             ~strcmp(BMatfiles(ct).name,<span class="string">'Multirxns.mat'</span>)
+0022         BNames{ct1} = BMatfiles(ct).name;
+0023         load(fullfile(Pth3,BNames{ct1}))
+0024         B=B2Kegg.B;K=B2Kegg.K;
+0025         Mlt = find(ismember(B,<span class="string">'MULTIR'</span>));
+0026         <span class="keyword">if</span> ~isempty(Mlt)
+0027             TB = B(1:Mlt-1); TK = K(1:Mlt-1);
+0028         <span class="keyword">end</span>
+0029         <span class="keyword">if</span> isempty(NewB)
+0030             NewB = TB; NewK = TK;
+0031         <span class="keyword">else</span>
+0032             NotB = TB(~ismember(TB,NewB));
+0033             NotK = TK(~ismember(TB,NewB));
+0034             NewLen = numel(NewB)+1:numel(NotB)+numel(NewB);
+0035             NewB(NewLen) = NotB; NewK(NewLen) = NotK;
+0036         <span class="keyword">end</span>
+0037         clear B2Kegg
+0038         ct1 = ct1 + 1;
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">end</span>
+0041 Len1 = numel(NewB);
+0042 NewB{Len1+1} = <span class="string">'MULTIR'</span>;
+0043 NewK{Len1+1} = <span class="string">'MULTIR'</span>;
+0044 load(fullfile(Pth3,<span class="string">'Multirxns.mat'</span>))
+0045 Pr = Multirxns.P; Cr = Multirxns.C;
+0046 clear Multirxns
+0047 <span class="keyword">for</span> c1 = 1:numel(Pr)
+0048     TempN = NewB(ismember(NewK,Pr{c1}));
+0049     TempC = Cr{c1};
+0050     Len = numel(TempC);
+0051     <span class="keyword">for</span> c2 = 1:numel(TempN)
+0052         Len1 = numel(NewB);
+0053         Len2 = Len1 + 1: Len1 + Len;
+0054         NewB(Len2) = TempN(c2);
+0055         NewK(Len2) = TempC;
+0056     <span class="keyword">end</span>
+0057 <span class="keyword">end</span>
+0058 B2Kegg.B = NewB; B2Kegg.K = NewK;
+0059 fname = fullfile(Pth3,<span class="string">'UniModelKEGG.mat'</span>);
+0060 save (fname,<span class="string">'B2Kegg'</span>)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

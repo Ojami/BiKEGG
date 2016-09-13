@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pixFit</title>
+  <meta name="keywords" content="pixFit">
+  <meta name="description" content="pixFit">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; pixFit.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>pixFit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>pixFit</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function pixFit(x,y,rxn) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> pixFit 
+ uses discrete position coordinates from BaseMapReader and interpolates
+ them to generate spatially continuous points for each reaction. This
+ function uses the already existing Pixdata.mat file.
+ 
+ Inputs:
+ x,y: Original discrete coordinates from BaseMapReader.
+ rxn: Reaction identifier in the form of [KEGG reaction ID,Entry ID provided
+ in the global map's KGML file], e.g.: 'R000933116' is a unique reaction
+ identifier for reaction ID R00093 and entry ID 3116.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="interparc.html" class="code" title="function [pt,dudt,fofthandle] = interparc(t,px,py,varargin)">interparc</a>	interparc (Copyright (c) 2012, John D'Errico): interpolate points along a curve in 2 or more dimensions</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function pixFit(x,y,rxn)</a>
+0002 <span class="comment">% pixFit</span>
+0003 <span class="comment">% uses discrete position coordinates from BaseMapReader and interpolates</span>
+0004 <span class="comment">% them to generate spatially continuous points for each reaction. This</span>
+0005 <span class="comment">% function uses the already existing Pixdata.mat file.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">% x,y: Original discrete coordinates from BaseMapReader.</span>
+0009 <span class="comment">% rxn: Reaction identifier in the form of [KEGG reaction ID,Entry ID provided</span>
+0010 <span class="comment">% in the global map's KGML file], e.g.: 'R000933116' is a unique reaction</span>
+0011 <span class="comment">% identifier for reaction ID R00093 and entry ID 3116.</span>
+0012 
+0013 <span class="comment">% O. Jamialahmadi</span>
+0014 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0015 <span class="comment">% July 2016</span>
+0016 
+0017 <span class="keyword">if</span> size(x,2) &gt; size(x,1)
+0018     x = x';
+0019 <span class="keyword">end</span>
+0020 <span class="keyword">if</span> size(y,2) &gt; size(y,1)
+0021     y = y';
+0022 <span class="keyword">end</span>
+0023 xy = [x,y];
+0024 xy = unique(xy,<span class="string">'rows'</span>);
+0025 x = xy(:,1); y = xy(:,2);
+0026 
+0027 <span class="keyword">if</span> ~all(diff(x)==0) <span class="comment">% Not a vertical line</span>
+0028     pixxy = <a href="interparc.html" class="code" title="function [pt,dudt,fofthandle] = interparc(t,px,py,varargin)">interparc</a>(2000,x,y,<span class="string">'pchip'</span>); <span class="comment">% Copyright (c) 2012, John D'Errico</span>
+0029     pixx = pixxy(:,1);
+0030     pixy = pixxy(:,2);
+0031     pixy = round(pixy);
+0032     pixx = round(pixx);
+0033     <span class="keyword">if</span> size(pixx,2) &gt; size(pixx,1)
+0034         pixx = pixx';
+0035     <span class="keyword">end</span>
+0036     <span class="keyword">if</span> size(pixy,2) &gt; size(pixy,1)
+0037         pixy = pixy';
+0038     <span class="keyword">end</span>
+0039     pixxy = [pixx,pixy];
+0040     pixxy = unique(pixxy,<span class="string">'rows'</span>);
+0041     pixx = pixxy(:,1); pixy = pixxy(:,2);   
+0042 <span class="keyword">else</span>
+0043     pixy = min(y):max(y);
+0044     pixx = ones(1,numel(pixy)).*x(1);
+0045     <span class="keyword">if</span> size(pixx,2) &gt; size(pixx,1)
+0046         pixx = pixx';
+0047     <span class="keyword">end</span>
+0048     <span class="keyword">if</span> size(pixy,2) &gt; size(pixy,1)
+0049         pixy = pixy';
+0050     <span class="keyword">end</span>
+0051     pixxy = [pixx,pixy];
+0052     pixxy = unique(pixxy,<span class="string">'rows'</span>);
+0053     pixx = pixxy(:,1); pixy = pixxy(:,2);
+0054 <span class="keyword">end</span>
+0055 
+0056 path_name = which(<span class="string">'Pixdata.mat'</span>);
+0057 <span class="keyword">if</span> isempty(path_name)
+0058     msgbox({<span class="string">'Pixdata.mat cannot be found!'</span>;<span class="keyword">...</span>
+0059                 <span class="string">'Make sure the file is present in BiKEGG folder'</span>},<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0060     <span class="keyword">return</span>
+0061 <span class="keyword">end</span>
+0062 load(path_name)
+0063 
+0064 <span class="keyword">if</span> isfield(pix_x,rxn)
+0065     fprintf(<span class="string">'%s has been replaced with new pixels!\n'</span>,rxn)
+0066     temp_pixx = pix_x.(rxn);
+0067     temp_pixy = pix_y.(rxn);
+0068     <span class="keyword">if</span> size(pixx,2) &gt; size(pixx,1)
+0069         pixx = pixx';
+0070     <span class="keyword">end</span>
+0071     <span class="keyword">if</span> size(pixy,2) &gt; size(pixy,1)
+0072         pixy = pixy';
+0073     <span class="keyword">end</span>
+0074     <span class="keyword">if</span> size(temp_pixx,2) &gt; size(temp_pixx,1)
+0075         temp_pixx = temp_pixx';
+0076     <span class="keyword">end</span>
+0077     <span class="keyword">if</span> size(temp_pixy,2) &gt; size(temp_pixy,1)
+0078         temp_pixy = temp_pixy';
+0079     <span class="keyword">end</span>
+0080     pixx = [pixx;temp_pixx];
+0081     pixy = [pixy;temp_pixy];
+0082     pixxy = [pixx,pixy];
+0083     pixxy = unique(pixxy,<span class="string">'rows'</span>);
+0084     pixx = pixxy(:,1); pixy = pixxy(:,2);
+0085     pix_x.(rxn) = pixx;
+0086     pix_y.(rxn) = pixy;
+0087 <span class="keyword">else</span>
+0088     pix_x.(rxn) = pixx;
+0089     pix_y.(rxn) = pixy;
+0090 <span class="keyword">end</span>
+0091 delete(path_name)
+0092 save(path_name,<span class="string">'pix_x'</span>,<span class="string">'pix_y'</span>)
+0093</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

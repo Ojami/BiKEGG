@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pixHover</title>
+  <meta name="keywords" content="pixHover">
+  <meta name="description" content="pixHover">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; pixHover.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>pixHover
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>pixHover</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> pixHover
+ a subfunction of NetDraw for showing information about
+ reactions/compounds upon hovering the cursor on the customized map 
+ created by NetDraw
+ 
+ Inputs:
+ x, y: Compounds' coordinates.
+ Allx, Ally: Reactions' coordinates.
+ AllHover: BiGG/KEGG identifiers for all reactions.
+ HoverUs: BiGG/KEGG identifiers for flux carrying reactions.
+ flx: Flux rates.
+ h1: Handle to map's axes.
+ H1: Handle to map's figure.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function hoverCallback(src, evt)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1)</a>
+0002 <span class="comment">% pixHover</span>
+0003 <span class="comment">% a subfunction of NetDraw for showing information about</span>
+0004 <span class="comment">% reactions/compounds upon hovering the cursor on the customized map</span>
+0005 <span class="comment">% created by NetDraw</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">% x, y: Compounds' coordinates.</span>
+0009 <span class="comment">% Allx, Ally: Reactions' coordinates.</span>
+0010 <span class="comment">% AllHover: BiGG/KEGG identifiers for all reactions.</span>
+0011 <span class="comment">% HoverUs: BiGG/KEGG identifiers for flux carrying reactions.</span>
+0012 <span class="comment">% flx: Flux rates.</span>
+0013 <span class="comment">% h1: Handle to map's axes.</span>
+0014 <span class="comment">% H1: Handle to map's figure.</span>
+0015 
+0016 <span class="comment">% O. Jamialahmadi</span>
+0017 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0018 <span class="comment">% July 2016</span>
+0019 
+0020  Thresh = 15; <span class="comment">% Threshold identifying the hovering area</span>
+0021  axes(h1)
+0022  set(H1,<span class="string">'WindowButtonMotionFcn'</span>, @<a href="#_sub1" class="code" title="subfunction hoverCallback(src, evt)">hoverCallback</a>);
+0023  textHdl = text(<span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'VerticalAlign'</span>,<span class="keyword">...</span>
+0024      <span class="string">'Bottom'</span>,<span class="string">'Interpreter'</span>,<span class="string">'none'</span>,<span class="string">'Parent'</span>,gca);
+0025  set(textHdl,<span class="string">'BackgroundColor'</span>,[173,255,47]./255)
+0026  set(textHdl,<span class="string">'EdgeColor'</span>,[34,139,34]./255)
+0027  set(textHdl,<span class="string">'Parent'</span>,h1)
+0028  textHdl1 = text(<span class="string">'Color'</span>, <span class="string">'black'</span>, <span class="string">'VerticalAlign'</span>,<span class="keyword">...</span>
+0029      <span class="string">'Bottom'</span>,<span class="string">'Interpreter'</span>,<span class="string">'none'</span>,<span class="string">'Parent'</span>,gca);
+0030  set(textHdl1,<span class="string">'BackgroundColor'</span>,[144,238,144]./255)
+0031  set(textHdl1,<span class="string">'EdgeColor'</span>,[34,139,34]./255)
+0032  set(textHdl1,<span class="string">'Parent'</span>,h1)
+0033 
+0034  <a name="_sub1" href="#_subfunctions" class="code">function hoverCallback(src, evt)</a>
+0035     mousePoint = get(h1, <span class="string">'CurrentPoint'</span>);
+0036     mouseX = mousePoint(1,1);
+0037     mouseY = mousePoint(1,2);
+0038     distancesToMouse = hypot(x - mouseX, y - mouseY);
+0039     [~, ind] = min(abs(distancesToMouse));
+0040     <span class="keyword">if</span> abs(mouseX - x(ind)) &lt; Thresh &amp;&amp; abs(mouseY - y(ind)) &lt; Thresh
+0041         set(textHdl, <span class="string">'String'</span>, [<span class="string">'ID = '</span>, cnames(ind)]);
+0042         set(textHdl, <span class="string">'Position'</span>, [x(ind) + Thresh, y(ind) + Thresh])
+0043         axes(h1)
+0044         viscircles(h1,[x(ind) y(ind)],rad, <span class="string">'EdgeColor'</span>,[1,0.8667,0.1765]);           
+0045     <span class="keyword">else</span>
+0046         set(textHdl, <span class="string">'String'</span>, <span class="string">''</span>)
+0047         hg1 = findobj(<span class="string">'type'</span>, <span class="string">'line'</span>);
+0048         set(hg1, <span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0049     <span class="keyword">end</span>
+0050     inFlag = 0; cum_str = [];
+0051     <span class="keyword">for</span> i1 =1:numel(Allx)
+0052         SX = Allx{i1};
+0053         SY = Ally{i1};
+0054         distancesToMouse1 = hypot(SX - mouseX, SY - mouseY);
+0055         [~, ind1] = min(abs(distancesToMouse1));
+0056         <span class="keyword">if</span> abs(mouseX - SX(ind1)) &lt; Thresh/4 &amp;&amp; abs(mouseY - SY(ind1)) &lt; Thresh/4
+0057             inFlag = [i1,ind1];
+0058             cum_str = [cum_str,AllHover.P(i1)];
+0059         <span class="keyword">end</span>
+0060     <span class="keyword">end</span>
+0061     <span class="keyword">if</span> inFlag(1)
+0062         [N1,~] = (ismember(HoverUs.P,cum_str));
+0063         AllKEGG = AllHover.R(ismember(AllHover.P,cum_str));
+0064         [~,NA] = intersect(AllHover.K,AllKEGG);
+0065         AllBiGG = AllHover.B(NA);
+0066         ThisKEGGH = HoverUs.R(N1); ThisKEGG = HoverUs.CR(N1);
+0067         [~,NW] = intersect(HoverUs.K,ThisKEGGH);
+0068         ThisBiGG = HoverUs.B(NW);
+0069         <span class="keyword">if</span> isempty(ThisBiGG); ThisBiGG = {<span class="string">'None'</span>}; <span class="keyword">end</span>;
+0070         <span class="keyword">if</span> isempty(AllBiGG); AllBiGG = {<span class="string">'None'</span>}; <span class="keyword">end</span>;
+0071         <span class="keyword">if</span> ~isempty(ThisKEGG) <span class="comment">% Flux carrying rxns ////////////////////</span>
+0072             <span class="keyword">if</span> numel(ThisKEGG) &gt; 1
+0073                 ForThisFlux = strrep(cellstr(num2str(flx(N1))),<span class="string">' '</span>,<span class="string">''</span>);
+0074                 <span class="keyword">if</span> size(ForThisFlux,1) &gt; size(ForThisFlux,2)
+0075                     ForThisFlux = ForThisFlux';
+0076                 <span class="keyword">end</span>
+0077                 <span class="keyword">if</span> size(ThisKEGG,1) &gt; size(ThisKEGG,2)
+0078                     ThisKEGG = ThisKEGG';
+0079                 <span class="keyword">end</span>
+0080                 <span class="keyword">if</span> size(ThisBiGG,1) &gt; size(ThisBiGG,2)
+0081                     ThisBiGG = ThisBiGG';
+0082                 <span class="keyword">end</span>
+0083                 set(textHdl1, <span class="string">'String'</span>, {[<span class="string">'KEGG: '</span>, strjoin(ThisKEGG,<span class="string">','</span>)],<span class="keyword">...</span>
+0084                     [<span class="string">'BiGG: '</span>, strjoin(ThisBiGG,<span class="string">','</span>)],<span class="keyword">...</span>
+0085                     [<span class="string">'Rate: '</span>,strjoin(ForThisFlux,<span class="string">','</span>)]});
+0086             <span class="keyword">elseif</span> numel(ThisKEGG) == 1 &amp;&amp; numel(ThisBiGG)&gt;1
+0087                 <span class="keyword">if</span> size(ThisBiGG,1) &gt; size(ThisBiGG,2)
+0088                     ThisBiGG = ThisBiGG';
+0089                 <span class="keyword">end</span>
+0090                 ForThisFlux = num2str(flx(N1));
+0091                 set(textHdl1, <span class="string">'String'</span>, {strjoin([<span class="string">'KEGG: '</span>, ThisKEGG]),<span class="keyword">...</span>
+0092                     [<span class="string">'BiGG: '</span>, strjoin(ThisBiGG,<span class="string">','</span>)],<span class="keyword">...</span>
+0093                     [<span class="string">'Rate: '</span>,ForThisFlux]});
+0094             <span class="keyword">else</span>
+0095                 ForThisFlux = num2str(flx(N1));
+0096                 set(textHdl1, <span class="string">'String'</span>, {strjoin([<span class="string">'KEGG: '</span>, ThisKEGG]),<span class="keyword">...</span>
+0097                     [<span class="string">'BiGG: '</span>, ThisBiGG{1}],<span class="keyword">...</span>
+0098                     [<span class="string">'Rate: '</span>,ForThisFlux]});
+0099             <span class="keyword">end</span>
+0100         <span class="keyword">else</span> <span class="comment">% Inactive rxns //////////////////////////////////////////</span>
+0101             <span class="keyword">if</span> numel(AllKEGG) &gt; 1
+0102                 <span class="keyword">if</span> size(AllBiGG,1) &gt; size(AllBiGG,2)
+0103                     AllBiGG = AllBiGG';
+0104                 <span class="keyword">end</span>
+0105                 set(textHdl1, <span class="string">'String'</span>, {[<span class="string">'KEGG: '</span>, strjoin(AllKEGG,<span class="string">','</span>)],<span class="keyword">...</span>
+0106                     [<span class="string">'BiGG: '</span>, strjoin(AllBiGG,<span class="string">','</span>)]});
+0107             <span class="keyword">elseif</span> numel(AllKEGG) == 1 &amp;&amp; numel(AllBiGG)&gt;1
+0108                 <span class="keyword">if</span> size(AllBiGG,1) &gt; size(AllBiGG,2)
+0109                     AllBiGG = AllBiGG';
+0110                 <span class="keyword">end</span>
+0111                 set(textHdl1, <span class="string">'String'</span>, {[<span class="string">'KEGG: '</span>, AllKEGG{1}],<span class="keyword">...</span>
+0112                     [<span class="string">'BiGG: '</span>, strjoin(AllBiGG,<span class="string">','</span>)]});
+0113             <span class="keyword">else</span>
+0114                 set(textHdl1, <span class="string">'String'</span>, {[<span class="string">'KEGG: '</span>, AllKEGG{1}],<span class="keyword">...</span>
+0115                     [<span class="string">'BiGG: '</span>, AllBiGG{1}]});
+0116             <span class="keyword">end</span>
+0117         <span class="keyword">end</span>
+0118         set(textHdl1, <span class="string">'Position'</span>, [Allx{inFlag(1)}(inFlag(2)) + Thresh, Ally{inFlag(1)}(inFlag(2)) + Thresh])
+0119     <span class="keyword">else</span>
+0120         set(textHdl1, <span class="string">'String'</span>, <span class="string">''</span>)    
+0121     <span class="keyword">end</span>
+0122 
+0123 <span class="keyword">end</span>
+0124 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

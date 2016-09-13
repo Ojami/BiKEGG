@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GetKegg</title>
+  <meta name="keywords" content="GetKegg">
+  <meta name="description" content="GetKegg">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; GetKegg.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>GetKegg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GetKegg</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [MapChoice, Outflx, RxnCds] = GetKegg(Bigg, Inflx, ModelName) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GetKegg
+ reads flux values obtained from COBRA optimization, and uses the 
+ input BiGG reactions to retreive the equivalent KEGG IDs obtained from 
+ Bigg2Kegg function. 
+ Inputs:
+ Bigg = A cell array of BiGG reaction IDs (can be obtained from readCbModel
+        function of COBRA toolbox) for which flux values to be displayed
+        on KEGG maps.
+ Inflx = A mXn matrix containing input flux data, which m corresponds to
+         BiGG IDs and n corresponds to time-series values.
+ ModelName = Model description according to BiGG database (e.g. RECON1)
+ Output:
+ MapChoice = A cell array of KEGG pathway identifiers chosen by the user
+             via a simple GUI. These set of KEGG pathway IDs will be used
+             as the input of KeggDraw function.
+ RxnCds = KEGG reaction identifiers equivalent to input Bigg IDs.
+ Outflx = Similar to Inflx, with the difference that m corresponds to
+          RxnCds (Note: if KEGG rxn IDs for some Bigg elements cannot be 
+          found, these IDs should be trimmed).
+ 
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Nov. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="GetKeggMaps.html" class="code" title="function varargout = GetKeggMaps(varargin)">GetKeggMaps</a>	GetKeggMaps (GUI)</li><li><a href="GetKeggTable.html" class="code" title="function varargout = GetKeggTable(varargin)">GetKeggTable</a>	GetKeggTable (GUI)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [MapChoice, Outflx, RxnCds] = GetKegg(Bigg, Inflx, ModelName)</a>
+0002 <span class="comment">% GetKegg</span>
+0003 <span class="comment">% reads flux values obtained from COBRA optimization, and uses the</span>
+0004 <span class="comment">% input BiGG reactions to retreive the equivalent KEGG IDs obtained from</span>
+0005 <span class="comment">% Bigg2Kegg function.</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% Bigg = A cell array of BiGG reaction IDs (can be obtained from readCbModel</span>
+0008 <span class="comment">%        function of COBRA toolbox) for which flux values to be displayed</span>
+0009 <span class="comment">%        on KEGG maps.</span>
+0010 <span class="comment">% Inflx = A mXn matrix containing input flux data, which m corresponds to</span>
+0011 <span class="comment">%         BiGG IDs and n corresponds to time-series values.</span>
+0012 <span class="comment">% ModelName = Model description according to BiGG database (e.g. RECON1)</span>
+0013 <span class="comment">% Output:</span>
+0014 <span class="comment">% MapChoice = A cell array of KEGG pathway identifiers chosen by the user</span>
+0015 <span class="comment">%             via a simple GUI. These set of KEGG pathway IDs will be used</span>
+0016 <span class="comment">%             as the input of KeggDraw function.</span>
+0017 <span class="comment">% RxnCds = KEGG reaction identifiers equivalent to input Bigg IDs.</span>
+0018 <span class="comment">% Outflx = Similar to Inflx, with the difference that m corresponds to</span>
+0019 <span class="comment">%          RxnCds (Note: if KEGG rxn IDs for some Bigg elements cannot be</span>
+0020 <span class="comment">%          found, these IDs should be trimmed).</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% O. Jamialahmadi</span>
+0023 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0024 <span class="comment">% Nov. 2015</span>
+0025 
+0026 <span class="comment">% Retrieve BiGG2KEGG rxn identifiers from Bigg2Kegg function---------------</span>
+0027 Pth1 = which(<span class="string">'GetKegg.m'</span>);
+0028 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0029 Pth2 = Pth1(1:tind-1);
+0030 Nme = [ModelName,<span class="string">'KEGG.mat'</span>];
+0031 TargetPth = fullfile(Pth2,<span class="string">'BIGG2KEGG'</span>,Nme);
+0032 load(TargetPth);
+0033 Brxns1 = B2Kegg.B; Krxns1 = B2Kegg.K;
+0034 <span class="comment">% -------------------------------------------------------------------------</span>
+0035 <span class="comment">% Find common rxns between Brxns and Bigg</span>
+0036 <span class="comment">% First, seperate multi-step rxns------------------------------------------</span>
+0037 MultiB1 = Brxns1(find(strcmp(Brxns1,<span class="string">'MULTIR'</span>))+1:end);
+0038 MultiK1 = Krxns1(find(strcmp(Brxns1,<span class="string">'MULTIR'</span>))+1:end);
+0039 MultiK = MultiK1(ismember(MultiB1, Bigg));
+0040 MultiB = MultiB1(ismember(MultiB1, Bigg));
+0041 [~,Fx22] = ismember(MultiB1, Bigg);
+0042 Fx22(Fx22==0) = [];
+0043 MultiFlx = Inflx(Fx22,:);
+0044 setappdata(0,<span class="string">'MultiB'</span>,MultiB); <span class="comment">% For later use in KeggDraw</span>
+0045 setappdata(0,<span class="string">'MultiK'</span>,MultiK);
+0046 setappdata(0,<span class="string">'MultiFlx'</span>,MultiFlx);
+0047 <span class="comment">% -------------------------------------------------------------------------</span>
+0048 Brxns = Brxns1(1:find(strcmp(Brxns1,<span class="string">'MULTIR'</span>))-1);
+0049 Krxns = Krxns1(1:find(strcmp(Brxns1,<span class="string">'MULTIR'</span>))-1);
+0050 RxnCdsI = Krxns(ismember(Brxns, Bigg));
+0051 BiGGI = Brxns(ismember(Brxns, Bigg));
+0052 [~,Fx2] = ismember(Brxns, Bigg);
+0053 Fx2(Fx2==0) = [];
+0054 FlxI = Inflx(Fx2,:);
+0055 <span class="comment">% If any, ask user to fill missed KEGG rxn IDs</span>
+0056 <span class="keyword">if</span> any(~ismember(Bigg,Brxns))
+0057     disp(<span class="string">'Some KEGG rxns cannot be found for input BiGG IDs'</span>)
+0058     disp(<span class="string">'Insert them manually'</span>)
+0059     disp(<span class="string">'NOTE: Exchange reactions are not displayed!'</span>)
+0060     NotData = Bigg(~ismember(Bigg,Brxns));
+0061     <span class="comment">% Exclude Exchange reactions : EX_w\*</span>
+0062     NoDataIdf = regexp(NotData,<span class="string">'\&lt;EX_\w*'</span>);
+0063     NoDataIdf1 = ~cellfun(<span class="string">'isempty'</span>, NoDataIdf);
+0064     NotData(NoDataIdf1) = [];
+0065     <span class="comment">%------------------------------------</span>
+0066     setappdata(0,<span class="string">'NotData'</span>,NotData)
+0067     waitfor(<a href="GetKeggTable.html" class="code" title="function varargout = GetKeggTable(varargin)">GetKeggTable</a>)
+0068     ModfdTab = getappdata(0,<span class="string">'Final'</span>);
+0069     FindUndfnd = ModfdTab(:,2);
+0070     BiGGUndfnd =  ModfdTab(:,1);
+0071     DfinedLoci = ~strcmpi(FindUndfnd,<span class="string">'Unknown'</span>);
+0072     RxnCdsII = FindUndfnd(DfinedLoci);
+0073     BiGGII = BiGGUndfnd(DfinedLoci);
+0074     Flxs = Inflx(~ismember(Bigg,Brxns),:);
+0075     FlxII = Flxs(DfinedLoci,:);
+0076     RxnCds = [RxnCdsI';RxnCdsII];
+0077     BiGG4KeggDraw = [BiGGI';BiGGII];
+0078     setappdata(0,<span class="string">'BiGG4KeggDraw'</span>,BiGG4KeggDraw);
+0079     Outflx = [FlxI;FlxII];
+0080 <span class="keyword">else</span>
+0081     RxnCds = RxnCdsI;
+0082     Outflx = FlxI;
+0083 <span class="keyword">end</span>
+0084 <span class="comment">%--------------------------------------------------------------------------</span>
+0085 <span class="comment">% Find all KEGG pathways for RxnCds</span>
+0086 Fileid1 = fopen(<span class="string">'rxn2map.txt'</span>,<span class="string">'r'</span>);
+0087 rxn2map = textscan(Fileid1,<span class="string">'%s %s'</span>);
+0088 RawRxns = rxn2map{1};
+0089 RawMaps = rxn2map{2};
+0090 [Loci1,~] = regexp(RawMaps, <span class="string">'path:rn'</span>);
+0091 Loci2 = ~cellfun(<span class="string">'isempty'</span>, Loci1);
+0092 RawMaps(Loci2) = [];
+0093 RawRxns(Loci2) = [];
+0094 Maps = strrep(RawMaps,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0095 Rxns = strrep(RawRxns,<span class="string">'rn:'</span>,<span class="string">''</span>);
+0096 RxnTemp = Rxns(ismember(Rxns,RxnCds));
+0097 MapTemp = Maps(ismember(Rxns,RxnCds));
+0098 count=1;
+0099 RxnList = {0}; MapList = {0}; SortTemp = (0);
+0100 RmvMaps = {<span class="string">'01100'</span>,<span class="string">'01110'</span>,<span class="string">'01120'</span>,<span class="string">'01130'</span>,<span class="string">'01200'</span>,<span class="string">'01210'</span>,<span class="string">'01212'</span>,<span class="keyword">...</span>
+0101     <span class="string">'01220'</span>,<span class="string">'01230'</span>,<span class="string">'00121'</span>};
+0102 <span class="keyword">while</span> numel(MapTemp)
+0103     Loci3 = ismember(MapTemp,MapTemp(1));
+0104     <span class="keyword">if</span> ~ismember(MapTemp(1),RmvMaps)
+0105         RxnList{count} = RxnTemp(Loci3);
+0106         SortTemp(count) = numel(RxnList{count});
+0107         MapList(count) = MapTemp(1);
+0108         count=count+1;
+0109     <span class="keyword">end</span>
+0110     RxnTemp(Loci3)=[];
+0111     MapTemp(Loci3)=[];
+0112 <span class="keyword">end</span>
+0113 <span class="comment">% Sort MapList based on rxns in RxnList</span>
+0114 [~,ST] = sort(SortTemp,<span class="string">'descend'</span>);
+0115 RxnList = RxnList(ST);
+0116 MapList = MapList(ST);
+0117 <span class="comment">% Add pathway names to map codes of MapList</span>
+0118 Fileid2 = fopen(<span class="string">'KEGGmaps.txt'</span>,<span class="string">'r'</span>);
+0119 TempMaps = textscan(Fileid2,<span class="string">'%s %[^\n]'</span>);
+0120 TempMaps1 = cell(size(TempMaps{1},1),1);
+0121 <span class="keyword">for</span> count = 1:size(TempMaps{1},1)
+0122     TempMaps1{count}=[TempMaps{1}{count},<span class="string">' '</span>,TempMaps{2}{count}];
+0123 <span class="keyword">end</span>
+0124 TempMaps1 = strrep(TempMaps1,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0125 MapNames2 = cell(numel(MapList),1);
+0126 <span class="keyword">for</span> count = 1:numel(MapList)
+0127     Loci4 = regexp(TempMaps1,MapList{count});
+0128     MapNames2{count} = TempMaps1{~cellfun(<span class="string">'isempty'</span>, Loci4)};
+0129 <span class="keyword">end</span>
+0130 
+0131 setappdata(0,<span class="string">'MapNames2'</span>,MapNames2)
+0132 setappdata(0,<span class="string">'RxnList'</span>,RxnList)
+0133 waitfor(<a href="GetKeggMaps.html" class="code" title="function varargout = GetKeggMaps(varargin)">GetKeggMaps</a>)
+0134 MapChoiceLoci = getappdata(0,<span class="string">'AllChoices'</span>);
+0135 MapChoice = MapList(MapChoiceLoci);
+0136 <span class="comment">% Remove previous data in appdata------------------------------------------</span>
+0137 AT=getappdata(0);
+0138 AT1 = fieldnames(AT);
+0139 <span class="keyword">for</span> co = 1:length(AT1)
+0140     <span class="keyword">if</span> strcmp(AT1{co},<span class="string">'BiGGModel'</span>) || strcmp(AT1{co},<span class="string">'Mdl'</span>) || <span class="keyword">...</span>
+0141             strcmp(AT1{co},<span class="string">'CRxns'</span>)
+0142         rmappdata(0,AT1{co});
+0143     <span class="keyword">end</span>
+0144 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

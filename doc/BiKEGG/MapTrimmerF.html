@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MapTrimmerF</title>
+  <meta name="keywords" content="MapTrimmerF">
+  <meta name="description" content="MapTrimmerF">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; MapTrimmerF.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MapTrimmerF
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MapTrimmerF</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,DoubleIds,Idx,LineStrength,ColSpec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MapTrimmerF
+ is a subfunction of NetDraw with a similar structure to
+ MapTrimmer with few extra arguments for processing overlapping reactions.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,</a><span class="keyword">...</span>
+0002     DoubleIds,Idx,LineStrength,ColSpec)
+0003 <span class="comment">% MapTrimmerF</span>
+0004 <span class="comment">% is a subfunction of NetDraw with a similar structure to</span>
+0005 <span class="comment">% MapTrimmer with few extra arguments for processing overlapping reactions.</span>
+0006 
+0007 <span class="comment">% O. Jamialahmadi</span>
+0008 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0009 <span class="comment">% July 2016</span>
+0010 
+0011 Ids = DoubleIds.Id; ArrowXhelp = ({}); ArrowYhelp = ArrowXhelp; CntrHelp = ArrowXhelp;
+0012 AllX = ArrowXhelp; AllY = ArrowXhelp;
+0013 <span class="keyword">for</span> i1 = 1:numel(Ids)
+0014     C = ismember(Idx,Ids{i1});
+0015     ArrowXhelp{i1} = ArrowX{C};
+0016     ArrowYhelp{i1} = ArrowY{C};
+0017     CntrHelp{i1} = Cntrs{C};
+0018     AllX{i1} = Allx4Arrow{C};
+0019     AllY{i1} = Ally4Arrow{C};
+0020 <span class="keyword">end</span>
+0021 ArrowX = ArrowXhelp; Cntrs = CntrHelp; Ally4Arrow = AllY;
+0022 ArrowY = ArrowYhelp; Allx4Arrow = AllX;
+0023 <span class="keyword">for</span> i1 = 1:numel(ArrowX)
+0024     <span class="keyword">if</span> isempty(ArrowX{i1})
+0025         <span class="keyword">continue</span>
+0026     <span class="keyword">end</span>
+0027     Xin = ArrowX{i1}; Yin = ArrowY{i1}; Cents = Cntrs{i1};
+0028     pixx = Allx4Arrow{i1};
+0029     pixy = Ally4Arrow{i1};
+0030     <span class="keyword">if</span> ~std(pixx)
+0031         pixx1 = pixx + LineStrength/2;
+0032         pixx = pixx - LineStrength/2;
+0033         pixy1 = pixy;
+0034     <span class="keyword">elseif</span> ~std(pixy)
+0035         pixy1 = pixy + LineStrength/2;
+0036         pixy = pixy - LineStrength/2;
+0037         pixx1 = pixx;
+0038     <span class="keyword">else</span>
+0039         pixx1 = pixx + LineStrength/2;
+0040         pixx = pixx - LineStrength/2;
+0041         pixy1 = pixy + LineStrength/2;
+0042         pixy = pixy - LineStrength/2;
+0043     <span class="keyword">end</span>
+0044     
+0045     <span class="keyword">for</span> cnt = 1:size(Xin,1)
+0046         X = Xin(cnt,:); Y = Yin(cnt,:); Cent = Cents(cnt,:);
+0047         DistToCpd = hypot( Allx4Arrow{i1} - Cent(1), Ally4Arrow{i1} - Cent(2));
+0048         CpdDistToPoint1 = hypot( X(1) - Cent(1), Y(1) - Cent(2));
+0049 <span class="comment">%         CpdDistToPoint2 = hypot( X(2) - Cent(1), Y(2) - Cent(2));</span>
+0050         Ind = find(DistToCpd &lt; 0.8*CpdDistToPoint1);<span class="comment">% &amp; DistToCpd&gt;CpdDistToPoint2);</span>
+0051         pixx1T = pixx1(Ind); pixxT = pixx(Ind);        
+0052         pixy1T = pixy1(Ind); pixyT = pixy(Ind);
+0053         pixx1T = round(pixx1T); pixxT = round(pixxT);
+0054         pixy1T = round(pixy1T); pixyT = round(pixyT);
+0055         <span class="keyword">for</span> i5 = 1:numel(pixxT)
+0056             I(pixyT(i5):pixy1T(i5),pixxT(i5),1) = ColSpec(1);
+0057             I(pixyT(i5),pixxT(i5):pixx1T(i5),1) = ColSpec(1); 
+0058             I(pixyT(i5):pixy1T(i5),pixxT(i5),2) = ColSpec(2);
+0059             I(pixyT(i5),pixxT(i5):pixx1T(i5),2) = ColSpec(2); 
+0060             I(pixyT(i5):pixy1T(i5),pixxT(i5),3) = ColSpec(3);
+0061             I(pixyT(i5),pixxT(i5):pixx1T(i5),3) = ColSpec(3); 
+0062         <span class="keyword">end</span>
+0063     <span class="keyword">end</span>
+0064 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

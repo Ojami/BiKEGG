@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of UpdateDBase</title>
+  <meta name="keywords" content="UpdateDBase">
+  <meta name="description" content="UpdateDBase(GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; UpdateDBase.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>UpdateDBase
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>UpdateDBase(GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = UpdateDBase(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> UpdateDBase(GUI)
+ Updating the local database of BiKEGG for offline use.
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Mar. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="GetData4MultiRxns.html" class="code" title="function GetData4MultiRxns">GetData4MultiRxns</a>	GetData4MultiRxns</li><li><a href="Weight4TransRxns.html" class="code" title="function Weight4TransRxns(Idfier)">Weight4TransRxns</a>	Weight4TransRxns</li><li><a href="getKGML.html" class="code" title="function getKGML">getKGML</a>	getKGML</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function UpdateDBase_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = UpdateDBase_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function rxn2mappushbutton1_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function map2cpdpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function KEGGmapspushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function KEGGcpdpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function ec2rxnpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function cpd2weightpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function cpd2rxnpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function Donepushbutton8_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function Weight4TransRxnspushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function getKGMLpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function MultiRxnpushbutton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function Orgspushbutton_Callback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = UpdateDBase(varargin)</a>
+0002 <span class="comment">% UpdateDBase(GUI)</span>
+0003 <span class="comment">% Updating the local database of BiKEGG for offline use.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% O. Jamialahmadi</span>
+0006 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0007 <span class="comment">% Mar. 2015</span>
+0008 
+0009 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0010 gui_Singleton = 1;
+0011 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0012                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0013                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction UpdateDBase_OpeningFcn(hObject, eventdata, handles, varargin)">UpdateDBase_OpeningFcn</a>, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = UpdateDBase_OutputFcn(hObject, eventdata, handles)">UpdateDBase_OutputFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0016                    <span class="string">'gui_Callback'</span>,   []);
+0017 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0018     gui_State.gui_Callback = str2func(varargin{1});
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> nargout
+0022     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0023 <span class="keyword">else</span>
+0024     gui_mainfcn(gui_State, varargin{:});
+0025 <span class="keyword">end</span>
+0026 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0027 
+0028 
+0029 <span class="comment">% --- Executes just before UpdateDBase is made visible.</span>
+0030 <a name="_sub1" href="#_subfunctions" class="code">function UpdateDBase_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0031 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0032 <span class="comment">% hObject    handle to figure</span>
+0033 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0034 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0035 <span class="comment">% varargin   command line arguments to UpdateDBase (see VARARGIN)</span>
+0036 
+0037 <span class="comment">% Choose default command line output for UpdateDBase</span>
+0038 handles.output = hObject;
+0039 
+0040 <span class="comment">% Update handles structure</span>
+0041 guidata(hObject, handles);
+0042 
+0043 <span class="comment">% UIWAIT makes UpdateDBase wait for user response (see UIRESUME)</span>
+0044 <span class="comment">% uiwait(handles.figure1);</span>
+0045 
+0046 
+0047 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0048 <a name="_sub2" href="#_subfunctions" class="code">function varargout = UpdateDBase_OutputFcn(hObject, eventdata, handles) </a>
+0049 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 
+0054 <span class="comment">% Get default command line output from handles structure</span>
+0055 varargout{1} = handles.output;
+0056 
+0057 
+0058 <span class="comment">% --- Executes on button press in rxn2mappushbutton1.</span>
+0059 <a name="_sub3" href="#_subfunctions" class="code">function rxn2mappushbutton1_Callback(hObject, eventdata, handles)</a>
+0060 <span class="comment">% hObject    handle to rxn2mappushbutton1 (see GCBO)</span>
+0061 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0062 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0063 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0064 [~,Stat1]=urlread(TestLink);
+0065 <span class="keyword">if</span> ~Stat1
+0066     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0067         <span class="string">'Seemingly you are offline!'</span>});
+0068     <span class="keyword">return</span>
+0069 <span class="keyword">end</span>
+0070 
+0071 Text1 = <span class="string">'Updating rxn2map.txt...'</span>;
+0072 fprintf(Text1)
+0073 Data=urlread(<span class="string">'http://rest.kegg.jp/link/path/rn'</span>);
+0074 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0075 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0076 Pth = Pth1(1:tind-1);
+0077 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'rxn2map.txt'</span>];
+0078 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0079 fprintf(Idf,Data);
+0080 fclose(Idf);
+0081 waitfor(msgbox(<span class="string">'rxn2map.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0082 <span class="keyword">for</span> i =1:numel(Text1)
+0083     fprintf(<span class="string">'\b'</span>)
+0084 <span class="keyword">end</span>
+0085 <span class="comment">% --- Executes on button press in map2cpdpushbutton.</span>
+0086 <a name="_sub4" href="#_subfunctions" class="code">function map2cpdpushbutton_Callback(hObject, eventdata, handles)</a>
+0087 <span class="comment">% hObject    handle to map2cpdpushbutton (see GCBO)</span>
+0088 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0089 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0090 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0091 [~,Stat1]=urlread(TestLink);
+0092 <span class="keyword">if</span> ~Stat1
+0093     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0094         <span class="string">'Seemingly you are offline!'</span>});
+0095     <span class="keyword">return</span>
+0096 <span class="keyword">end</span>
+0097 Text1 = <span class="string">'Updating map2cpd.txt...'</span>;
+0098 fprintf(Text1)
+0099 Data=urlread(<span class="string">'http://rest.kegg.jp/link/cpd/path'</span>);
+0100 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0101 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0102 Pth = Pth1(1:tind-1);
+0103 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'map2cpd.txt'</span>];
+0104 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0105 fprintf(Idf,Data);
+0106 fclose(Idf);
+0107 waitfor(msgbox(<span class="string">'map2cpd.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0108 <span class="keyword">for</span> i =1:numel(Text1)
+0109     fprintf(<span class="string">'\b'</span>)
+0110 <span class="keyword">end</span>
+0111 
+0112 <span class="comment">% --- Executes on button press in KEGGmapspushbutton.</span>
+0113 <a name="_sub5" href="#_subfunctions" class="code">function KEGGmapspushbutton_Callback(hObject, eventdata, handles)</a>
+0114 <span class="comment">% hObject    handle to KEGGmapspushbutton (see GCBO)</span>
+0115 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0116 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0117 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0118 [~,Stat1]=urlread(TestLink);
+0119 <span class="keyword">if</span> ~Stat1
+0120     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0121         <span class="string">'Seemingly you are offline!'</span>});
+0122     <span class="keyword">return</span>
+0123 <span class="keyword">end</span>
+0124 Text1 = <span class="string">'Updating KEGGmaps.txt...'</span>;
+0125 fprintf(Text1)
+0126 Data=urlread(<span class="string">'http://rest.kegg.jp/list/pathway'</span>);
+0127 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0128 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0129 Pth = Pth1(1:tind-1);
+0130 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'KEGGmaps.txt'</span>];
+0131 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0132 fprintf(Idf,Data);
+0133 fclose(Idf);
+0134 waitfor(msgbox(<span class="string">'KEGGmaps.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0135 <span class="keyword">for</span> i =1:numel(Text1)
+0136     fprintf(<span class="string">'\b'</span>)
+0137 <span class="keyword">end</span>
+0138 
+0139 <span class="comment">% --- Executes on button press in KEGGcpdpushbutton.</span>
+0140 <a name="_sub6" href="#_subfunctions" class="code">function KEGGcpdpushbutton_Callback(hObject, eventdata, handles)</a>
+0141 <span class="comment">% hObject    handle to KEGGcpdpushbutton (see GCBO)</span>
+0142 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0143 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0144 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0145 [~,Stat1]=urlread(TestLink);
+0146 <span class="keyword">if</span> ~Stat1
+0147     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0148         <span class="string">'Seemingly you are offline!'</span>});
+0149     <span class="keyword">return</span>
+0150 <span class="keyword">end</span>
+0151 Text1 = <span class="string">'Updating KEGGcpd.txt...'</span>;
+0152 fprintf(Text1)
+0153 Data=urlread(<span class="string">'http://rest.kegg.jp/list/cpd'</span>);
+0154 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0155 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0156 Pth = Pth1(1:tind-1);
+0157 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'KEGGcpd.txt'</span>];
+0158 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0159 fprintf(Idf,Data);
+0160 fclose(Idf);
+0161 waitfor(msgbox(<span class="string">'KEGGcpd.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0162 <span class="keyword">for</span> i =1:numel(Text1)
+0163     fprintf(<span class="string">'\b'</span>)
+0164 <span class="keyword">end</span>
+0165 
+0166 <span class="comment">% --- Executes on button press in ec2rxnpushbutton.</span>
+0167 <a name="_sub7" href="#_subfunctions" class="code">function ec2rxnpushbutton_Callback(hObject, eventdata, handles)</a>
+0168 <span class="comment">% hObject    handle to ec2rxnpushbutton (see GCBO)</span>
+0169 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0170 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0171 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0172 [~,Stat1]=urlread(TestLink);
+0173 <span class="keyword">if</span> ~Stat1
+0174     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0175         <span class="string">'Seemingly you are offline!'</span>});
+0176     <span class="keyword">return</span>
+0177 <span class="keyword">end</span>
+0178 Text1 = <span class="string">'Updating ec2rxn.txt...'</span>;
+0179 fprintf(Text1)
+0180 Data=urlread(<span class="string">'http://rest.kegg.jp/link/rn/ec'</span>);
+0181 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0182 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0183 Pth = Pth1(1:tind-1);
+0184 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'ec2rxn.txt'</span>];
+0185 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0186 fprintf(Idf,Data);
+0187 fclose(Idf);
+0188 waitfor(msgbox(<span class="string">'ec2rxn.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0189 <span class="keyword">for</span> i =1:numel(Text1)
+0190     fprintf(<span class="string">'\b'</span>)
+0191 <span class="keyword">end</span>
+0192 
+0193 <span class="comment">% --- Executes on button press in cpd2weightpushbutton.</span>
+0194 <a name="_sub8" href="#_subfunctions" class="code">function cpd2weightpushbutton_Callback(hObject, eventdata, handles)</a>
+0195 <span class="comment">% hObject    handle to cpd2weightpushbutton (see GCBO)</span>
+0196 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0197 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0198 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0199 [~,Stat1]=urlread(TestLink);
+0200 <span class="keyword">if</span> ~Stat1
+0201     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0202         <span class="string">'Seemingly you are offline!'</span>});
+0203     <span class="keyword">return</span>
+0204 <span class="keyword">end</span>
+0205 Text1 = <span class="string">'Updating cpd2weight.txt...'</span>;
+0206 fprintf(Text1)
+0207 Data=urlread(<span class="string">'http://rest.kegg.jp/find/compound/1-9000/mol_weight'</span>);
+0208 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0209 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0210 Pth = Pth1(1:tind-1);
+0211 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'cpd2weight.txt'</span>];
+0212 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0213 fprintf(Idf,Data);
+0214 fclose(Idf);
+0215 waitfor(msgbox(<span class="string">'cpd2weight.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0216 <span class="keyword">for</span> i =1:numel(Text1)
+0217     fprintf(<span class="string">'\b'</span>)
+0218 <span class="keyword">end</span>
+0219 
+0220 <span class="comment">% --- Executes on button press in cpd2rxnpushbutton.</span>
+0221 <a name="_sub9" href="#_subfunctions" class="code">function cpd2rxnpushbutton_Callback(hObject, eventdata, handles)</a>
+0222 <span class="comment">% hObject    handle to cpd2rxnpushbutton (see GCBO)</span>
+0223 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0224 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0225 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0226 [~,Stat1]=urlread(TestLink);
+0227 <span class="keyword">if</span> ~Stat1
+0228     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0229         <span class="string">'Seemingly you are offline!'</span>});
+0230     <span class="keyword">return</span>
+0231 <span class="keyword">end</span>
+0232 Text1 = <span class="string">'Updating cpd2rxn.txt...'</span>;
+0233 fprintf(Text1)
+0234 Data=urlread(<span class="string">'http://rest.kegg.jp/link/rn/cpd'</span>);
+0235 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0236 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0237 Pth = Pth1(1:tind-1);
+0238 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'cpd2rxn.txt'</span>];
+0239 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0240 fprintf(Idf,Data);
+0241 fclose(Idf);
+0242 waitfor(msgbox(<span class="string">'cpd2rxn.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0243 <span class="keyword">for</span> i =1:numel(Text1)
+0244     fprintf(<span class="string">'\b'</span>)
+0245 <span class="keyword">end</span>
+0246 
+0247 
+0248 <span class="comment">% --- Executes on button press in Donepushbutton8.</span>
+0249 <a name="_sub10" href="#_subfunctions" class="code">function Donepushbutton8_Callback(hObject, eventdata, handles)</a>
+0250 <span class="comment">% hObject    handle to Donepushbutton8 (see GCBO)</span>
+0251 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0252 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0253 close(gcf)
+0254 
+0255 
+0256 <span class="comment">% --- Executes on button press in Weight4TransRxnspushbutton.</span>
+0257 <a name="_sub11" href="#_subfunctions" class="code">function Weight4TransRxnspushbutton_Callback(hObject, eventdata, handles)</a>
+0258 <span class="comment">% hObject    handle to Weight4TransRxnspushbutton (see GCBO)</span>
+0259 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0260 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0261 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0262 [~,Stat1]=urlread(TestLink);
+0263 <span class="keyword">if</span> ~Stat1
+0264     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0265         <span class="string">'Seemingly you are offline!'</span>});
+0266     <span class="keyword">return</span>
+0267 <span class="keyword">end</span>
+0268 Text1 = <span class="string">'Updating W4TranRxns2.txt and W4TranRxns4.txt...'</span>;
+0269 fprintf(Text1)
+0270 fprintf(<span class="string">'\n'</span>)
+0271 <a href="Weight4TransRxns.html" class="code" title="function Weight4TransRxns(Idfier)">Weight4TransRxns</a>(2)
+0272 fprintf(<span class="string">'\n'</span>)
+0273 <a href="Weight4TransRxns.html" class="code" title="function Weight4TransRxns(Idfier)">Weight4TransRxns</a>(4)
+0274 fprintf(<span class="string">'\n'</span>)
+0275 waitfor(msgbox(<span class="string">'W4TranRxns2.txt and W4TranRxns4.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0276 <span class="keyword">for</span> i =1:numel(Text1)
+0277     fprintf(<span class="string">'\b'</span>)
+0278 <span class="keyword">end</span>
+0279 clc
+0280 
+0281 <span class="comment">% --- Executes on button press in getKGMLpushbutton.</span>
+0282 <a name="_sub12" href="#_subfunctions" class="code">function getKGMLpushbutton_Callback(hObject, eventdata, handles)</a>
+0283 <span class="comment">% hObject    handle to getKGMLpushbutton (see GCBO)</span>
+0284 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0285 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0286 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0287 [~,Stat1]=urlread(TestLink);
+0288 <span class="keyword">if</span> ~Stat1
+0289     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0290         <span class="string">'Seemingly you are offline!'</span>});
+0291     <span class="keyword">return</span>
+0292 <span class="keyword">end</span>
+0293 Text1 = <span class="string">'Updating KEGGmaps folder...'</span>;
+0294 fprintf([Text1,<span class="string">'\n'</span>])
+0295 <a href="getKGML.html" class="code" title="function getKGML">getKGML</a>
+0296 waitfor(msgbox(<span class="string">'KEGGmaps folder was successfully updated!'</span>,<span class="string">'Update'</span>))
+0297 <span class="keyword">for</span> i =1:numel(Text1)
+0298     fprintf(<span class="string">'\b'</span>)
+0299 <span class="keyword">end</span>
+0300 
+0301 <span class="comment">% --- Executes on button press in MultiRxnpushbutton.</span>
+0302 <a name="_sub13" href="#_subfunctions" class="code">function MultiRxnpushbutton_Callback(hObject, eventdata, handles)</a>
+0303 <span class="comment">% hObject    handle to MultiRxnpushbutton (see GCBO)</span>
+0304 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0305 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0306 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0307 [~,Stat1]=urlread(TestLink);
+0308 <span class="keyword">if</span> ~Stat1
+0309     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0310         <span class="string">'Seemingly you are offline!'</span>});
+0311     <span class="keyword">return</span>
+0312 <span class="keyword">end</span>
+0313 Text1 = <span class="string">'Updating OfflineRxnData folder...'</span>;
+0314 fprintf(Text1)
+0315 <a href="GetData4MultiRxns.html" class="code" title="function GetData4MultiRxns">GetData4MultiRxns</a>
+0316 waitfor(msgbox(<span class="string">'OfflineRxnData folder was successfully updated!'</span>,<span class="string">'Update'</span>))
+0317 <span class="keyword">for</span> i =1:numel(Text1)
+0318     fprintf(<span class="string">'\b'</span>)
+0319 <span class="keyword">end</span>
+0320 clc
+0321 
+0322 <span class="comment">% --- Executes on button press in Orgspushbutton.</span>
+0323 <a name="_sub14" href="#_subfunctions" class="code">function Orgspushbutton_Callback(hObject, eventdata, handles)</a>
+0324 <span class="comment">% hObject    handle to Orgspushbutton (see GCBO)</span>
+0325 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0326 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0327 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0328 [~,Stat1]=urlread(TestLink);
+0329 <span class="keyword">if</span> ~Stat1
+0330     msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0331         <span class="string">'Seemingly you are offline!'</span>});
+0332     <span class="keyword">return</span>
+0333 <span class="keyword">end</span>
+0334 Text1 = <span class="string">'Updating orgs.txt...'</span>;
+0335 fprintf(Text1)
+0336 Data=urlread(<span class="string">'http://rest.kegg.jp/list/organism'</span>);
+0337 Pth1 = which (<span class="string">'Precons.m'</span>);
+0338 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0339 Pth = Pth1(1:tind-1);
+0340 Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'orgs.txt'</span>];
+0341 Idf = fopen(Pth1,<span class="string">'w'</span>);
+0342 fprintf(Idf,Data);
+0343 fclose(Idf);
+0344 waitfor(msgbox(<span class="string">'orgs.txt was successfully updated!'</span>,<span class="string">'Update'</span>))
+0345 <span class="keyword">for</span> i =1:numel(Text1)
+0346     fprintf(<span class="string">'\b'</span>)
+0347 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of BaseMapReader</title>
+  <meta name="keywords" content="BaseMapReader">
+  <meta name="description" content="BaseMapReader">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; BaseMapReader.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>BaseMapReader
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BaseMapReader</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function basemap = BaseMapReader(Netstat) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BaseMapReader
+ reads KGML file of KEGG global metaboli pathway (map01100),
+ extracts all required information and organizes them in a structure
+ array, with three fields of r, c, and rc for respectively reactions, 
+ compounds and reaction-to-compound details for subsequent use in NetDraw.
+ 
+ Input:
+ Netstat: Operate in online (1) or offline (0) mode. In offline mode, data
+ in KEGGmaps folder of BiKEGG will be used.
+ 
+ Output:
+ basemap: Structure array with three fields of r, c, and rc for reactions,
+ compounds and reaction-to-compound details respectively.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function basemap = BaseMapReader(Netstat)</a>
+0002 <span class="comment">% BaseMapReader</span>
+0003 <span class="comment">% reads KGML file of KEGG global metaboli pathway (map01100),</span>
+0004 <span class="comment">% extracts all required information and organizes them in a structure</span>
+0005 <span class="comment">% array, with three fields of r, c, and rc for respectively reactions,</span>
+0006 <span class="comment">% compounds and reaction-to-compound details for subsequent use in NetDraw.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">% Netstat: Operate in online (1) or offline (0) mode. In offline mode, data</span>
+0010 <span class="comment">% in KEGGmaps folder of BiKEGG will be used.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Output:</span>
+0013 <span class="comment">% basemap: Structure array with three fields of r, c, and rc for reactions,</span>
+0014 <span class="comment">% compounds and reaction-to-compound details respectively.</span>
+0015 
+0016 <span class="comment">% O. Jamialahmadi</span>
+0017 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0018 <span class="comment">% July 2016</span>
+0019 <span class="comment">% -------------------------------------------------------------------------</span>
+0020 
+0021 <span class="keyword">if</span> Netstat
+0022     Dat = <span class="string">'http://rest.kegg.jp/get/rn01100/kgml'</span>;
+0023     Dat = urlread(Dat);
+0024 <span class="keyword">else</span>
+0025     load(which(<span class="string">'map01100.mat'</span>))
+0026 <span class="keyword">end</span>
+0027 <span class="comment">% Extract rxns details ====================================================</span>
+0028 rxnDat = regexp(Dat,<span class="string">'(?&lt;=entry) id=&quot;(\d+)&quot; name=&quot;rn:[^&quot;]*.*?(?=&lt;/entry&gt;)'</span>,<span class="string">'match'</span>);
+0029 RawRNs = regexp(rxnDat,<span class="string">'(?&lt;=reaction=&quot;rn:)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0030 Lineseg = regexp(rxnDat, <span class="string">'(?&lt;=type=&quot;line&quot; coords=&quot;)[^&quot;]*'</span>, <span class="string">'match'</span>);
+0031 rxns = ({}); ctr = 1; rxnx = ({}); rxny = ({}); rxn_id = (0); rxn_col = ({});
+0032 <span class="keyword">for</span> i1 = 1:numel(RawRNs)
+0033     temp_rxn = regexp(RawRNs{i1}{1}, <span class="string">'R\d{5}'</span>, <span class="string">'match'</span>);
+0034     rxn_idTemp = str2double(regexp(rxnDat{i1},<span class="string">'(?&lt;=id=&quot;)(\d+)[^&quot;]*'</span>,<span class="string">'match'</span>));
+0035     rxn_colTemp = unique(regexp(rxnDat{i1},<span class="string">'(?&lt;=fgcolor=&quot;#)[^&quot;]*'</span>,<span class="string">'match'</span>));
+0036     temp_coord =regexp(Lineseg{i1}, <span class="string">'\d+'</span>, <span class="string">'match'</span>);
+0037     line_coord1 = cellfun(@str2double, temp_coord, <span class="string">'UniformOutput'</span>, false);
+0038     line_x = ({}); line_y = ({});
+0039     <span class="keyword">for</span> i3 = 1:numel(line_coord1) <span class="comment">% Extract all lines for each rxn</span>
+0040         temp_coord1 = line_coord1{i3};
+0041         x_temp = temp_coord1(1:2:end);
+0042         y_temp = temp_coord1(2:2:end);
+0043         line_x{i3} = x_temp;
+0044         line_y{i3} = y_temp;
+0045         clear x_temp y_temp
+0046     <span class="keyword">end</span>
+0047     <span class="keyword">for</span> i2 = 1:numel(temp_rxn)
+0048         rxns{ctr} = temp_rxn{i2}; <span class="comment">% All rxn details !!!!!!!!!!!!!</span>
+0049         rxn_id(ctr) = rxn_idTemp;
+0050         rxn_col(ctr) = rxn_colTemp;
+0051         rxnx{ctr} = line_x;  <span class="comment">% All rxn details !!!!!!!!!!!</span>
+0052         rxny{ctr} = line_y;  <span class="comment">% All rxn details !!!!!!!!!!!</span>
+0053         ctr = ctr + 1;
+0054     <span class="keyword">end</span>
+0055 <span class="keyword">end</span>
+0056 clear rxnDat RawRNs Lineseg
+0057 <span class="comment">% =========================================================================</span>
+0058 <span class="comment">% Extract compound details ================================================</span>
+0059 cpdDat = regexp(Dat,<span class="string">'(?&lt;=entry) id=&quot;(\d+)&quot; name=&quot;cpd:[^&quot;]*.*?(?=&lt;/entry&gt;)'</span>,<span class="string">'match'</span>);
+0060 glDat = regexp(Dat,<span class="string">'(?&lt;=entry) id=&quot;(\d+)&quot; name=&quot;gl:[^&quot;]*.*?(?=&lt;/entry&gt;)'</span>,<span class="string">'match'</span>);
+0061 cpd_coord = (0); cpd_id = (0); cpds = ({});
+0062 <span class="keyword">for</span> i1=1:numel(cpdDat)
+0063     cpds(i1) = regexp(cpdDat{i1},<span class="string">'(?&lt;=name=&quot;cpd:)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0064     cpd_id(i1) = str2double(regexp(cpdDat{i1},<span class="string">'(?&lt;=id=&quot;)(\d+)[^&quot;]*'</span>,<span class="string">'match'</span>));
+0065     cpd_coords = regexp(cpdDat{i1},<span class="string">'type=&quot;circle&quot; x=&quot;(\d+)&quot; y=&quot;(\d+)&quot; width=&quot;(\d+)&quot; height=&quot;(\d+)&quot;'</span>,<span class="string">'tokens'</span>);
+0066     cpd_coord(i1,1) = str2double(cpd_coords{1}{1});
+0067     cpd_coord(i1,2) = str2double(cpd_coords{1}{2});
+0068     cpd_coord(i1,3) = str2double(cpd_coords{1}{3});
+0069     cpd_coord(i1,4) = str2double(cpd_coords{1}{4});
+0070 <span class="keyword">end</span>
+0071 gl_coord = (0); gl_id = (0); gls = ({});
+0072 <span class="keyword">for</span> i1 = 1:numel(glDat)
+0073     gls(i1) = regexp(glDat{i1},<span class="string">'(?&lt;=name=&quot;gl:)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0074     gl_id(i1) = str2double(regexp(glDat{i1},<span class="string">'(?&lt;=id=&quot;)(\d+)[^&quot;]*'</span>,<span class="string">'match'</span>));
+0075     gl_coords = regexp(glDat{i1},<span class="string">'type=&quot;circle&quot; x=&quot;(\d+)&quot; y=&quot;(\d+)&quot; width=&quot;(\d+)&quot; height=&quot;(\d+)&quot;'</span>,<span class="string">'tokens'</span>);
+0076     gl_coord(i1,1) = str2double(gl_coords{1}{1});
+0077     gl_coord(i1,2) = str2double(gl_coords{1}{2});
+0078     gl_coord(i1,3) = str2double(gl_coords{1}{3});
+0079     gl_coord(i1,4) = str2double(gl_coords{1}{4});
+0080 <span class="keyword">end</span>
+0081 <span class="comment">% =========================================================================</span>
+0082 <span class="comment">% Extract rxn-to-compound details =========================================</span>
+0083 <span class="comment">% NOTE: rxn-to-compound details are collected based on rxn ID, meaning all</span>
+0084 <span class="comment">% rxns correlated with one certain ID are sotred together.</span>
+0085 rxn4cmp = regexp(Dat,<span class="string">'(?&lt;=&lt;reaction)\s+id=&quot;(\d+)&quot; (.+?/&gt;)*?\s*(?=&lt;/reaction&gt;)'</span>,<span class="string">'tokens'</span>);
+0086 rxn4cmp_id = (0); rxn4cmp_subid= ({}); rxn4cmp_subname= ({});
+0087 rxn4cmp_prodid= ({}); rxn4cmp_prodname= ({}); rxn4cmp_name = ({});
+0088 <span class="keyword">for</span> i1 = 1:numel(rxn4cmp)
+0089     rxn4cmp_det = regexp(rxn4cmp{i1}{2},<span class="string">'(?&lt;=&quot;rn:)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0090     temp_rxn1 = regexp(rxn4cmp_det{1}, <span class="string">'R\d{5}'</span>, <span class="string">'match'</span>);
+0091     <span class="keyword">for</span> r1 = 1:numel(temp_rxn1)
+0092         rxn4cmp_name{i1}{r1} = temp_rxn1{r1};
+0093     <span class="keyword">end</span>
+0094     rxndet_sub = regexp(rxn4cmp{i1}{2},<span class="string">'(?&lt;=&lt;substrate)\s+id=&quot;(\d+)&quot;\s+name=&quot;cpd:C(\d+)&quot;[^/]*'</span>,<span class="string">'tokens'</span>);
+0095     rxndet_sub1 = regexp(rxn4cmp{i1}{2},<span class="string">'(?&lt;=&lt;substrate)\s+id=&quot;(\d+)&quot;\s+name=&quot;gl:G(\d+)&quot;[^/]*'</span>,<span class="string">'tokens'</span>);
+0096     rxndet_prod = regexp(rxn4cmp{i1}{2},<span class="string">'(?&lt;=&lt;product)\s+id=&quot;(\d+)&quot;\s+name=&quot;cpd:C(\d+)&quot;[^/]*'</span>,<span class="string">'tokens'</span>);
+0097     rxndet_prod1 = regexp(rxn4cmp{i1}{2},<span class="string">'(?&lt;=&lt;product)\s+id=&quot;(\d+)&quot;\s+name=&quot;gl:G(\d+)&quot;[^/]*'</span>,<span class="string">'tokens'</span>);
+0098     <span class="keyword">for</span> i2 = 1:numel(rxndet_sub)
+0099         rxn4cmp_subid{i1}(i2) = str2double(rxndet_sub{i2}(1));
+0100         rxn4cmp_subname{i1}{i2} = strcat(<span class="string">'C'</span>,rxndet_sub{i2}{2});
+0101     <span class="keyword">end</span>
+0102     <span class="keyword">for</span> i2 = numel(rxndet_sub)+1:numel(rxndet_sub1)+numel(rxndet_sub)
+0103         rxn4cmp_subid{i1}(i2) = str2double(rxndet_sub1{i2-numel(rxndet_sub)}(1));
+0104         rxn4cmp_subname{i1}{i2} = strcat(<span class="string">'G'</span>,rxndet_sub1{i2-numel(rxndet_sub)}{2});
+0105     <span class="keyword">end</span>
+0106     <span class="keyword">for</span> i3 = 1:numel(rxndet_prod)       
+0107         rxn4cmp_prodid{i1}(i3) = str2double(rxndet_prod{i3}(1));
+0108         rxn4cmp_prodname{i1}{i3} = strcat(<span class="string">'C'</span>,rxndet_prod{i3}{2});       
+0109     <span class="keyword">end</span>
+0110     <span class="keyword">for</span> i3 = 1+numel(rxndet_prod):numel(rxndet_prod1)+numel(rxndet_prod)      
+0111         rxn4cmp_prodid{i1}(i3) = str2double(rxndet_prod1{i3-numel(rxndet_prod)}(1));
+0112         rxn4cmp_prodname{i1}{i3} = strcat(<span class="string">'G'</span>,rxndet_prod1{i3-numel(rxndet_prod)}{2});
+0113     <span class="keyword">end</span>
+0114     rxn4cmp_id(i1) = str2double(rxn4cmp{i1}{1});
+0115 <span class="keyword">end</span>
+0116 basemap.r.rxn = rxns;
+0117 basemap.r.rxnid = rxn_id;
+0118 basemap.r.col = rxn_col;
+0119 basemap.r.rxnx = rxnx;
+0120 basemap.r.rxny = rxny;
+0121 basemap.c.cpd = cpds;
+0122 basemap.c.cpdid = cpd_id;
+0123 basemap.c.cpdxy = cpd_coord;
+0124 basemap.c.gl = gls;
+0125 basemap.c.glid = gl_id;
+0126 basemap.c.glxy = gl_coord;
+0127 basemap.rc.rxn = rxn4cmp_name;
+0128 basemap.rc.rxnid = rxn4cmp_id;
+0129 basemap.rc.sub = rxn4cmp_subname;
+0130 basemap.rc.subid = rxn4cmp_subid;
+0131 basemap.rc.prod = rxn4cmp_prodname;
+0132 basemap.rc.prodid = rxn4cmp_prodid;
+0133 
+0134 <span class="comment">% Modify basemap: There are some discrepancies between KGML and basemap</span>
+0135 <span class="comment">% Error in R08940</span>
+0136 basemap.rc.sub{basemap.rc.rxnid==18} = <span class="string">'C00019'</span>;
+0137 basemap.rc.subid{basemap.rc.rxnid==18} = 4254;
+0138 <span class="comment">% Error in R04097</span>
+0139 basemap.rc.prod{basemap.rc.rxnid==718} = <span class="string">'C15975'</span>;
+0140 basemap.rc.prodid{basemap.rc.rxnid==718} = 2997;</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

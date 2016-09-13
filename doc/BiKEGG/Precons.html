@@ -1,0 +1,299 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Precons</title>
+  <meta name="keywords" content="Precons">
+  <meta name="description" content="Precons(GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; Precons.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Precons
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Precons(GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = Precons(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Precons(GUI)
+ A GUI for PreconsMethod
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Match 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="PreconsMethod.html" class="code" title="function PreconsMethod(handles)">PreconsMethod</a>	PreconsMethod</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function Precons_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = Precons_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function OrganPopup_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function OrganPopup_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function OrganEdit_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function OrganEdit_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function DonePush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function Pathwaylistbox_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function Pathwaylistbox_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function Biographcheck_Callback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = Precons(varargin)</a>
+0002 <span class="comment">% Precons(GUI)</span>
+0003 <span class="comment">% A GUI for PreconsMethod</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% O. Jamialahmadi</span>
+0006 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0007 <span class="comment">% Match 2016</span>
+0008 
+0009 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0010 gui_Singleton = 1;
+0011 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0012                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0013                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction Precons_OpeningFcn(hObject, eventdata, handles, varargin)">Precons_OpeningFcn</a>, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = Precons_OutputFcn(hObject, eventdata, handles)">Precons_OutputFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0016                    <span class="string">'gui_Callback'</span>,   []);
+0017 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0018     gui_State.gui_Callback = str2func(varargin{1});
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> nargout
+0022     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0023 <span class="keyword">else</span>
+0024     gui_mainfcn(gui_State, varargin{:});
+0025 <span class="keyword">end</span>
+0026 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0027 
+0028 
+0029 <span class="comment">% --- Executes just before Precons is made visible.</span>
+0030 <a name="_sub1" href="#_subfunctions" class="code">function Precons_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0031 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0032 <span class="comment">% hObject    handle to figure</span>
+0033 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0034 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0035 <span class="comment">% varargin   command line arguments to Precons (see VARARGIN)</span>
+0036 Fileid = fopen(<span class="string">'orgs.txt'</span>,<span class="string">'r'</span>);
+0037 orgcell = textscan(Fileid,<span class="string">'%s %s %[^\n]'</span>);
+0038 fclose(Fileid);
+0039 Tcode = orgcell{1}; Scode = orgcell{2};
+0040 <span class="keyword">for</span> ct = 1:numel(Tcode)
+0041     tscode{ct} = [Scode{ct},<span class="string">'  '</span>,Tcode{ct}];
+0042 <span class="keyword">end</span>
+0043 set(handles.OrganPopup,<span class="string">'String'</span>,tscode)
+0044 
+0045 <span class="comment">% Choose default command line output for Precons</span>
+0046 handles.output = hObject;
+0047 
+0048 <span class="comment">% Update handles structure</span>
+0049 guidata(hObject, handles);
+0050 
+0051 <span class="comment">% UIWAIT makes Precons wait for user response (see UIRESUME)</span>
+0052 <span class="comment">% uiwait(handles.figure1);</span>
+0053 
+0054 
+0055 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0056 <a name="_sub2" href="#_subfunctions" class="code">function varargout = Precons_OutputFcn(hObject, eventdata, handles) </a>
+0057 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0058 <span class="comment">% hObject    handle to figure</span>
+0059 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0060 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0061 
+0062 <span class="comment">% Get default command line output from handles structure</span>
+0063 varargout{1} = handles.output;
+0064 
+0065 
+0066 <span class="comment">% --- Executes on selection change in OrganPopup.</span>
+0067 <a name="_sub3" href="#_subfunctions" class="code">function OrganPopup_Callback(hObject, eventdata, handles)</a>
+0068 <span class="comment">% hObject    handle to OrganPopup (see GCBO)</span>
+0069 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0070 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0071 Fileid = fopen(<span class="string">'orgs.txt'</span>,<span class="string">'r'</span>);
+0072 orgcell = textscan(Fileid,<span class="string">'%s %s %[^\n]'</span>);
+0073 fclose(Fileid);
+0074 Ncode = orgcell{3}; Scode = orgcell{2};
+0075 Cursel = get(hObject,<span class="string">'Value'</span>);
+0076 <span class="keyword">if</span> ~isempty(Cursel)
+0077     set(handles.Orgtext,<span class="string">'String'</span>,Ncode{Cursel})
+0078     set(handles.OrganEdit,<span class="string">'String'</span>,Scode{Cursel})
+0079 <span class="keyword">end</span>
+0080 
+0081 stat = get(handles.Biographcheck,<span class="string">'Value'</span>);
+0082 <span class="keyword">if</span> stat
+0083     Org = get(handles.OrganEdit,<span class="string">'String'</span>);
+0084     <span class="keyword">if</span> ~strcmp(Org,<span class="string">'Organism code'</span>)
+0085         Txt1 = <span class="string">'Downloding pathway data...'</span>;
+0086         fprintf(Txt1)
+0087         [getpathways,stat] = urlread([<span class="string">'http://rest.kegg.jp/list/pathway/'</span>,Org]);
+0088         <span class="keyword">if</span> ~stat
+0089             msgbox(<span class="string">'There is a problem with the internet connection!'</span>);
+0090             <span class="keyword">for</span> i =1:numel(Txt1)
+0091                 fprintf(<span class="string">'\b'</span>)
+0092             <span class="keyword">end</span>
+0093             <span class="keyword">return</span>
+0094         <span class="keyword">end</span>
+0095         <span class="keyword">for</span> i =1:numel(Txt1)
+0096             fprintf(<span class="string">'\b'</span>)
+0097         <span class="keyword">end</span>
+0098         pths = textscan(getpathways,<span class="string">'%s %[^\n]'</span>);
+0099         pathnames = pths{1}; pathnames = strrep(pathnames,<span class="string">'path:'</span>,<span class="string">''</span>);
+0100         pathdescription = pths{2};
+0101         set(handles.Pathwaylistbox,<span class="string">'String'</span>,strcat(pathnames,<span class="string">'_'</span>,pathdescription))
+0102     <span class="keyword">end</span>
+0103 <span class="keyword">end</span>
+0104 
+0105 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0106 <a name="_sub4" href="#_subfunctions" class="code">function OrganPopup_CreateFcn(hObject, eventdata, handles)</a>
+0107 <span class="comment">% hObject    handle to OrganPopup (see GCBO)</span>
+0108 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0109 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0110 
+0111 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0112 <span class="comment">%       See ISPC and COMPUTER.</span>
+0113 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0114     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0115 <span class="keyword">end</span>
+0116 
+0117 
+0118 
+0119 <a name="_sub5" href="#_subfunctions" class="code">function OrganEdit_Callback(hObject, eventdata, handles)</a>
+0120 <span class="comment">% hObject    handle to OrganEdit (see GCBO)</span>
+0121 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0122 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0123 Fileid = fopen(<span class="string">'orgs.txt'</span>,<span class="string">'r'</span>);
+0124 orgcell = textscan(Fileid,<span class="string">'%s %s %[^\n]'</span>);
+0125 fclose(Fileid);
+0126 Tcode = orgcell{1}; Scode = orgcell{2}; Ncode = orgcell{3};
+0127 OrgEditSelect = get(hObject,<span class="string">'String'</span>);
+0128 WhereOrgPop1 = find(ismember(Tcode,OrgEditSelect));
+0129 WhereOrgPop2 = find(ismember(Scode,OrgEditSelect));
+0130 <span class="keyword">if</span> ~isempty(WhereOrgPop1)
+0131     set(handles.OrganPopup,<span class="string">'Value'</span>,WhereOrgPop1)
+0132     set(handles.Orgtext,<span class="string">'String'</span>,Ncode{WhereOrgPop1})
+0133 <span class="keyword">elseif</span> ~isempty(WhereOrgPop2)
+0134     set(handles.OrganPopup,<span class="string">'Value'</span>,WhereOrgPop2)
+0135     set(handles.Orgtext,<span class="string">'String'</span>,Ncode{WhereOrgPop2})
+0136 <span class="keyword">else</span>
+0137     set(handles.Orgtext,<span class="string">'String'</span>,<span class="string">'Wrong organism code'</span>)
+0138 <span class="keyword">end</span>
+0139 stat = get(handles.Biographcheck,<span class="string">'Value'</span>);
+0140 <span class="keyword">if</span> stat
+0141     Org = get(handles.OrganEdit,<span class="string">'String'</span>);
+0142     <span class="keyword">if</span> ~strcmp(Org,<span class="string">'Organism code'</span>)
+0143         Txt1 = <span class="string">'Downloding pathway data...'</span>;
+0144         fprintf(Txt1)
+0145         [getpathways,stat] = urlread([<span class="string">'http://rest.kegg.jp/list/pathway/'</span>,Org]);
+0146         <span class="keyword">if</span> ~stat
+0147             msgbox(<span class="string">'There is a problem with the internet connection!'</span>);
+0148             <span class="keyword">for</span> i =1:numel(Txt1)
+0149                 fprintf(<span class="string">'\b'</span>)
+0150             <span class="keyword">end</span>
+0151             <span class="keyword">return</span>
+0152         <span class="keyword">end</span>
+0153         <span class="keyword">for</span> i =1:numel(Txt1)
+0154             fprintf(<span class="string">'\b'</span>)
+0155         <span class="keyword">end</span>
+0156         pths = textscan(getpathways,<span class="string">'%s %[^\n]'</span>);
+0157         pathnames = pths{1}; pathnames = strrep(pathnames,<span class="string">'path:'</span>,<span class="string">''</span>);
+0158         pathdescription = pths{2};
+0159         set(handles.Pathwaylistbox,<span class="string">'String'</span>,strcat(pathnames,<span class="string">'_'</span>,pathdescription))
+0160     <span class="keyword">end</span>
+0161 <span class="keyword">end</span>
+0162 
+0163 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0164 <a name="_sub6" href="#_subfunctions" class="code">function OrganEdit_CreateFcn(hObject, eventdata, handles)</a>
+0165 <span class="comment">% hObject    handle to OrganEdit (see GCBO)</span>
+0166 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0167 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0168 
+0169 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0170 <span class="comment">%       See ISPC and COMPUTER.</span>
+0171 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0172     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0173 <span class="keyword">end</span>
+0174 
+0175 
+0176 <span class="comment">% --- Executes on button press in DonePush.</span>
+0177 <a name="_sub7" href="#_subfunctions" class="code">function DonePush_Callback(hObject, eventdata, handles)</a>
+0178 <span class="comment">% hObject    handle to DonePush (see GCBO)</span>
+0179 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0180 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0181 <a href="PreconsMethod.html" class="code" title="function PreconsMethod(handles)">PreconsMethod</a>(handles)
+0182 
+0183 
+0184 <span class="comment">% --- Executes on selection change in Pathwaylistbox.</span>
+0185 <a name="_sub8" href="#_subfunctions" class="code">function Pathwaylistbox_Callback(hObject, eventdata, handles)</a>
+0186 <span class="comment">% hObject    handle to Pathwaylistbox (see GCBO)</span>
+0187 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0188 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0189 
+0190 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns Pathwaylistbox contents as cell array</span>
+0191 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from Pathwaylistbox</span>
+0192 
+0193 
+0194 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0195 <a name="_sub9" href="#_subfunctions" class="code">function Pathwaylistbox_CreateFcn(hObject, eventdata, handles)</a>
+0196 <span class="comment">% hObject    handle to Pathwaylistbox (see GCBO)</span>
+0197 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0198 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0199 
+0200 <span class="comment">% Hint: listbox controls usually have a white background on Windows.</span>
+0201 <span class="comment">%       See ISPC and COMPUTER.</span>
+0202 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0203     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0204 <span class="keyword">end</span>
+0205 
+0206 
+0207 <span class="comment">% --- Executes on button press in Biographcheck.</span>
+0208 <a name="_sub10" href="#_subfunctions" class="code">function Biographcheck_Callback(hObject, eventdata, handles)</a>
+0209 <span class="comment">% hObject    handle to Biographcheck (see GCBO)</span>
+0210 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0211 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0212 
+0213 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of Biographcheck</span>
+0214 stat = get(hObject,<span class="string">'Value'</span>);
+0215 <span class="keyword">if</span> stat
+0216     set(handles.Pathwaylistbox,<span class="string">'Enable'</span>,<span class="string">'on'</span>)
+0217     set(handles.G2Bradiobutton,<span class="string">'Enable'</span>,<span class="string">'on'</span>)
+0218     set(handles.G2Kradiobutton,<span class="string">'Enable'</span>,<span class="string">'on'</span>)
+0219     set(handles.G2K2Bradiobutton,<span class="string">'Enable'</span>,<span class="string">'on'</span>)
+0220     Org = get(handles.OrganEdit,<span class="string">'String'</span>);
+0221     <span class="keyword">if</span> ~strcmp(Org,<span class="string">'Organism code'</span>)
+0222         Txt1 = <span class="string">'Downloding pathway data...'</span>;
+0223         fprintf(Txt1)
+0224         [getpathways,stat] = urlread([<span class="string">'http://rest.kegg.jp/list/pathway/'</span>,Org]);
+0225         <span class="keyword">if</span> ~stat
+0226             msgbox(<span class="string">'There is a problem with the internet connection!'</span>);
+0227             <span class="keyword">for</span> i =1:numel(Txt1)
+0228                 fprintf(<span class="string">'\b'</span>)
+0229             <span class="keyword">end</span>
+0230             <span class="keyword">return</span>
+0231         <span class="keyword">end</span>
+0232         <span class="keyword">for</span> i =1:numel(Txt1)
+0233             fprintf(<span class="string">'\b'</span>)
+0234         <span class="keyword">end</span>
+0235         pths = textscan(getpathways,<span class="string">'%s %[^\n]'</span>);
+0236         pathnames = pths{1}; pathnames = strrep(pathnames,<span class="string">'path:'</span>,<span class="string">''</span>);
+0237         pathdescription = pths{2};
+0238         set(handles.Pathwaylistbox,<span class="string">'String'</span>,strcat(pathnames,<span class="string">'_'</span>,pathdescription))
+0239     <span class="keyword">end</span>
+0240 <span class="keyword">else</span>
+0241     set(handles.Pathwaylistbox,<span class="string">'Enable'</span>,<span class="string">'off'</span>)
+0242     set(handles.G2Bradiobutton,<span class="string">'Enable'</span>,<span class="string">'off'</span>)
+0243     set(handles.G2Kradiobutton,<span class="string">'Enable'</span>,<span class="string">'off'</span>)
+0244     set(handles.G2K2Bradiobutton,<span class="string">'Enable'</span>,<span class="string">'off'</span>)
+0245 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

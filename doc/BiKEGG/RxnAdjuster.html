@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RxnAdjuster</title>
+  <meta name="keywords" content="RxnAdjuster">
+  <meta name="description" content="RxnAdjuster">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; RxnAdjuster.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>RxnAdjuster
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>RxnAdjuster</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [OverlayMe,Allx4Arrow,Ally4Arrow] = RxnAdjuster(PostData,Mdl,RefID) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> RxnAdjuster
+ is a subfunction of MapAdjuster for displaying reaction
+ details on created maps by NetDraw.
+
+ Inputs:
+ PostData: All necessary data from NetDraw
+ Mdl: COBRA model for which in silico simulations are performed.
+ RefID: A string; 'bigg' or 'kegg'.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MapAdjuster.html" class="code" title="function varargout = MapAdjuster(varargin)">MapAdjuster</a>	MapAdjuster(GUI)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [OverlayMe,Allx4Arrow,Ally4Arrow] = RxnAdjuster(PostData,Mdl,RefID)</a>
+0002 <span class="comment">% RxnAdjuster</span>
+0003 <span class="comment">% is a subfunction of MapAdjuster for displaying reaction</span>
+0004 <span class="comment">% details on created maps by NetDraw.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% PostData: All necessary data from NetDraw</span>
+0008 <span class="comment">% Mdl: COBRA model for which in silico simulations are performed.</span>
+0009 <span class="comment">% RefID: A string; 'bigg' or 'kegg'.</span>
+0010 
+0011 <span class="comment">% O. Jamialahmadi</span>
+0012 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0013 <span class="comment">% July 2016</span>
+0014 
+0015 Allx4Arrow = PostData.Allx4Arrow;
+0016 Ally4Arrow = PostData.Ally4Arrow;
+0017 field_intsect = PostData.field_intsect;
+0018 Idxs = PostData.field_intsect_overlay;
+0019 rxnCds = PostData.rxnCds;
+0020 [~,n2] = ismember(Idxs,field_intsect);
+0021 OrxnCds = rxnCds(n2);
+0022 ArXo = PostData.ArXo;
+0023 ArYo = PostData.ArYo;
+0024 RefOverlapData = PostData.RefOverlapData;
+0025 [~,Idx1,~] = unique(RefOverlapData);
+0026 Chck1 = setdiff(1:size(RefOverlapData,1),Idx1);
+0027 
+0028 <span class="keyword">for</span> m2 = 1:numel(Chck1)
+0029     WhrC = ismember(RefOverlapData,RefOverlapData{Chck1(m2)});
+0030     RedundantIdx = field_intsect(WhrC);
+0031     <span class="keyword">if</span> any(ismember(Idxs,RedundantIdx))
+0032         <span class="keyword">if</span> sum(ismember(Idxs,RedundantIdx)) &lt; numel(RedundantIdx)
+0033             Allx4Arrow(WhrC) = {<span class="string">''</span>}; Ally4Arrow(WhrC) = {<span class="string">''</span>}; 
+0034             field_intsect(WhrC) = {<span class="string">''</span>};
+0035             WhrAdd = find(ismember(Idxs,RedundantIdx));
+0036             <span class="keyword">for</span> m3 = 1:numel(WhrAdd)
+0037                 Allx4Arrow{end+1} = ArXo{WhrAdd(m3)};
+0038                 Ally4Arrow{end+1} = ArYo{WhrAdd(m3)};
+0039                 field_intsect(end+1) = Idxs(WhrAdd(m3));
+0040             <span class="keyword">end</span>
+0041         <span class="keyword">end</span>      
+0042     <span class="keyword">end</span>   
+0043 <span class="keyword">end</span>
+0044 emrmv = ~cellfun(<span class="string">'isempty'</span>,field_intsect);
+0045 Allx4Arrow = Allx4Arrow(emrmv);
+0046 Ally4Arrow = Ally4Arrow(emrmv);
+0047 field_intsect = field_intsect(emrmv); NewRefData = ({});
+0048 <span class="keyword">for</span> i1 =1:numel(Allx4Arrow)
+0049     NewRefData{i1} = [num2str(numel(Allx4Arrow{i1})),<span class="string">','</span>,<span class="keyword">...</span>
+0050         num2str(mean(Allx4Arrow{i1})),<span class="string">','</span>,num2str(numel(Ally4Arrow{i1})),<span class="string">','</span>,<span class="keyword">...</span>
+0051         num2str(mean(Ally4Arrow{i1}))];
+0052 <span class="keyword">end</span>
+0053 [~,Idx1,~] = unique(NewRefData); clear WhrC
+0054 Chck1 = setdiff(1:size(NewRefData,2),Idx1);
+0055 [~,N2] = ismember(field_intsect,PostData.field_intsect);
+0056 <span class="keyword">switch</span> RefID
+0057     <span class="keyword">case</span> <span class="string">'kegg'</span>
+0058         OverlayMe = rxnCds(N2);
+0059     <span class="keyword">case</span> <span class="string">'bigg'</span>
+0060         K1 = Mdl.B2Kegg.K;
+0061         B1 = Mdl.B2Kegg.B;
+0062         Chk = which(<span class="string">'UniModelKEGG.mat'</span>);
+0063         <span class="keyword">if</span> isempty(Chk)
+0064             msgbox({<span class="string">'UniModelKEGG.mat cannot be found!'</span>;<span class="keyword">...</span>
+0065                 <span class="string">'Make sure the file is present in BiGG2KEGG folder'</span>},<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0066             <span class="keyword">return</span>
+0067         <span class="keyword">end</span>
+0068         CRxns = getappdata(0,<span class="string">'CRxns'</span>);
+0069         OverlayMe = rxnCds(N2);
+0070         <span class="keyword">if</span> ~isempty(CRxns) <span class="comment">% Correct for consistent reaction correspondences</span>
+0071             <span class="keyword">for</span> cnter = 1:numel(CRxns.C)
+0072                 OverlayMe(ismember(OverlayMe,CRxns.C{cnter})) = <span class="keyword">...</span>
+0073                     CRxns.O(cnter);
+0074                 OrxnCds(ismember(OrxnCds,CRxns.C{cnter})) = <span class="keyword">...</span>
+0075                     CRxns.O(cnter);
+0076             <span class="keyword">end</span>
+0077         <span class="keyword">end</span>
+0078         
+0079         Uni = load(which(<span class="string">'UniModelKEGG.mat'</span>));
+0080         K = Uni.B2Kegg.K;
+0081         B = Uni.B2Kegg.B;
+0082         <span class="keyword">for</span> i1 = 1:numel(OverlayMe)
+0083             <span class="keyword">if</span> any(strcmp(OverlayMe{i1},OrxnCds))
+0084                 WhrK = find(ismember(K1,OverlayMe{i1}));
+0085                 <span class="keyword">if</span> isempty(WhrK)
+0086                     WhrK = find(ismember(K,OverlayMe{i1}));
+0087                     Tmpchk = B(WhrK);
+0088                 <span class="keyword">else</span>
+0089                     Tmpchk = B1(WhrK);
+0090                 <span class="keyword">end</span>
+0091             <span class="keyword">else</span>
+0092                 WhrK = find(ismember(K,OverlayMe{i1}));
+0093                 Tmpchk = B(WhrK);
+0094             <span class="keyword">end</span>
+0095             <span class="keyword">if</span> isempty(WhrK)
+0096                 OverlayMe(i1) = {<span class="string">''</span>};
+0097                 <span class="keyword">continue</span>
+0098             <span class="keyword">end</span>
+0099             <span class="keyword">if</span> numel(WhrK)&gt;1                
+0100                 C1 = regexp(Tmpchk,<span class="string">'\w*p\&gt;'</span>); C1 = ~cellfun(<span class="string">'isempty'</span>,C1);
+0101                 <span class="keyword">if</span> sum(C1) &lt; numel(Tmpchk)
+0102                     Tmpchk(C1) = [];
+0103                 <span class="keyword">end</span>
+0104                 C1 = regexp(Tmpchk,<span class="string">'\w*copy\d\&gt;'</span>); C1 = ~cellfun(<span class="string">'isempty'</span>,C1);
+0105                 <span class="keyword">if</span> sum(C1) &lt; numel(Tmpchk)
+0106                     Tmpchk(C1) = [];
+0107                 <span class="keyword">end</span>
+0108                 C1 = regexp(Tmpchk,<span class="string">'\w*f\&gt;'</span>); C1 = ~cellfun(<span class="string">'isempty'</span>,C1);
+0109                 <span class="keyword">if</span> sum(C1) &lt; numel(Tmpchk)
+0110                     Tmpchk(C1) = [];
+0111                 <span class="keyword">end</span>
+0112                 C1 = regexp(Tmpchk,<span class="string">'\w*m\&gt;'</span>); C1 = ~cellfun(<span class="string">'isempty'</span>,C1);
+0113                 <span class="keyword">if</span> sum(C1) &lt; numel(Tmpchk)
+0114                     Tmpchk(C1) = [];
+0115                 <span class="keyword">end</span>
+0116                 C1 = regexp(Tmpchk,<span class="string">'ICDHhr'</span>); C1 = ~cellfun(<span class="string">'isempty'</span>,C1);
+0117                 <span class="keyword">if</span> sum(C1) &lt; numel(Tmpchk)
+0118                     Tmpchk(C1) = [];
+0119                 <span class="keyword">end</span>
+0120             <span class="keyword">end</span>
+0121             OverlayMe(i1) = Tmpchk(1);
+0122         <span class="keyword">end</span>
+0123 <span class="keyword">end</span>
+0124 Allx4Arrow = PostData.Allx4Arrow(N2);
+0125 Ally4Arrow = PostData.Ally4Arrow(N2);
+0126 overlayMetemp = OverlayMe;
+0127 <span class="keyword">for</span> m2 = 1:numel(Chck1)
+0128     WhrC = find(ismember(NewRefData,NewRefData{Chck1(m2)}));
+0129     <span class="keyword">for</span> m3 = 1:numel(WhrC)
+0130         OverlayMe{WhrC(m3)} = strjoin(overlayMetemp(WhrC),<span class="string">','</span>);
+0131         <span class="keyword">if</span> ~isempty(OverlayMe{WhrC(m3)})       
+0132             <span class="keyword">if</span> strcmp(OverlayMe{WhrC(m3)}(1),<span class="string">','</span>)
+0133                 OverlayMe{WhrC(m3)}(1) = [];
+0134             <span class="keyword">end</span>
+0135         <span class="keyword">end</span>
+0136         <span class="keyword">if</span> ~isempty(OverlayMe{WhrC(m3)})
+0137             <span class="keyword">if</span> strcmp(OverlayMe{WhrC(m3)}(end),<span class="string">','</span>)
+0138                 OverlayMe{WhrC(m3)}(end) = [];
+0139             <span class="keyword">end</span>
+0140         <span class="keyword">end</span>
+0141     <span class="keyword">end</span>
+0142 <span class="keyword">end</span>
+0143 [~,N1] = unique(OverlayMe);
+0144 OverlayMe = OverlayMe(N1); Allx4Arrow = Allx4Arrow(N1); Ally4Arrow = Ally4Arrow(N1);</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

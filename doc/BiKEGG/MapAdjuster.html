@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MapAdjuster</title>
+  <meta name="keywords" content="MapAdjuster">
+  <meta name="description" content="MapAdjuster(GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; MapAdjuster.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MapAdjuster
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MapAdjuster(GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = MapAdjuster(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MapAdjuster(GUI)
+ Post-processing the created customized metabolic maps by NetDraw
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ June 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KEGG2BiGGMets.html" class="code" title="function [Metkegg,Metbigg] = KEGG2BiGGMets(D,CbModel)">KEGG2BiGGMets</a>	KEGG2BiGGMets</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li><li><a href="RxnAdjuster.html" class="code" title="function [OverlayMe,Allx4Arrow,Ally4Arrow] = RxnAdjuster(PostData,Mdl,RefID)">RxnAdjuster</a>	RxnAdjuster</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function MapAdjuster_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = MapAdjuster_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function DonePush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function TitleEdit_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function TitleEdit_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function TitlePush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function LineWEdit_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function LineWEdit_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function ShowRatesCheck_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function OverlapCheck_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function ColormapCheck_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function RedrawPush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function Backgroundpush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function Cpdpush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub15" class="code">function inactivespush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub16" class="code">function ClosePush_Callback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = MapAdjuster(varargin)</a>
+0002 <span class="comment">% MapAdjuster(GUI)</span>
+0003 <span class="comment">% Post-processing the created customized metabolic maps by NetDraw</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% O. Jamialahmadi</span>
+0006 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0007 <span class="comment">% June 2016</span>
+0008 
+0009 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0010 gui_Singleton = 1;
+0011 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0012                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0013                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction MapAdjuster_OpeningFcn(hObject, eventdata, handles, varargin)">MapAdjuster_OpeningFcn</a>, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = MapAdjuster_OutputFcn(hObject, eventdata, handles)">MapAdjuster_OutputFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0016                    <span class="string">'gui_Callback'</span>,   []);
+0017 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0018     gui_State.gui_Callback = str2func(varargin{1});
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> nargout
+0022     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0023 <span class="keyword">else</span>
+0024     gui_mainfcn(gui_State, varargin{:});
+0025 <span class="keyword">end</span>
+0026 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0027 
+0028 
+0029 <span class="comment">% --- Executes just before MapAdjuster is made visible.</span>
+0030 <a name="_sub1" href="#_subfunctions" class="code">function MapAdjuster_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0031 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0032 <span class="comment">% hObject    handle to figure</span>
+0033 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0034 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0035 <span class="comment">% varargin   command line arguments to MapAdjuster (see VARARGIN)</span>
+0036 
+0037 <span class="comment">% Choose default command line output for MapAdjuster</span>
+0038 handles.output = hObject;
+0039 
+0040 <span class="comment">% Update handles structure</span>
+0041 guidata(hObject, handles);
+0042 
+0043 <span class="comment">% UIWAIT makes MapAdjuster wait for user response (see UIRESUME)</span>
+0044 <span class="comment">% uiwait(handles.figure1);</span>
+0045 
+0046 
+0047 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0048 <a name="_sub2" href="#_subfunctions" class="code">function varargout = MapAdjuster_OutputFcn(hObject, eventdata, handles) </a>
+0049 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 
+0054 <span class="comment">% Get default command line output from handles structure</span>
+0055 varargout{1} = handles.output;
+0056 
+0057 
+0058 <span class="comment">% --- Executes on button press in DonePush.</span>
+0059 <a name="_sub3" href="#_subfunctions" class="code">function DonePush_Callback(hObject, eventdata, handles)</a>
+0060 PostData = getappdata(0,<span class="string">'PostData'</span>);
+0061 <span class="comment">% Title processing ////////////////////////////////////////////////////////</span>
+0062 Title = get(handles.TitleEdit,<span class="string">'String'</span>);
+0063 FHndl = getappdata(0,<span class="string">'ParentFig'</span>);
+0064 AxHndl = getappdata(0,<span class="string">'ParentAx'</span>);
+0065 <span class="comment">% TitleHndl = getappdata(hObject,'TitleHndl');</span>
+0066 <span class="comment">% set(TitleHndl,'Visible','off');</span>
+0067 text(<span class="string">'position'</span>,[50,50],<span class="string">'String'</span>,Title,<span class="string">'Unit'</span>,<span class="string">'data'</span>,<span class="string">'FontSize'</span>,22,<span class="keyword">...</span>
+0068     <span class="string">'Parent'</span>,AxHndl);
+0069 <span class="comment">% setappdata(hObject,'TitleHndl',TitleHndl);</span>
+0070 set(FHndl,<span class="string">'name'</span>,Title,<span class="string">'numbertitle'</span>,<span class="string">'off'</span>)
+0071 <span class="comment">% Show Rates///////////////////////////////////////////////////////////////</span>
+0072 ShowRate = get(handles.ShowRatesCheck,<span class="string">'Value'</span>);
+0073 <span class="keyword">if</span> ShowRate
+0074     FlxStrHndls = getappdata(hObject,<span class="string">'FlxStrHndls'</span>);
+0075     set(FlxStrHndls,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0076     AxHndl = getappdata(0,<span class="string">'ParentAx'</span>);
+0077     flx = PostData.flx(:,PostData.k);
+0078     ArX = PostData.ArX;
+0079     ArY = PostData.ArY;
+0080     <span class="keyword">for</span> i1=1:numel(ArX)
+0081         FlxStrHndls(i1) = text(<span class="string">'position'</span>,[mean(ArX{i1}),mean(ArY{i1})],<span class="keyword">...</span>
+0082          <span class="string">'String'</span>,num2str(abs(flx(i1)),<span class="string">'%.2f'</span>),<span class="string">'FontSize'</span>,7,<span class="string">'Parent'</span>,AxHndl);
+0083     <span class="keyword">end</span>
+0084     setappdata(hObject,<span class="string">'FlxStrHndls'</span>,FlxStrHndls);
+0085 <span class="keyword">else</span>
+0086     FlxStrHndls = getappdata(hObject,<span class="string">'FlxStrHndls'</span>);
+0087     set(FlxStrHndls,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0088 <span class="keyword">end</span>
+0089 <span class="comment">% Show compounds //////////////////////////////////////////////////////////</span>
+0090 CpdPanelTags = {<span class="string">'KeggCpdIdRadio'</span>,<span class="string">'KeggCpdNRadio'</span>,<span class="string">'BiGGCpdRadio'</span>,<span class="string">'RmvCpdRadio'</span>};
+0091 hCpdpanel = get(handles.CpdPanel,<span class="string">'SelectedObject'</span>);
+0092 Cpdpanel = find(strcmp(CpdPanelTags,get(hCpdpanel,<span class="string">'Tag'</span>)));
+0093 AxHndl = getappdata(0,<span class="string">'ParentAx'</span>);
+0094 KEGGCpdH = getappdata(hObject,<span class="string">'KEGGCpdH'</span>);
+0095 KEGGCpdNH = getappdata(hObject,<span class="string">'KEGGCpdNH'</span>);
+0096 BiGGCpdH = getappdata(hObject,<span class="string">'BiGGCpdH'</span>);
+0097 <span class="keyword">if</span> any(ishandle(KEGGCpdH))
+0098     set(KEGGCpdH,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0099 <span class="keyword">end</span>
+0100 <span class="keyword">if</span> any(ishandle(KEGGCpdNH))
+0101     set(KEGGCpdNH,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0102 <span class="keyword">end</span>
+0103 <span class="keyword">if</span> any(ishandle(BiGGCpdH))
+0104     set(BiGGCpdH,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0105 <span class="keyword">end</span>
+0106 <span class="keyword">switch</span> Cpdpanel
+0107     <span class="keyword">case</span> 1
+0108         cpdnames = PostData.cpdnames;
+0109         x_cpd = PostData.x_cpd;
+0110         y_cpd = PostData.y_cpd;
+0111         cpdxy = PostData.cpdxy;
+0112         <span class="keyword">for</span> i1=1:numel(cpdnames)
+0113              KEGGCpdH(i1) = text(<span class="string">'position'</span>,[x_cpd(i1)+cpdxy(1,4)/2,y_cpd(i1)-cpdxy(1,4)/2],<span class="keyword">...</span>
+0114                  <span class="string">'String'</span>,cpdnames{i1},<span class="string">'FontSize'</span>,7,<span class="string">'Parent'</span>,AxHndl);
+0115         <span class="keyword">end</span>
+0116         setappdata(hObject,<span class="string">'KEGGCpdH'</span>,KEGGCpdH);
+0117     <span class="keyword">case</span> 2
+0118         cpdnames = PostData.cpdnames;
+0119         x_cpd = PostData.x_cpd;
+0120         y_cpd = PostData.y_cpd;
+0121         cpdxy = PostData.cpdxy;
+0122         Fileid = fopen(<span class="string">'KEGGcpd.txt'</span>,<span class="string">'r'</span>);
+0123         TempCpds = textscan(Fileid,<span class="string">'%s %s %[^\n]'</span>);
+0124         fclose(Fileid);
+0125         CpdIds = TempCpds{1}; CpdIds = strrep(CpdIds,<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0126         CpdNms = TempCpds{2}; CpdNms = strrep(CpdNms,<span class="string">';'</span>,<span class="string">''</span>);
+0127         clear TempCpds
+0128         [~,N1] = ismember(cpdnames,CpdIds);
+0129          KEGGCpdNms = CpdNms(N1);
+0130         <span class="keyword">for</span> i1=1:numel(KEGGCpdNms)
+0131              KEGGCpdNH(i1) = text(<span class="string">'position'</span>,[x_cpd(i1)+cpdxy(1,4)/2,y_cpd(i1)-cpdxy(1,4)/2],<span class="keyword">...</span>
+0132                  <span class="string">'String'</span>,KEGGCpdNms{i1},<span class="string">'FontSize'</span>,5.5,<span class="string">'Parent'</span>,AxHndl);
+0133         <span class="keyword">end</span>
+0134         setappdata(hObject,<span class="string">'KEGGCpdNH'</span>,KEGGCpdNH);
+0135     <span class="keyword">case</span> 3
+0136         BiGGModel = getappdata(0,<span class="string">'BiGGModel'</span>);
+0137         <span class="keyword">if</span> isempty(BiGGModel)
+0138             [pname,fname1]=uigetfile({<span class="string">'*.*'</span>},<span class="string">'Select the model file (SBML)'</span>);
+0139             Testname=pname(strfind(pname,<span class="string">'.'</span>)+1:end);
+0140             <span class="keyword">if</span> ~strcmp(Testname,<span class="string">'xml'</span>)
+0141                 msgbox(<span class="string">'Only xml file format!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0142                 <span class="keyword">return</span>
+0143             <span class="keyword">else</span>
+0144                 Idf = fopen([fname1,pname]);
+0145                 D = textscan(Idf,<span class="string">'%s'</span>);
+0146                 fclose(Idf);
+0147                 CbModel = readCbModel([fname1,pname]);
+0148                 [Metkegg,Metbigg] = <a href="KEGG2BiGGMets.html" class="code" title="function [Metkegg,Metbigg] = KEGG2BiGGMets(D,CbModel)">KEGG2BiGGMets</a>(D,CbModel);
+0149                 BiGGModel.Metkegg = Metkegg;
+0150                 BiGGModel.CbModel = CbModel;
+0151                 BiGGModel.Metbigg = Metbigg;
+0152                 setappdata(0,<span class="string">'BiGGModel'</span>,BiGGModel);
+0153             <span class="keyword">end</span>
+0154         <span class="keyword">end</span>
+0155         Metbigg = BiGGModel.Metbigg;
+0156         Metkegg = BiGGModel.Metkegg;
+0157         cpdnames = PostData.cpdnames;
+0158         x_cpd = PostData.x_cpd;
+0159         y_cpd = PostData.y_cpd;
+0160         cpdxy = PostData.cpdxy;
+0161         <span class="keyword">for</span> m1 = 1:numel(cpdnames)
+0162             <span class="keyword">if</span> any(ismember(cpdnames{m1},Metkegg))
+0163                 whrc = find(ismember(Metkegg,cpdnames{m1}));
+0164                 cpdnames(m1) = Metbigg(whrc(1));
+0165             <span class="keyword">end</span>
+0166         <span class="keyword">end</span>
+0167         
+0168         <span class="keyword">for</span> i1=1:numel(cpdnames)
+0169              BiGGCpdH(i1) = text(<span class="string">'position'</span>,[x_cpd(i1)+cpdxy(1,4)/2,y_cpd(i1)-cpdxy(1,4)/2],<span class="keyword">...</span>
+0170                  <span class="string">'Interpreter'</span>,<span class="string">'none'</span>,<span class="string">'String'</span>,cpdnames{i1},<span class="string">'FontSize'</span>,5.5,<span class="string">'Parent'</span>,AxHndl);
+0171         <span class="keyword">end</span>
+0172         setappdata(hObject,<span class="string">'BiGGCpdH'</span>,BiGGCpdH);
+0173 <span class="keyword">end</span>
+0174 <span class="comment">% Show rxns ///////////////////////////////////////////////////////////////</span>
+0175 RxnPanelTags = {<span class="string">'KeggRxnIdRadio'</span>,<span class="string">'BiGGRxnRadio'</span>,<span class="string">'RmvRxnRadio'</span>};
+0176 hrxnpanel = get(handles.RxnPanel,<span class="string">'SelectedObject'</span>);
+0177 rxnpanel = find(strcmp(RxnPanelTags,get(hrxnpanel,<span class="string">'Tag'</span>)));
+0178 AxHndl = getappdata(0,<span class="string">'ParentAx'</span>);
+0179 KEGGRxnHndls = getappdata(hObject,<span class="string">'KEGGRxnHndls'</span>);
+0180 BiGGRxnHndls = getappdata(hObject,<span class="string">'BiGGRxnHndls'</span>);
+0181 <span class="keyword">if</span> any(ishandle(KEGGRxnHndls))
+0182     set(KEGGRxnHndls,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0183 <span class="keyword">end</span>
+0184 <span class="keyword">if</span> any(ishandle(BiGGRxnHndls))
+0185     set(BiGGRxnHndls,<span class="string">'Visible'</span>,<span class="string">'off'</span>);
+0186 <span class="keyword">end</span>
+0187 
+0188 <span class="keyword">switch</span> rxnpanel <span class="comment">% Show rxn IDs ////////////////////////////////////////////</span>
+0189     <span class="keyword">case</span> 1 <span class="comment">% KEGG ID ------------------------------------------------------</span>
+0190         [OverlayMe,Allx4Arrow,Ally4Arrow] = <a href="RxnAdjuster.html" class="code" title="function [OverlayMe,Allx4Arrow,Ally4Arrow] = RxnAdjuster(PostData,Mdl,RefID)">RxnAdjuster</a>(PostData,[],<span class="string">'kegg'</span>);
+0191         <span class="keyword">for</span> i1=1:numel(Allx4Arrow)
+0192             <span class="keyword">if</span> std(Allx4Arrow{i1})&lt;1e-1
+0193                 KEGGRxnHndls(i1) = text(<span class="string">'position'</span>,<span class="keyword">...</span>
+0194                     [mean(Allx4Arrow{i1})-10,mean(Ally4Arrow{i1})+15],<span class="keyword">...</span>
+0195                  <span class="string">'String'</span>,OverlayMe{i1},<span class="string">'FontSize'</span>,6.5,<span class="string">'rotation'</span>,90,<span class="string">'Parent'</span>,AxHndl);
+0196             <span class="keyword">else</span>
+0197                 KEGGRxnHndls(i1) = text(<span class="string">'position'</span>,<span class="keyword">...</span>
+0198                     [mean(Allx4Arrow{i1})-15,mean(Ally4Arrow{i1})-10],<span class="keyword">...</span>
+0199                  <span class="string">'String'</span>,OverlayMe{i1},<span class="string">'FontSize'</span>,6.5,<span class="string">'Parent'</span>,AxHndl);
+0200             <span class="keyword">end</span>
+0201         <span class="keyword">end</span> 
+0202         setappdata(hObject,<span class="string">'KEGGRxnHndls'</span>,KEGGRxnHndls)
+0203     <span class="keyword">case</span> 2 <span class="comment">% BiGG ID ------------------------------------------------------</span>
+0204         Mdl = getappdata(0,<span class="string">'Mdl'</span>);
+0205         <span class="keyword">if</span> isempty(Mdl)
+0206             [pname,~]=uigetfile({<span class="string">'*.*'</span>},<span class="string">'Select the model file (SBML)'</span>);
+0207             Testname=pname(strfind(pname,<span class="string">'.'</span>)+1:end);
+0208             <span class="keyword">if</span> ~strcmp(Testname,<span class="string">'xml'</span>)
+0209                 msgbox(<span class="string">'Only xml file format!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0210                 <span class="keyword">return</span>
+0211             <span class="keyword">end</span>
+0212             Chk = which([pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>]);
+0213             <span class="keyword">if</span> isempty(Chk)
+0214                 msgbox({[pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>,<span class="string">' cannot be found!'</span>];<span class="keyword">...</span>
+0215                     <span class="string">'Make sure the file is present in BiGG2KEGG folder'</span>},<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0216                 <span class="keyword">return</span>
+0217             <span class="keyword">end</span>
+0218             Mdl = load(which([pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>]));
+0219             setappdata(0,<span class="string">'Mdl'</span>,Mdl);
+0220         <span class="keyword">end</span>
+0221         [OverlayMe,Allx4Arrow,Ally4Arrow] = <a href="RxnAdjuster.html" class="code" title="function [OverlayMe,Allx4Arrow,Ally4Arrow] = RxnAdjuster(PostData,Mdl,RefID)">RxnAdjuster</a>(PostData,Mdl,<span class="string">'bigg'</span>);
+0222         <span class="comment">% Rmv empty ones</span>
+0223         Chkempty = find(cellfun(<span class="string">'isempty'</span>,regexp(OverlayMe,<span class="string">'\w'</span>,<span class="string">'match'</span>)));
+0224         OverlayMe(Chkempty) = {<span class="string">''</span>};
+0225         
+0226         <span class="keyword">for</span> i1=1:numel(Allx4Arrow)
+0227             <span class="keyword">if</span> std(Allx4Arrow{i1})&lt;1e-1
+0228                 BiGGRxnHndls(i1) = text(<span class="string">'position'</span>,<span class="keyword">...</span>
+0229                     [mean(Allx4Arrow{i1})-10,mean(Ally4Arrow{i1})+15],<span class="keyword">...</span>
+0230                  <span class="string">'String'</span>,OverlayMe{i1},<span class="string">'FontSize'</span>,6,<span class="string">'rotation'</span>,90,<span class="keyword">...</span>
+0231                  <span class="string">'Interpreter'</span>,<span class="string">'none'</span>,<span class="string">'Parent'</span>,AxHndl);
+0232             <span class="keyword">else</span>
+0233                 BiGGRxnHndls(i1) = text(<span class="string">'position'</span>,<span class="keyword">...</span>
+0234                     [mean(Allx4Arrow{i1})-15,mean(Ally4Arrow{i1})-10],<span class="keyword">...</span>
+0235                  <span class="string">'String'</span>,OverlayMe{i1},<span class="string">'FontSize'</span>,6,<span class="string">'Parent'</span>,AxHndl,<span class="keyword">...</span>
+0236                  <span class="string">'Interpreter'</span>,<span class="string">'none'</span>);
+0237             <span class="keyword">end</span>
+0238         <span class="keyword">end</span> 
+0239         setappdata(hObject,<span class="string">'BiGGRxnHndls'</span>,BiGGRxnHndls)
+0240 <span class="keyword">end</span>
+0241 
+0242 <a name="_sub4" href="#_subfunctions" class="code">function TitleEdit_Callback(hObject, eventdata, handles)</a>
+0243 
+0244 
+0245 
+0246 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0247 <a name="_sub5" href="#_subfunctions" class="code">function TitleEdit_CreateFcn(hObject, eventdata, handles)</a>
+0248 <span class="comment">% hObject    handle to TitleEdit (see GCBO)</span>
+0249 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0250 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0251 
+0252 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0253 <span class="comment">%       See ISPC and COMPUTER.</span>
+0254 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0255     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0256 <span class="keyword">end</span>
+0257 
+0258 
+0259 <span class="comment">% --- Executes on button press in TitlePush.</span>
+0260 <a name="_sub6" href="#_subfunctions" class="code">function TitlePush_Callback(hObject, eventdata, handles)</a>
+0261 
+0262 
+0263 
+0264 <a name="_sub7" href="#_subfunctions" class="code">function LineWEdit_Callback(hObject, eventdata, handles)</a>
+0265 <span class="comment">% hObject    handle to LineWEdit (see GCBO)</span>
+0266 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0267 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0268 
+0269 <span class="comment">% Hints: get(hObject,'String') returns contents of LineWEdit as text</span>
+0270 <span class="comment">%        str2double(get(hObject,'String')) returns contents of LineWEdit as a double</span>
+0271 
+0272 
+0273 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0274 <a name="_sub8" href="#_subfunctions" class="code">function LineWEdit_CreateFcn(hObject, eventdata, handles)</a>
+0275 <span class="comment">% hObject    handle to LineWEdit (see GCBO)</span>
+0276 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0277 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0278 
+0279 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0280 <span class="comment">%       See ISPC and COMPUTER.</span>
+0281 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0282     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0283 <span class="keyword">end</span>
+0284 
+0285 
+0286 <span class="comment">% --- Executes on button press in ShowRatesCheck.</span>
+0287 <a name="_sub9" href="#_subfunctions" class="code">function ShowRatesCheck_Callback(hObject, eventdata, handles)</a>
+0288 <span class="comment">% hObject    handle to ShowRatesCheck (see GCBO)</span>
+0289 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0290 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0291 
+0292 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of ShowRatesCheck</span>
+0293 
+0294 
+0295 <span class="comment">% --- Executes on button press in OverlapCheck.</span>
+0296 <a name="_sub10" href="#_subfunctions" class="code">function OverlapCheck_Callback(hObject, eventdata, handles)</a>
+0297 <span class="comment">% hObject    handle to OverlapCheck (see GCBO)</span>
+0298 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0299 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0300 
+0301 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of OverlapCheck</span>
+0302 
+0303 
+0304 <span class="comment">% --- Executes on button press in ColormapCheck.</span>
+0305 <a name="_sub11" href="#_subfunctions" class="code">function ColormapCheck_Callback(hObject, eventdata, handles)</a>
+0306 <span class="comment">% hObject    handle to ColormapCheck (see GCBO)</span>
+0307 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0308 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0309 
+0310 <span class="comment">% Hint: get(hObject,'Value') returns toggle state of ColormapCheck</span>
+0311 
+0312 
+0313 <span class="comment">% --- Executes on button press in RedrawPush.</span>
+0314 <a name="_sub12" href="#_subfunctions" class="code">function RedrawPush_Callback(hObject, eventdata, handles)</a>
+0315 OverlapC = get(handles.OverlapCheck,<span class="string">'Value'</span>);
+0316 ColormapC = get(handles.ColormapCheck,<span class="string">'Value'</span>);
+0317 LineStr = str2double(get(handles.LineWEdit,<span class="string">'String'</span>));
+0318 BackCol = getappdata(handles.Backgroundpush,<span class="string">'BackCol'</span>);
+0319 CpdCol = getappdata(handles.Cpdpush,<span class="string">'CpdCol'</span>);
+0320 inactiveCol = getappdata(handles.inactivespush,<span class="string">'inactiveCol'</span>);
+0321 <a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>(LineStr,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)
+0322 
+0323 
+0324 <span class="comment">% --- Executes on button press in Backgroundpush.</span>
+0325 <a name="_sub13" href="#_subfunctions" class="code">function Backgroundpush_Callback(hObject, eventdata, handles)</a>
+0326 BackCol=uisetcolor;
+0327 setappdata(hObject,<span class="string">'BackCol'</span>,BackCol);
+0328 
+0329 
+0330 <span class="comment">% --- Executes on button press in Cpdpush.</span>
+0331 <a name="_sub14" href="#_subfunctions" class="code">function Cpdpush_Callback(hObject, eventdata, handles)</a>
+0332 CpdCol=uisetcolor;
+0333 setappdata(hObject,<span class="string">'CpdCol'</span>,CpdCol);
+0334 
+0335 
+0336 <span class="comment">% --- Executes on button press in inactivespush.</span>
+0337 <a name="_sub15" href="#_subfunctions" class="code">function inactivespush_Callback(hObject, eventdata, handles)</a>
+0338 inactiveCol=uisetcolor;
+0339 setappdata(hObject,<span class="string">'inactiveCol'</span>,inactiveCol);
+0340 
+0341 
+0342 <span class="comment">% --- Executes on button press in ClosePush.</span>
+0343 <a name="_sub16" href="#_subfunctions" class="code">function ClosePush_Callback(hObject, eventdata, handles)</a>
+0344 <span class="comment">% hObject    handle to ClosePush (see GCBO)</span>
+0345 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0346 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0347 close(gcf)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

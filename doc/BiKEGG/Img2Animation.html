@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Img2Animation</title>
+  <meta name="keywords" content="Img2Animation">
+  <meta name="description" content="Img2Animation">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; Img2Animation.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Img2Animation
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Img2Animation</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Img2Animation (Idf) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Img2Animation
+ gets consecutive image files, and based on Idf value
+ generates a Video or GIF file as output. Frames are sorted based on image
+ numbers, which performed by SaveFlxImgs function
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Sep. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KeggDraw.html" class="code" title="function KeggDraw (Outflx,RxnCds,MapChoice,flxType,InOpts)">KeggDraw</a>	KeggDraw</li><li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Img2Animation (Idf)</a>
+0002 <span class="comment">% Img2Animation</span>
+0003 <span class="comment">% gets consecutive image files, and based on Idf value</span>
+0004 <span class="comment">% generates a Video or GIF file as output. Frames are sorted based on image</span>
+0005 <span class="comment">% numbers, which performed by SaveFlxImgs function</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% O. Jamialahmadi</span>
+0008 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0009 <span class="comment">% Sep. 2015</span>
+0010 
+0011 <span class="keyword">if</span> isempty(Idf) || Idf &gt; 2 || Idf &lt;= 0
+0012     waitfor(msgbox(<span class="string">'Unknown identifier (1 | 2)'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>));
+0013     <span class="keyword">return</span>
+0014 <span class="keyword">end</span>
+0015 <span class="comment">% Check if image formats are consistent</span>
+0016 ImagesFolder=uigetdir;
+0017 TempF=dir(ImagesFolder);
+0018 TempF1=TempF(3).name;
+0019 T1=strfind(TempF1,<span class="string">'.'</span>);
+0020 TempF2=TempF1(T1+1:end);
+0021 <span class="keyword">if</span> size(TempF,1) &lt; 4
+0022      msgbox([<span class="string">'There is only one image '</span>,<span class="keyword">...</span>
+0023      <span class="string">'in this directory!'</span>],<span class="string">'Warning'</span>,<span class="string">'warn'</span>);
+0024      <span class="keyword">return</span>
+0025 <span class="keyword">end</span>
+0026 TempG1=TempF(4).name;
+0027 G1=strfind(TempF1,<span class="string">'.'</span>);
+0028 TempG2=TempG1(G1+1:end);
+0029 <span class="keyword">if</span> ~strcmp(TempF2,TempG2)
+0030      msgbox([<span class="string">'File types in the chosen '</span>,<span class="keyword">...</span>
+0031          <span class="string">'folder are not consistent!'</span>],<span class="string">'Warning'</span>,<span class="string">'warn'</span>);
+0032      <span class="keyword">return</span>
+0033 <span class="keyword">end</span>
+0034 
+0035 ImgFiles = dir(strcat(ImagesFolder,<span class="string">'\*'</span>,TempF2));
+0036 
+0037 S = [ImgFiles(:).datenum]; 
+0038 [~,S] = sort(S);
+0039 ImgFilesS = ImgFiles(S);
+0040 
+0041 <span class="keyword">if</span> Idf == 1 <span class="comment">% Video file</span>
+0042     VideoFile=strcat(ImagesFolder,<span class="string">'\Output video'</span>);
+0043     writerObj = VideoWriter(VideoFile);
+0044 <span class="comment">%     Input dialog box for framerate</span>
+0045     prompt=<span class="string">'Insert the desired framerate value:'</span>;
+0046     name=<span class="string">'Frame rate: '</span>;
+0047     numlines=1;
+0048     defaultanswer={<span class="string">'1'</span>};
+0049     options.Resize=<span class="string">'on'</span>;
+0050     options.WindowStyle=<span class="string">'normal'</span>;
+0051     options.Interpreter=<span class="string">'tex'</span>;
+0052     answer=inputdlg(prompt,name,numlines,defaultanswer,options);
+0053     fps=str2double(answer(1)); 
+0054     writerObj.FrameRate = fps;
+0055     open(writerObj);
+0056     <span class="keyword">for</span> t= 1:length(ImgFilesS)
+0057          Frame=imread(strcat(ImagesFolder,<span class="string">'\'</span>,ImgFilesS(t).name));
+0058          writeVideo(writerObj,im2frame(Frame));
+0059     <span class="keyword">end</span>
+0060     close(writerObj);
+0061 <span class="keyword">elseif</span> Idf == 2 <span class="comment">% GIF file</span>
+0062     GIFfilename = strcat(ImagesFolder,<span class="string">'\OutputAnimatedImg.gif'</span>);
+0063     <span class="keyword">for</span> t= 1:length(ImgFilesS)
+0064         Frame=imread(strcat(ImagesFolder,<span class="string">'\'</span>,ImgFilesS(t).name));
+0065         [imind,cm] = rgb2ind(Frame,256);
+0066         <span class="keyword">if</span> t == 1;
+0067             imwrite(imind,cm,GIFfilename,<span class="string">'gif'</span>,<span class="string">'LoopCount'</span>,Inf,<span class="string">'DelayTime'</span>,1);
+0068         <span class="keyword">else</span>
+0069            imwrite(imind,cm,GIFfilename,<span class="string">'gif'</span>,<span class="string">'WriteMode'</span>,<span class="string">'append'</span>,<span class="string">'DelayTime'</span>,1);
+0070         <span class="keyword">end</span>
+0071     <span class="keyword">end</span>
+0072 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

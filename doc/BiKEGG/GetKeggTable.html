@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GetKeggTable</title>
+  <meta name="keywords" content="GetKeggTable">
+  <meta name="description" content="GetKeggTable (GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; GetKeggTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>GetKeggTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GetKeggTable (GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = GetKeggTable(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GetKeggTable (GUI)
+ Identifies missed (unknown) reaction correspondences for the input BiGG model.
+ Part of GetKEGG
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Nov. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="GetKegg.html" class="code" title="function [MapChoice, Outflx, RxnCds] = GetKegg(Bigg, Inflx, ModelName)">GetKegg</a>	GetKegg</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function GetKeggTable_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = GetKeggTable_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function DoneButton_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function Table1_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function Table1_CellEditCallback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = GetKeggTable(varargin)</a>
+0002 <span class="comment">% GetKeggTable (GUI)</span>
+0003 <span class="comment">% Identifies missed (unknown) reaction correspondences for the input BiGG model.</span>
+0004 <span class="comment">% Part of GetKEGG</span>
+0005 <span class="comment">% O. Jamialahmadi</span>
+0006 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0007 <span class="comment">% Nov. 2015</span>
+0008 
+0009 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0010 gui_Singleton = 1;
+0011 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0012                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0013                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction GetKeggTable_OpeningFcn(hObject, eventdata, handles, varargin)">GetKeggTable_OpeningFcn</a>, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = GetKeggTable_OutputFcn(hObject, eventdata, handles)">GetKeggTable_OutputFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0016                    <span class="string">'gui_Callback'</span>,   []);
+0017 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0018     gui_State.gui_Callback = str2func(varargin{1});
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> nargout
+0022     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0023 <span class="keyword">else</span>
+0024     gui_mainfcn(gui_State, varargin{:});
+0025 <span class="keyword">end</span>
+0026 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0027 
+0028 
+0029 <span class="comment">% --- Executes just before GetKeggTable is made visible.</span>
+0030 <a name="_sub1" href="#_subfunctions" class="code">function GetKeggTable_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0031 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0032 <span class="comment">% hObject    handle to figure</span>
+0033 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0034 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0035 <span class="comment">% varargin   command line arguments to GetKeggTable (see VARARGIN)</span>
+0036 
+0037 <span class="comment">% Choose default command line output for GetKeggTable</span>
+0038 handles.output = hObject;
+0039 
+0040 <span class="comment">% Update handles structure</span>
+0041 guidata(hObject, handles);
+0042 
+0043 <span class="comment">% UIWAIT makes GetKeggTable wait for user response (see UIRESUME)</span>
+0044 <span class="comment">% uiwait(handles.figure1);</span>
+0045 
+0046 
+0047 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0048 <a name="_sub2" href="#_subfunctions" class="code">function varargout = GetKeggTable_OutputFcn(hObject, eventdata, handles) </a>
+0049 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 
+0054 <span class="comment">% Get default command line output from handles structure</span>
+0055 varargout{1} = handles.output;
+0056 
+0057 
+0058 <span class="comment">% --- Executes on button press in DoneButton.</span>
+0059 <a name="_sub3" href="#_subfunctions" class="code">function DoneButton_Callback(hObject, eventdata, handles)</a>
+0060 <span class="comment">% hObject    handle to DoneButton (see GCBO)</span>
+0061 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0062 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0063 A=get(handles.Table1,<span class="string">'Data'</span>);
+0064 setappdata(0,<span class="string">'Final'</span>,A);
+0065 close(gcf)
+0066 
+0067 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0068 <a name="_sub4" href="#_subfunctions" class="code">function Table1_CreateFcn(hObject, eventdata, handles)</a>
+0069 FirstClm = getappdata(0,<span class="string">'NotData'</span>);
+0070 SecClm = cell(1,numel(FirstClm));
+0071 SecClm(1:end) = {<span class="string">'Unknown'</span>};
+0072 TabData = cell(numel(FirstClm),2);
+0073 TabData(1:<span class="keyword">end</span>,1) = FirstClm; TabData(1:<span class="keyword">end</span>,2) = SecClm;
+0074 set(hObject, <span class="string">'Data'</span>, TabData);
+0075 set(hObject, <span class="string">'ColumnName'</span>, {<span class="string">'BiGG'</span>, <span class="string">'KEGG'</span>})
+0076 set(hObject, <span class="string">'ColumnEditable'</span>, [true, true]);
+0077 <span class="comment">% hObject    handle to Table1 (see GCBO)</span>
+0078 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0079 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0080 
+0081 
+0082 <span class="comment">% --- Executes when entered data in editable cell(s) in Table1.</span>
+0083 <a name="_sub5" href="#_subfunctions" class="code">function Table1_CellEditCallback(hObject, eventdata, handles)</a>
+0084 <span class="comment">% hObject    handle to Table1 (see GCBO)</span>
+0085 <span class="comment">% eventdata  structure with the following fields (see UITABLE)</span>
+0086 <span class="comment">%    Indices: row and column indices of the cell(s) edited</span>
+0087 <span class="comment">%    PreviousData: previous data for the cell(s) edited</span>
+0088 <span class="comment">%    EditData: string(s) entered by the user</span>
+0089 <span class="comment">%    NewData: EditData or its converted form set on the Data property. Empty if Data was not changed</span>
+0090 <span class="comment">%    Error: error string when failed to convert EditData to appropriate value for Data</span>
+0091 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0092 RowChanged=eventdata.Indices(1);
+0093 ColChanged=eventdata.Indices(2);
+0094 newValue=eventdata.NewData;
+0095 D =get(handles.Table1,<span class="string">'Data'</span>);
+0096 D{RowChanged,ColChanged}=newValue;</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of TimePropUDF</title>
+  <meta name="keywords" content="TimePropUDF">
+  <meta name="description" content="TimePropUDF">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; TimePropUDF.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>TimePropUDF
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>TimePropUDF</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function TimePropUDF (flxType,TextFont,SelectString,mTime,k,h1) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> TimePropUDF
+ based on user defined properties of text properties, changes
+ time-series text properties on map images.
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Apr. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KeggDraw.html" class="code" title="function KeggDraw (Outflx,RxnCds,MapChoice,flxType,InOpts)">KeggDraw</a>	KeggDraw</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function TimePropUDF (flxType,TextFont,SelectString,mTime,k,h1) </a>
+0002 <span class="comment">% TimePropUDF</span>
+0003 <span class="comment">% based on user defined properties of text properties, changes</span>
+0004 <span class="comment">% time-series text properties on map images.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% O. Jamialahmadi</span>
+0007 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0008 <span class="comment">% Apr. 2015</span>
+0009 
+0010 <span class="keyword">if</span> isempty(TextFont) <span class="comment">% Set default properties</span>
+0011     TextFont.FontName = <span class="string">'Arial'</span>;
+0012     TextFont.FontWeight = <span class="string">'normal'</span>;
+0013     TextFont.FontAngle = <span class="string">'normal'</span>;
+0014     TextFont.FontUnits = <span class="string">'points'</span>;
+0015     TextFont.FontSize = 10;
+0016 <span class="keyword">end</span>
+0017 
+0018 <span class="keyword">switch</span> flxType
+0019     <span class="keyword">case</span> <span class="string">'One'</span>
+0020         <span class="keyword">if</span> strcmp(SelectString,<span class="string">'NShow'</span>)
+0021         <span class="keyword">elseif</span> strcmp(SelectString,<span class="string">'NO'</span>)
+0022             text(10,10,[<span class="string">'Time point: '</span>,num2str(mTime(k))]<span class="keyword">...</span>
+0023                 ,<span class="string">'FontSize'</span>,TextFont.FontSize,<span class="string">'FontName'</span>,<span class="keyword">...</span>
+0024                 TextFont.FontName,<span class="string">'FontWeight'</span>,<span class="keyword">...</span>
+0025                 TextFont.FontWeight,<span class="string">'FontAngle'</span>,<span class="keyword">...</span>
+0026                 TextFont.FontAngle,<span class="string">'FontUnits'</span>,<span class="keyword">...</span>
+0027                 TextFont.FontUnits,<span class="string">'Parent'</span>,h1)
+0028         <span class="keyword">else</span>
+0029             text(10,10,[<span class="string">'Time point: '</span>,num2str(mTime(k)),<span class="keyword">...</span>
+0030                 <span class="string">' '</span>,SelectString],<span class="string">'FontSize'</span>,TextFont.FontSize,<span class="keyword">...</span>
+0031                 <span class="string">'FontName'</span>,TextFont.FontName,<span class="string">'FontWeight'</span>,<span class="keyword">...</span>
+0032                 TextFont.FontWeight,<span class="string">'FontAngle'</span>,TextFont.FontAngle,<span class="keyword">...</span>
+0033                 <span class="string">'FontUnits'</span>,TextFont.FontUnits,<span class="string">'Parent'</span>,h1)
+0034         <span class="keyword">end</span>
+0035     <span class="keyword">case</span> <span class="string">'Two'</span>
+0036         <span class="keyword">if</span> strcmp(SelectString,<span class="string">'NShow'</span>)
+0037         <span class="keyword">elseif</span> strcmp(SelectString,<span class="string">'NO'</span>)
+0038             text(10,10,[<span class="string">'Time point: '</span>,num2str(mTime(ceil(k/2)))]<span class="keyword">...</span>
+0039                 ,<span class="string">'FontSize'</span>,TextFont.FontSize,<span class="string">'FontName'</span>,<span class="keyword">...</span>
+0040                 TextFont.FontName,<span class="string">'FontWeight'</span>,TextFont.FontWeight,<span class="keyword">...</span>
+0041                 <span class="string">'FontAngle'</span>,TextFont.FontAngle,<span class="string">'FontUnits'</span>,<span class="keyword">...</span>
+0042                 TextFont.FontUnits,<span class="string">'Parent'</span>,h1)
+0043         <span class="keyword">else</span>
+0044             text(10,10,[<span class="string">'Time point: '</span>,num2str(mTime(ceil(k/2))),<span class="keyword">...</span>
+0045                 <span class="string">' '</span>,SelectString],<span class="string">'FontSize'</span>,TextFont.FontSize,<span class="keyword">...</span>
+0046                 <span class="string">'FontName'</span>,TextFont.FontName,<span class="string">'FontWeight'</span>,<span class="keyword">...</span>
+0047                 TextFont.FontWeight,<span class="string">'FontAngle'</span>,<span class="keyword">...</span>
+0048                 TextFont.FontAngle,<span class="string">'FontUnits'</span>,<span class="keyword">...</span>
+0049                 TextFont.FontUnits,<span class="string">'Parent'</span>,h1)
+0050         <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

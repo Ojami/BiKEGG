@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PreconsMethod</title>
+  <meta name="keywords" content="PreconsMethod">
+  <meta name="description" content="PreconsMethod">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; PreconsMethod.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>PreconsMethod
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>PreconsMethod</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function PreconsMethod(handles) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> PreconsMethod
+ Employs Precons GUI tool for building reaction correspondences based on
+ KEGG genome annotations. Output is a MS Excel spreadsheet  containing
+ gene entries (KEGG), KEGG reaction identifier, BiGG reaction abbr., and 
+ associated pathways (KEGG). 
+ A MATLAB biograph object can also be generated for the selected organism.
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ June 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getKGML.html" class="code" title="function getKGML">getKGML</a>	getKGML</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="Precons.html" class="code" title="function varargout = Precons(varargin)">Precons</a>	Precons(GUI)</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function gene2rxn(Allgenes,Allrxns,Allbigg,BioType)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function PreconsMethod(handles)</a>
+0002 <span class="comment">% PreconsMethod</span>
+0003 <span class="comment">% Employs Precons GUI tool for building reaction correspondences based on</span>
+0004 <span class="comment">% KEGG genome annotations. Output is a MS Excel spreadsheet  containing</span>
+0005 <span class="comment">% gene entries (KEGG), KEGG reaction identifier, BiGG reaction abbr., and</span>
+0006 <span class="comment">% associated pathways (KEGG).</span>
+0007 <span class="comment">% A MATLAB biograph object can also be generated for the selected organism.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% O. Jamialahmadi</span>
+0010 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0011 <span class="comment">% June 2016</span>
+0012 
+0013 Org = get(handles.OrganEdit,<span class="string">'String'</span>);
+0014 
+0015 [getpathways,stat] = urlread([<span class="string">'http://rest.kegg.jp/list/pathway/'</span>,Org]);
+0016 <span class="keyword">if</span> ~stat
+0017     msgbox(<span class="string">'There is a problem with the internet connection!'</span>);
+0018     <span class="keyword">return</span>
+0019 <span class="keyword">end</span>
+0020 pths = textscan(getpathways,<span class="string">'%s %[^\n]'</span>);
+0021 pathnames = pths{1}; pathnames = strrep(pathnames,<span class="string">'path:'</span>,<span class="string">''</span>);
+0022 <span class="comment">% pathdescription = pths{2};</span>
+0023 
+0024 <span class="comment">% Load KEGG2BiGG reactions</span>
+0025 BiGGdata = load(<span class="string">'UniModelKEGG.mat'</span>);
+0026 Bdata = BiGGdata.B2Kegg.B; Kdata = BiGGdata.B2Kegg.K;
+0027 Multir = find(ismember(Bdata,<span class="string">'MULTIR'</span>));
+0028 Bdata(Multir:end) = []; Kdata(Multir:end) = [];
+0029 Allgenes = {[]}; Allrxns = {[]}; Allbigg = {[]}; Allpath = {[]};
+0030 yct = 1;
+0031 <span class="keyword">for</span> cp = 1:numel(pathnames)
+0032     fprintf(<span class="string">'Pathway: %d of %d\n'</span>,cp,numel(pathnames))
+0033     [<a href="getKGML.html" class="code" title="function getKGML">getKGML</a>,stat] = urlread([<span class="string">'http://rest.kegg.jp/get/'</span>,pathnames{cp},<span class="string">'/kgml'</span>]);
+0034     <span class="keyword">if</span> ~stat
+0035         msgbox(<span class="string">'There is a problem with the internet connection!'</span>);
+0036         clc
+0037         <span class="keyword">return</span>
+0038     <span class="keyword">end</span>
+0039     Ids = regexp(<a href="getKGML.html" class="code" title="function getKGML">getKGML</a>,<span class="string">'(?&lt;=entry id=)[^&gt;]*'</span>,<span class="string">'match'</span>);
+0040     <span class="keyword">if</span> isempty(Ids)
+0041         <span class="keyword">continue</span>
+0042     <span class="keyword">end</span>
+0043     <span class="keyword">for</span> ct = 1:numel(Ids)
+0044         rnsTemp = Ids{ct};
+0045         checkgene = regexp(rnsTemp,<span class="string">'type=&quot;gene&quot;'</span>, <span class="string">'once'</span>);
+0046         <span class="keyword">if</span> ~isempty(checkgene)
+0047             rnnms1 = regexp(rnsTemp,<span class="string">'(?&lt;=reaction=&quot;)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0048             <span class="keyword">if</span> ~isempty(rnnms1)
+0049                 genenms1 = regexp(rnsTemp,<span class="string">'(?&lt;=name=&quot;)[^&quot;]*'</span>,<span class="string">'match'</span>);
+0050                 CurrxnNum1 = regexp(rnnms1, <span class="string">'R\d{5}'</span>, <span class="string">'match'</span>);
+0051                 CurrxnNum = CurrxnNum1{1};
+0052                 <span class="keyword">for</span> mc = 1:numel(CurrxnNum)
+0053                     biggTemp = Bdata(ismember(Kdata,CurrxnNum{mc}));
+0054                     <span class="keyword">if</span> isempty(biggTemp)
+0055                         biggtemp = <span class="string">''</span>;
+0056                     <span class="keyword">else</span>
+0057                         <span class="keyword">if</span> numel(biggTemp)&gt;1
+0058                              biggtemp = strjoin(biggTemp,<span class="string">';'</span>);
+0059                         <span class="keyword">else</span>
+0060                             biggtemp = biggTemp{1};
+0061                         <span class="keyword">end</span>
+0062                     <span class="keyword">end</span>
+0063                     <span class="comment">% Collect all data together</span>
+0064                     rxntemp = CurrxnNum{mc};
+0065                     genetemp = genenms1{1};
+0066                     pathtemp = pathnames{cp};
+0067                     <span class="keyword">if</span> ~isempty(Allrxns{1})
+0068                         <span class="keyword">if</span> ~any(ismember(Allrxns,rxntemp))
+0069                             Allgenes{yct} = genetemp;
+0070                             Allrxns{yct} = rxntemp;
+0071                             Allbigg{yct} =  biggtemp;
+0072                             Allpath{yct} = pathnames{cp};
+0073                         <span class="keyword">else</span>
+0074                             Aloci = find(ismember(Allrxns,rxntemp));
+0075                             Allgenes{yct} = strjoin(unique({Allgenes{Aloci},<span class="keyword">...</span>
+0076                                 genetemp}),<span class="string">'|'</span>);
+0077                             Allpath{yct} = strjoin(unique({Allpath{Aloci},<span class="keyword">...</span>
+0078                                 pathtemp}),<span class="string">';'</span>);
+0079                             Allrxns{yct} = rxntemp;
+0080                             Allbigg{yct} =  biggtemp;
+0081                             Allgenes(Aloci) = []; Allpath(Aloci) = [];
+0082                             Allrxns(Aloci) = []; Allbigg(Aloci) = [];
+0083                             yct = yct - numel(Aloci);
+0084                         <span class="keyword">end</span>
+0085                     <span class="keyword">else</span>
+0086                         Allgenes{yct} = genetemp;
+0087                         Allrxns{yct} = rxntemp;
+0088                         Allbigg{yct} =  biggtemp;
+0089                         Allpath{yct} = pathnames{cp};
+0090                     <span class="keyword">end</span>
+0091                     yct = yct + 1;
+0092                 <span class="keyword">end</span>                
+0093             <span class="keyword">end</span>
+0094         <span class="keyword">end</span>
+0095     <span class="keyword">end</span>
+0096 <span class="keyword">end</span>
+0097 <span class="keyword">for</span> ct2 = 1:numel(Allgenes)
+0098     temp1 = unique(strsplit(Allgenes{ct2},<span class="string">'|'</span>));
+0099     Allgenes{ct2} = strjoin(temp1,<span class="string">'|'</span>);
+0100     temp2 = unique(strsplit(Allpath{ct2},<span class="string">';'</span>));
+0101     Allpath{ct2} = strjoin(temp2,<span class="string">';'</span>);
+0102 <span class="keyword">end</span>
+0103 <span class="comment">% Decomposing data on the basis of pathway code</span>
+0104 AllgenesP = {[]}; AllrxnsP = {[]}; AllbiggP = {[]};
+0105 <span class="keyword">for</span> ct = 1:numel(pathnames);
+0106     pathloci = regexp(Allpath,pathnames{ct});
+0107     pathloci = find(~cellfun(<span class="string">'isempty'</span>, pathloci));
+0108     AllgenesP{ct} = Allgenes(pathloci);
+0109     AllrxnsP{ct} = Allrxns(pathloci);
+0110     AllbiggP{ct} = Allbigg(pathloci);
+0111 <span class="keyword">end</span>
+0112 Biostat = get(handles.Biographcheck,<span class="string">'Value'</span>);
+0113 <span class="keyword">if</span> Biostat
+0114     hSelectedObj=get(handles.Biographpanel, <span class="string">'SelectedObject'</span>);
+0115     BioType = get(hSelectedObj, <span class="string">'Tag'</span>);
+0116     Pathchoice = get(handles.Pathwaylistbox,<span class="string">'Value'</span>);
+0117     <a href="#_sub1" class="code" title="subfunction gene2rxn(Allgenes,Allrxns,Allbigg,BioType)">gene2rxn</a>(AllgenesP{Pathchoice},AllrxnsP{Pathchoice},AllbiggP{Pathchoice},BioType)
+0118 <span class="keyword">end</span>
+0119 
+0120 
+0121 <span class="comment">% Write data to an Excel file</span>
+0122 Pth1 = which (<span class="string">'Precons.m'</span>);
+0123 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0124 Pth = Pth1(1:tind-1);
+0125 Filename = [Pth,<span class="string">'\'</span>,Org,<span class="string">'.xlsx'</span>];
+0126 <span class="keyword">if</span> exist(Filename,<span class="string">'file'</span>)
+0127     Txt3 = [Org,<span class="string">'.xlsx already exists in the directory.\n'</span>];
+0128     fprintf(Txt3)
+0129     Txt4 = <span class="string">'The file will be replaced with the new one\n'</span>;
+0130     fprintf(Txt4)
+0131     delete(Filename)  
+0132 <span class="keyword">end</span>
+0133 Txt2 = <span class="string">'Writing data to Xlsx file...\n'</span>;
+0134 fprintf(Txt2)
+0135 Alldat = cell(numel(Allgenes)+1,4);
+0136 Alldat{1,1} = <span class="string">'Gene Entry'</span>; Alldat{1,2} = <span class="string">'KEGG'</span>; Alldat{1,3} = <span class="string">'BiGG'</span>;
+0137 Alldat{1,4} = <span class="string">'Pathway'</span>;
+0138 <span class="keyword">for</span> nt = 1:numel(Allgenes)
+0139     Alldat{nt+1,1} = Allgenes{nt};
+0140     Alldat{nt+1,2} = Allrxns{nt};
+0141     Alldat{nt+1,3} = Allbigg{nt};
+0142     Alldat{nt+1,4} = Allpath{nt};
+0143 <span class="keyword">end</span>
+0144 xlswrite(Filename,Alldat)
+0145 clc
+0146 fprintf(<span class="string">'\nDone!'</span>)
+0147 
+0148 
+0149 <a name="_sub1" href="#_subfunctions" class="code">function gene2rxn(Allgenes,Allrxns,Allbigg,BioType)</a>
+0150 AllgeneNO1 = strjoin(Allgenes,<span class="string">'|'</span>);
+0151 AllgeneNO2 = strsplit(AllgeneNO1,<span class="string">'|'</span>); AllgeneNO2 = unique(AllgeneNO2);
+0152 AllgeneNO = numel(AllgeneNO2); <span class="comment">% Number of all unique genes</span>
+0153 <span class="comment">% AllbiggU1 = unique(Allbigg);</span>
+0154 AllbiggU = find(~cellfun(<span class="string">'isempty'</span>, Allbigg));
+0155 AllbiggStr = Allbigg(AllbiggU);
+0156 AllgeneStr = num2str(1:numel(AllgeneNO2));
+0157 AllgeneStr = strsplit(AllgeneStr,<span class="string">' '</span>); AllgeneStr = strcat(<span class="string">'G'</span>,AllgeneStr);
+0158 AllbiggNostr = num2str(1:numel(AllbiggStr));
+0159 <span class="keyword">if</span> ~isempty(AllbiggNostr)
+0160     AllbiggNostr = strsplit(AllbiggNostr,<span class="string">' '</span>);
+0161     AllbiggNostr = strcat(<span class="string">'B'</span>,AllbiggNostr);
+0162 <span class="keyword">end</span>
+0163 
+0164 <span class="keyword">if</span> strcmp(BioType,<span class="string">'G2K2Bradiobutton'</span>) <span class="comment">%================================</span>
+0165     GprS = zeros(AllgeneNO + numel(Allrxns) + numel(AllbiggU));
+0166     <span class="keyword">for</span> ct1 = 1:numel(Allrxns)
+0167         currgenes = strsplit(Allgenes{ct1},<span class="string">'|'</span>);
+0168         <span class="keyword">for</span> ct2 = 1:numel(currgenes)
+0169             currgeneloci = find(ismember(AllgeneNO2,currgenes{ct2}));
+0170             GprS(currgeneloci,AllgeneNO+ct1) = 1;
+0171         <span class="keyword">end</span>
+0172         <span class="keyword">if</span> ~isempty(Allbigg{ct1})
+0173             y_coor = find(ismember(AllbiggStr,Allbigg{ct1}));
+0174             GprS(AllgeneNO+ct1,AllgeneNO+numel(Allrxns)+y_coor) = 1;    
+0175         <span class="keyword">end</span>
+0176     <span class="keyword">end</span>
+0177     Allcum = [AllgeneStr,Allrxns,AllbiggNostr];
+0178     GprS = sparse(GprS);
+0179     bg1 = biograph(GprS,Allcum);
+0180     dolayout(bg1);
+0181     
+0182     Tetta1 = 0:pi/(numel(AllgeneStr)-1):2*pi;
+0183     Tetta2 = 0:pi/(numel(Allrxns)-1):2*pi;
+0184     Tetta3 = 0:pi/(numel(AllbiggStr)-1):2*pi;
+0185     R1 = 350; R2 = R1*1.5; R3 = R1*2;
+0186     X1 = R1.*cos(Tetta1); Y1 = R1.*sin(Tetta1);
+0187     X2 = R2.*cos(Tetta2); Y2 = R2.*sin(Tetta2);
+0188     X3 = R3.*cos(Tetta3); Y3 = R3.*sin(Tetta3);
+0189     <span class="keyword">for</span> ct = 1:numel(Allcum)
+0190         <span class="keyword">if</span> ct&lt;=numel(AllgeneStr)
+0191             bg1.nodes(ct).Position = [X1(ct),Y1(ct)];
+0192             set(bg1.nodes(ct),<span class="string">'Shape'</span>,<span class="string">'circle'</span>)
+0193             set(bg1.nodes(ct),<span class="string">'Label'</span>,AllgeneNO2{ct})
+0194         <span class="keyword">elseif</span> ct&gt;numel(AllgeneStr) &amp;&amp; ct&lt;=(numel(Allrxns)+numel(AllgeneStr))
+0195             bg1.nodes(ct).Position = [X2(ct-numel(AllgeneStr)),<span class="keyword">...</span>
+0196                 Y2(ct-numel(AllgeneStr))];
+0197             set(bg1.nodes(ct),<span class="string">'Shape'</span>,<span class="string">'diamond'</span>)
+0198         <span class="keyword">else</span>
+0199             bg1.nodes(ct).Position = [X3(ct-numel(AllgeneStr)-numel(Allrxns)),<span class="keyword">...</span>
+0200                 Y3(ct-numel(AllgeneStr)-numel(Allrxns))];
+0201             set(bg1.nodes(ct),<span class="string">'Label'</span>,AllbiggStr{ct-numel(AllgeneStr)-numel(Allrxns)})
+0202         <span class="keyword">end</span>
+0203     <span class="keyword">end</span>
+0204 
+0205 <span class="keyword">elseif</span> strcmp(BioType,<span class="string">'G2Bradiobutton'</span>) <span class="comment">%====================================</span>
+0206     gene4biggRaw = Allgenes(AllbiggU);
+0207     gene4bigg = strjoin(gene4biggRaw,<span class="string">'|'</span>);
+0208     gene4bigg = strsplit(gene4bigg,<span class="string">'|'</span>); gene4bigg = unique(gene4bigg);
+0209     gene4biggNo = numel(gene4bigg); <span class="comment">% Number of all unique genes</span>
+0210     AllgeneStr1 = num2str(1:numel(gene4bigg));
+0211     AllgeneStr1 = strsplit(AllgeneStr1,<span class="string">' '</span>);
+0212     AllgeneStr1 = strcat(<span class="string">'G'</span>,AllgeneStr1);
+0213     GprS = zeros(gene4biggNo + numel(AllbiggU));
+0214     <span class="keyword">for</span> ct1 = 1:numel(gene4biggRaw)
+0215         currgenes = strsplit(gene4biggRaw{ct1},<span class="string">'|'</span>);
+0216         <span class="keyword">for</span> ct2 = 1:numel(currgenes)
+0217             currgeneloci = find(ismember(gene4bigg,currgenes{ct2}));
+0218             GprS(currgeneloci,gene4biggNo+ct1) = 1;
+0219         <span class="keyword">end</span>
+0220     <span class="keyword">end</span>
+0221     Allcum = [AllgeneStr1,AllbiggNostr];
+0222     GprS = sparse(GprS);
+0223     bg1 = biograph(GprS,Allcum);
+0224     dolayout(bg1);
+0225     Tetta1 = 0:pi/(numel(AllgeneStr1)-1):2*pi;
+0226     Tetta2 = 0:pi/(numel(AllbiggNostr)-1):2*pi;
+0227         R1 = 350; R2 = R1*1.5;
+0228     X1 = R1.*cos(Tetta1); Y1 = R1.*sin(Tetta1);
+0229     X2 = R2.*cos(Tetta2); Y2 = R2.*sin(Tetta2);
+0230     <span class="keyword">for</span> ct = 1:numel(Allcum)
+0231         <span class="keyword">if</span> ct&lt;=numel(AllgeneStr1)
+0232             bg1.nodes(ct).Position = [X1(ct),Y1(ct)];
+0233             set(bg1.nodes(ct),<span class="string">'Shape'</span>,<span class="string">'circle'</span>)
+0234             set(bg1.nodes(ct),<span class="string">'Label'</span>,gene4bigg{ct})
+0235         <span class="keyword">else</span>
+0236             bg1.nodes(ct).Position = [X2(ct-numel(AllgeneStr1)),<span class="keyword">...</span>
+0237                 Y2(ct-numel(AllgeneStr1))];
+0238             set(bg1.nodes(ct),<span class="string">'Label'</span>,AllbiggStr{ct-numel(AllgeneStr1)})
+0239         <span class="keyword">end</span>
+0240     <span class="keyword">end</span>
+0241 <span class="keyword">else</span> <span class="comment">%=====================================================================</span>
+0242     GprS = zeros(AllgeneNO + numel(Allrxns));
+0243     <span class="keyword">for</span> ct1 = 1:numel(Allrxns)
+0244         currgenes = strsplit(Allgenes{ct1},<span class="string">'|'</span>);
+0245         <span class="keyword">for</span> ct2 = 1:numel(currgenes)
+0246             currgeneloci = find(ismember(AllgeneNO2,currgenes{ct2}));
+0247             GprS(currgeneloci,AllgeneNO+ct1) = 1;
+0248         <span class="keyword">end</span>
+0249     <span class="keyword">end</span>
+0250     Allcum = [AllgeneStr,Allrxns];
+0251     GprS = sparse(GprS);
+0252     bg1 = biograph(GprS,Allcum);
+0253     dolayout(bg1);
+0254     Tetta1 = 0:pi/(numel(AllgeneStr)-1):2*pi;
+0255     Tetta2 = 0:pi/(numel(Allrxns)-1):2*pi;
+0256     R1 = 350; R2 = R1*1.5;
+0257     X1 = R1.*cos(Tetta1); Y1 = R1.*sin(Tetta1);
+0258     X2 = R2.*cos(Tetta2); Y2 = R2.*sin(Tetta2);
+0259     <span class="keyword">for</span> ct = 1:numel(Allcum)
+0260         <span class="keyword">if</span> ct&lt;=numel(AllgeneStr)
+0261             bg1.nodes(ct).Position = [X1(ct),Y1(ct)];
+0262             set(bg1.nodes(ct),<span class="string">'Shape'</span>,<span class="string">'circle'</span>)
+0263             set(bg1.nodes(ct),<span class="string">'Label'</span>,AllgeneNO2{ct})
+0264         <span class="keyword">else</span>
+0265             bg1.nodes(ct).Position = [X2(ct-numel(AllgeneStr)),<span class="keyword">...</span>
+0266                 Y2(ct-numel(AllgeneStr))];
+0267             set(bg1.nodes(ct),<span class="string">'Shape'</span>,<span class="string">'diamond'</span>)
+0268         <span class="keyword">end</span>
+0269     <span class="keyword">end</span>
+0270     
+0271 <span class="keyword">end</span>
+0272 
+0273 dolayout(bg1, <span class="string">'Pathsonly'</span>, true);
+0274 view(bg1)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of AllKEGG2BiGGmet</title>
+  <meta name="keywords" content="AllKEGG2BiGGmet">
+  <meta name="description" content="AllKEGG2BiGGmet">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; AllKEGG2BiGGmet.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>AllKEGG2BiGGmet
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>AllKEGG2BiGGmet</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function AllKEGG2BiGGmet </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> AllKEGG2BiGGmet
+ Extracts all KEGG metabolites from BIGG API and save them
+ as a mat file (AllKEGG2BiGGmet.mat), which is used in MapAdjuster for
+ displaying compound details on created customized maps by NetDraw.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function AllKEGG2BiGGmet</a>
+0002 <span class="comment">% AllKEGG2BiGGmet</span>
+0003 <span class="comment">% Extracts all KEGG metabolites from BIGG API and save them</span>
+0004 <span class="comment">% as a mat file (AllKEGG2BiGGmet.mat), which is used in MapAdjuster for</span>
+0005 <span class="comment">% displaying compound details on created customized maps by NetDraw.</span>
+0006 
+0007 <span class="comment">% O. Jamialahmadi</span>
+0008 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0009 <span class="comment">% July 2016</span>
+0010 <span class="comment">%--------------------------------------------------------------------------</span>
+0011 
+0012 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0013 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0014 Pth = Pth1(1:tind-1);
+0015 Fileid3 = fopen(fullfile(Pth,<span class="string">'bigg_models_metabolites.txt'</span>),<span class="string">'r'</span>);
+0016 biggmets = textscan(Fileid3,<span class="string">'%s %s %[^\n]'</span>);
+0017 fclose(Fileid3);
+0018 biggmetid = biggmets{1}; biggmetdes = biggmets{3}; clear biggmets
+0019 Metkegg = ({}); Metbigg = ({});
+0020 ct3 = 1;
+0021 <span class="keyword">for</span> ct1 = 2:numel(biggmetid)
+0022     temploci = regexp(biggmetdes{ct1},<span class="keyword">...</span>
+0023         <span class="string">'http://identifiers.org/kegg.compound/C\S{5}'</span>,<span class="string">'match'</span>);
+0024     <span class="keyword">if</span> isempty(temploci)
+0025         <span class="keyword">continue</span>
+0026     <span class="keyword">end</span>
+0027     <span class="keyword">if</span> iscell(temploci{1})
+0028         temploci = temploci{1};
+0029     <span class="keyword">end</span>
+0030     <span class="keyword">if</span> isempty(temploci)
+0031         <span class="keyword">continue</span>
+0032     <span class="keyword">else</span>
+0033         <span class="keyword">for</span> ct2 = 1:numel(temploci)
+0034             regtemp = regexp(temploci{ct2},<span class="string">'C\S{5}'</span>,<span class="string">'match'</span>);
+0035             Metkegg{ct3}{ct2} = regtemp{1};
+0036             Metbigg{ct3}{ct2} = biggmetid{ct1};
+0037         <span class="keyword">end</span>
+0038         ct3 = ct3 + 1;
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">end</span>
+0041 <span class="keyword">for</span> ct1 = 2:numel(biggmetid) <span class="comment">% KEGG glycan</span>
+0042     temploci = regexp(biggmetdes{ct1},<span class="keyword">...</span>
+0043         <span class="string">'http://identifiers.org/kegg.compound/G\S{5}'</span>,<span class="string">'match'</span>);
+0044     <span class="keyword">if</span> isempty(temploci)
+0045         <span class="keyword">continue</span>
+0046     <span class="keyword">end</span>
+0047     <span class="keyword">if</span> iscell(temploci{1})
+0048         temploci = temploci{1};
+0049     <span class="keyword">end</span>
+0050     <span class="keyword">if</span> isempty(temploci)
+0051         <span class="keyword">continue</span>
+0052     <span class="keyword">else</span>
+0053         <span class="keyword">for</span> ct2 = 1:numel(temploci)
+0054             regtemp = regexp(temploci{ct2},<span class="string">'G\S{5}'</span>,<span class="string">'match'</span>);
+0055             Metkegg{ct3}{ct2} = regtemp{1};
+0056             Metbigg{ct3}{ct2} = biggmetid{ct1};
+0057         <span class="keyword">end</span>
+0058         ct3 = ct3 + 1;
+0059     <span class="keyword">end</span>
+0060 <span class="keyword">end</span>
+0061 AllKEGG2BiGGmet.Metkegg = Metkegg; AllKEGG2BiGGmet.Metbigg = Metbigg;
+0062 save(<span class="string">'AllKEGG2BiGGmet.mat'</span>,<span class="string">'AllKEGG2BiGGmet'</span>)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

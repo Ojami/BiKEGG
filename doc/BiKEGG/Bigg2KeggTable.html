@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Bigg2KeggTable</title>
+  <meta name="keywords" content="Bigg2KeggTable">
+  <meta name="description" content="BIGG2KEGGTABLE MATLAB code for Bigg2KeggTable.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; Bigg2KeggTable.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Bigg2KeggTable
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>BIGG2KEGGTABLE MATLAB code for Bigg2KeggTable.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = Bigg2KeggTable(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BIGG2KEGGTABLE MATLAB code for Bigg2KeggTable.fig
+      BIGG2KEGGTABLE, by itself, creates a new BIGG2KEGGTABLE or raises the existing
+      singleton*.
+
+      H = BIGG2KEGGTABLE returns the handle to a new BIGG2KEGGTABLE or the handle to
+      the existing singleton*.
+
+      BIGG2KEGGTABLE('CALLBACK',hObject,eventData,handles,...) calls the local
+      function named CALLBACK in BIGG2KEGGTABLE.M with the given input arguments.
+
+      BIGG2KEGGTABLE('Property','Value',...) creates a new BIGG2KEGGTABLE or raises the
+      existing singleton*.  Starting from the left, property value pairs are
+      applied to the GUI before Bigg2KeggTable_OpeningFcn gets called.  An
+      unrecognized property name or invalid value makes property application
+      stop.  All inputs are passed to Bigg2KeggTable_OpeningFcn via varargin.
+
+      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one
+      instance to run (singleton)&quot;.
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="Bigg2Kegg.html" class="code" title="function Bigg2Kegg(Idfier)">Bigg2Kegg</a>	BiKEGG</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function Bigg2KeggTable_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = Bigg2KeggTable_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function pushbutton1_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function uitable1_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function uitable1_CellEditCallback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = Bigg2KeggTable(varargin)</a>
+0002 <span class="comment">% BIGG2KEGGTABLE MATLAB code for Bigg2KeggTable.fig</span>
+0003 <span class="comment">%      BIGG2KEGGTABLE, by itself, creates a new BIGG2KEGGTABLE or raises the existing</span>
+0004 <span class="comment">%      singleton*.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%      H = BIGG2KEGGTABLE returns the handle to a new BIGG2KEGGTABLE or the handle to</span>
+0007 <span class="comment">%      the existing singleton*.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%      BIGG2KEGGTABLE('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0010 <span class="comment">%      function named CALLBACK in BIGG2KEGGTABLE.M with the given input arguments.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%      BIGG2KEGGTABLE('Property','Value',...) creates a new BIGG2KEGGTABLE or raises the</span>
+0013 <span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+0014 <span class="comment">%      applied to the GUI before Bigg2KeggTable_OpeningFcn gets called.  An</span>
+0015 <span class="comment">%      unrecognized property name or invalid value makes property application</span>
+0016 <span class="comment">%      stop.  All inputs are passed to Bigg2KeggTable_OpeningFcn via varargin.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one</span>
+0019 <span class="comment">%      instance to run (singleton)&quot;.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0022 
+0023 <span class="comment">% Edit the above text to modify the response to help Bigg2KeggTable</span>
+0024 
+0025 <span class="comment">% Last Modified by GUIDE v2.5 17-Mar-2016 11:43:15</span>
+0026 
+0027 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0028 gui_Singleton = 1;
+0029 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0030                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0031                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction Bigg2KeggTable_OpeningFcn(hObject, eventdata, handles, varargin)">Bigg2KeggTable_OpeningFcn</a>, <span class="keyword">...</span>
+0032                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = Bigg2KeggTable_OutputFcn(hObject, eventdata, handles)">Bigg2KeggTable_OutputFcn</a>, <span class="keyword">...</span>
+0033                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0034                    <span class="string">'gui_Callback'</span>,   []);
+0035 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0036     gui_State.gui_Callback = str2func(varargin{1});
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="keyword">if</span> nargout
+0040     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0041 <span class="keyword">else</span>
+0042     gui_mainfcn(gui_State, varargin{:});
+0043 <span class="keyword">end</span>
+0044 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0045 
+0046 
+0047 <span class="comment">% --- Executes just before Bigg2KeggTable is made visible.</span>
+0048 <a name="_sub1" href="#_subfunctions" class="code">function Bigg2KeggTable_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0049 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 <span class="comment">% varargin   command line arguments to Bigg2KeggTable (see VARARGIN)</span>
+0054 
+0055 <span class="comment">% Choose default command line output for Bigg2KeggTable</span>
+0056 handles.output = hObject;
+0057 
+0058 <span class="comment">% Update handles structure</span>
+0059 guidata(hObject, handles);
+0060 
+0061 <span class="comment">% UIWAIT makes Bigg2KeggTable wait for user response (see UIRESUME)</span>
+0062 <span class="comment">% uiwait(handles.figure1);</span>
+0063 
+0064 
+0065 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0066 <a name="_sub2" href="#_subfunctions" class="code">function varargout = Bigg2KeggTable_OutputFcn(hObject, eventdata, handles) </a>
+0067 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0068 <span class="comment">% hObject    handle to figure</span>
+0069 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0070 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0071 
+0072 <span class="comment">% Get default command line output from handles structure</span>
+0073 varargout{1} = handles.output;
+0074 
+0075 
+0076 <span class="comment">% --- Executes on button press in pushbutton1.</span>
+0077 <a name="_sub3" href="#_subfunctions" class="code">function pushbutton1_Callback(hObject, eventdata, handles)</a>
+0078 <span class="comment">% hObject    handle to pushbutton1 (see GCBO)</span>
+0079 A=get(handles.uitable1,<span class="string">'Data'</span>);
+0080 setappdata(0,<span class="string">'Finalvalidity'</span>,A);
+0081 close(gcf)
+0082 
+0083 
+0084 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0085 <a name="_sub4" href="#_subfunctions" class="code">function uitable1_CreateFcn(hObject, eventdata, handles)</a>
+0086 Diffdata = getappdata(0,<span class="string">'Diffdata'</span>);
+0087 set(hObject, <span class="string">'Data'</span>, Diffdata);
+0088 set(hObject, <span class="string">'ColumnName'</span>, {<span class="string">'BiGG'</span>, <span class="string">'KEGG'</span>, <span class="string">'Validity'</span>})
+0089 set(hObject, <span class="string">'ColumnEditable'</span>, [false, false, true]);
+0090 <span class="comment">% hObject    handle to uitable1 (see GCBO)</span>
+0091 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0092 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0093 
+0094 
+0095 <span class="comment">% --- Executes when entered data in editable cell(s) in uitable1.</span>
+0096 <a name="_sub5" href="#_subfunctions" class="code">function uitable1_CellEditCallback(hObject, eventdata, handles)</a>
+0097 <span class="comment">% hObject    handle to uitable1 (see GCBO)</span>
+0098 RowChanged=eventdata.Indices(1);
+0099 ColChanged=eventdata.Indices(2);
+0100 newValue=eventdata.NewData;
+0101 D =get(handles.uitable1,<span class="string">'Data'</span>);
+0102 D{RowChanged,ColChanged}=newValue;</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

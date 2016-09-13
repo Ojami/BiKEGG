@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MultiRxnsLib</title>
+  <meta name="keywords" content="MultiRxnsLib">
+  <meta name="description" content="MultiRxnsLib">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; MultiRxnsLib.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MultiRxnsLib
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MultiRxnsLib</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function MultiRxnsLib </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MultiRxnsLib
+ generates shared multi-step reactions among all models saved
+ in Bigg2Kegg folder. This list is used in both function UniModel and
+ MultiRxns
+ 
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Jan. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MultiRxns.html" class="code" title="function [Po,Hout1] = MultiRxns(K)">MultiRxns</a>	MultiRxns</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [NotBM,NotKM] =  Rxnfinder(BM1,NotBM1,NotKM1)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function MultiRxnsLib</a>
+0002 <span class="comment">% MultiRxnsLib</span>
+0003 <span class="comment">% generates shared multi-step reactions among all models saved</span>
+0004 <span class="comment">% in Bigg2Kegg folder. This list is used in both function UniModel and</span>
+0005 <span class="comment">% MultiRxns</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% O. Jamialahmadi</span>
+0008 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0009 <span class="comment">% Jan. 2015</span>
+0010 
+0011 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0012 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0013 Pth = Pth1(1:tind-1);
+0014 Pth2 = fullfile(Pth,<span class="string">'BiGG2KEGG\*.mat'</span>);
+0015 Pth3 = fullfile(Pth,<span class="string">'BiGG2KEGG'</span>);
+0016 BMatfiles = dir(Pth2);
+0017 BNames = cell(numel(BMatfiles)-2,1);
+0018 ct1 = 1;
+0019 <span class="keyword">for</span> ct = 1:numel(BMatfiles)
+0020     <span class="keyword">if</span> ~strcmp(BMatfiles(ct).name,<span class="string">'BiGG2KEGG_HMRbased-RECON1.mat'</span>) &amp;&amp; <span class="keyword">...</span>
+0021             ~strcmp(BMatfiles(ct).name,<span class="string">'Multirxns.mat'</span>)
+0022         BNames{ct1} = BMatfiles(ct).name;
+0023         ct1 = ct1 + 1;
+0024     <span class="keyword">end</span>
+0025 <span class="keyword">end</span>
+0026 BM = ({}); NotBM = ({}); NotKM = ({});
+0027 <span class="keyword">for</span> count =1:numel(BNames)
+0028     load(fullfile(Pth3,BNames{count}))
+0029     B=B2Kegg.B;K=B2Kegg.K;
+0030     MltLoci = find(ismember(B,<span class="string">'MULTIR'</span>));
+0031     NotBM1 = B(1:MltLoci-1); NotKM1 = K(1:MltLoci-1);
+0032     BM1 = B(MltLoci+1:end); 
+0033     NonOverlp = ~ismember(BM1,BM);
+0034     BM1 = BM1(NonOverlp);
+0035     [NotBM1,NotKM1] = <a href="#_sub1" class="code" title="subfunction [NotBM,NotKM] =  Rxnfinder(BM1,NotBM1,NotKM1)">Rxnfinder</a>(BM1,NotBM1,NotKM1);
+0036     Len = numel(BM)+1:numel(BM1)+numel(BM);
+0037     clear B2Kegg
+0038     BM(Len) = BM1; 
+0039     <span class="keyword">if</span> ~isempty(NotBM1)
+0040         Len1 = numel(NotBM)+1:numel(NotBM1)+numel(NotBM);
+0041         NotBM(Len1) = NotBM1; NotKM(Len1) = NotKM1;
+0042     <span class="keyword">end</span>
+0043 <span class="keyword">end</span>
+0044 [ParentRxn,ChildRxns] = <a href="MultiRxns.html" class="code" title="function [Po,Hout1] = MultiRxns(K)">MultiRxns</a>(NotKM);
+0045 Multirxns.P = ParentRxn; Multirxns.C = ChildRxns;
+0046 save ([Pth3,<span class="string">'\Multirxns.mat'</span>],<span class="string">'Multirxns'</span>)
+0047 clear
+0048 disp(<span class="string">'Multi Reactions Library has been generated successfully!'</span>)
+0049 <span class="comment">%--------------------------------------------------------------------------</span>
+0050 <a name="_sub1" href="#_subfunctions" class="code">function [NotBM,NotKM] =  Rxnfinder(BM1,NotBM1,NotKM1)</a>
+0051 count = 1; NotBM = ({}); NotKM = ({});
+0052 <span class="keyword">while</span> numel(BM1)
+0053     Tfind = find(ismember(BM1,BM1{1}));
+0054     Tfind1 = find(ismember(NotBM1,BM1{Tfind(1)}));
+0055     <span class="keyword">for</span> ct = 1:numel(Tfind1)
+0056         NotBM{count} = NotBM1{Tfind1(ct)};
+0057         NotKM{count} = NotKM1{Tfind1(ct)};
+0058         count = count + 1;
+0059     <span class="keyword">end</span>
+0060     BM1(Tfind) = [];
+0061 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

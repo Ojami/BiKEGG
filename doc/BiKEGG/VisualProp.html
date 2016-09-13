@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of VisualProp</title>
+  <meta name="keywords" content="VisualProp">
+  <meta name="description" content="VisualProp(GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; VisualProp.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>VisualProp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>VisualProp(GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = VisualProp(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> VisualProp(GUI)
+ Customizing color properties for KeggDraw maps.
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ Mar. 2015</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KeggDraw.html" class="code" title="function KeggDraw (Outflx,RxnCds,MapChoice,flxType,InOpts)">KeggDraw</a>	KeggDraw</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function VisualProp_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = VisualProp_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function TextColPush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function TextFontPush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function BoxColPush_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function Donepushbutton5_Callback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = VisualProp(varargin)</a>
+0002 <span class="comment">% VisualProp(GUI)</span>
+0003 <span class="comment">% Customizing color properties for KeggDraw maps.</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% O. Jamialahmadi</span>
+0006 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0007 <span class="comment">% Mar. 2015</span>
+0008 
+0009 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0010 gui_Singleton = 1;
+0011 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0012                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0013                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction VisualProp_OpeningFcn(hObject, eventdata, handles, varargin)">VisualProp_OpeningFcn</a>, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = VisualProp_OutputFcn(hObject, eventdata, handles)">VisualProp_OutputFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0016                    <span class="string">'gui_Callback'</span>,   []);
+0017 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0018     gui_State.gui_Callback = str2func(varargin{1});
+0019 <span class="keyword">end</span>
+0020 
+0021 <span class="keyword">if</span> nargout
+0022     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0023 <span class="keyword">else</span>
+0024     gui_mainfcn(gui_State, varargin{:});
+0025 <span class="keyword">end</span>
+0026 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0027 
+0028 
+0029 <span class="comment">% --- Executes just before VisualProp is made visible.</span>
+0030 <a name="_sub1" href="#_subfunctions" class="code">function VisualProp_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0031 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0032 <span class="comment">% hObject    handle to figure</span>
+0033 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0034 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0035 <span class="comment">% varargin   command line arguments to VisualProp (see VARARGIN)</span>
+0036 
+0037 <span class="comment">% Choose default command line output for VisualProp</span>
+0038 handles.output = hObject;
+0039 
+0040 <span class="comment">% Update handles structure</span>
+0041 guidata(hObject, handles);
+0042 
+0043 <span class="comment">% UIWAIT makes VisualProp wait for user response (see UIRESUME)</span>
+0044 <span class="comment">% uiwait(handles.figure1);</span>
+0045 
+0046 
+0047 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0048 <a name="_sub2" href="#_subfunctions" class="code">function varargout = VisualProp_OutputFcn(hObject, eventdata, handles) </a>
+0049 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 
+0054 <span class="comment">% Get default command line output from handles structure</span>
+0055 varargout{1} = handles.output;
+0056 
+0057 
+0058 <span class="comment">% --- Executes on button press in TextColPush.</span>
+0059 <a name="_sub3" href="#_subfunctions" class="code">function TextColPush_Callback(hObject, eventdata, handles)</a>
+0060 <span class="comment">% hObject    handle to TextColPush (see GCBO)</span>
+0061 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0062 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0063 <span class="keyword">if</span> ~isempty (getappdata(0,<span class="string">'TextCol'</span>))
+0064     rmappdata (0,<span class="string">'TextCol'</span>)
+0065 <span class="keyword">else</span>
+0066     waitfor(msgbox({<span class="string">'                      Choosing text color is optional'</span>;<span class="keyword">...</span>
+0067         <span class="string">'You can use default properties simply by closing color panel'</span>},<span class="keyword">...</span>
+0068         <span class="string">'warning'</span>,<span class="string">'warn'</span>));
+0069 <span class="keyword">end</span>
+0070 TextCol=uisetcolor;
+0071 <span class="keyword">if</span> size(TextCol,2) == 3
+0072     setappdata(0,<span class="string">'TextCol'</span>,TextCol)
+0073 <span class="keyword">end</span>
+0074 
+0075 <span class="comment">% --- Executes on button press in TextFontPush.</span>
+0076 <a name="_sub4" href="#_subfunctions" class="code">function TextFontPush_Callback(hObject, eventdata, handles)</a>
+0077 <span class="comment">% hObject    handle to TextFontPush (see GCBO)</span>
+0078 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0079 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0080 <span class="keyword">if</span> ~isempty (getappdata(0,<span class="string">'TextFont'</span>))
+0081     rmappdata (0,<span class="string">'TextFont'</span>)
+0082 <span class="keyword">else</span>
+0083     waitfor(msgbox({<span class="string">'                      Choosing text font is optional'</span>;<span class="keyword">...</span>
+0084         <span class="string">'You can use default properties simply by closing text panel'</span>},<span class="keyword">...</span>
+0085         <span class="string">'warning'</span>,<span class="string">'warn'</span>));
+0086 <span class="keyword">end</span>
+0087 TextFont=uisetfont;
+0088 <span class="keyword">if</span> isstruct(TextFont);
+0089     setappdata(0,<span class="string">'TextFont'</span>,TextFont)
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">% --- Executes on button press in BoxColPush.</span>
+0093 <a name="_sub5" href="#_subfunctions" class="code">function BoxColPush_Callback(hObject, eventdata, handles)</a>
+0094 <span class="comment">% hObject    handle to BoxColPush (see GCBO)</span>
+0095 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0096 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0097 <span class="keyword">if</span> ~isempty (getappdata(0,<span class="string">'BoxtCol'</span>))
+0098     rmappdata (0,<span class="string">'BoxtCol'</span>)
+0099 <span class="keyword">else</span>
+0100     waitfor(msgbox({<span class="string">'                      Choosing box color is optional'</span>;<span class="keyword">...</span>
+0101         <span class="string">'You can use default properties simply by closing color panel'</span>},<span class="keyword">...</span>
+0102         <span class="string">'warning'</span>,<span class="string">'warn'</span>));
+0103 <span class="keyword">end</span>
+0104 BoxCol=uisetcolor;
+0105 <span class="keyword">if</span> size(BoxCol,2) == 3
+0106     setappdata(0,<span class="string">'BoxtCol'</span>,BoxCol)
+0107 <span class="keyword">end</span>
+0108 
+0109 
+0110 <span class="comment">% --- Executes on button press in Donepushbutton5.</span>
+0111 <a name="_sub6" href="#_subfunctions" class="code">function Donepushbutton5_Callback(hObject, eventdata, handles)</a>
+0112 <span class="comment">% hObject    handle to Donepushbutton5 (see GCBO)</span>
+0113 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0114 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0115 close(gcf)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

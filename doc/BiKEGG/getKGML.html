@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getKGML</title>
+  <meta name="keywords" content="getKGML">
+  <meta name="description" content="getKGML">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; getKGML.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>getKGML
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>getKGML</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function getKGML </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> getKGML
+ reads and retrieves KGML file and image data of KEGG pathways,
+ and stores them in &quot;KEGGmaps&quot; subfolder within FluxPuya folder.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="PreconsMethod.html" class="code" title="function PreconsMethod(handles)">PreconsMethod</a>	PreconsMethod</li><li><a href="UpdateDBase.html" class="code" title="function varargout = UpdateDBase(varargin)">UpdateDBase</a>	UpdateDBase(GUI)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function getKGML</a>
+0002 <span class="comment">% getKGML</span>
+0003 <span class="comment">% reads and retrieves KGML file and image data of KEGG pathways,</span>
+0004 <span class="comment">% and stores them in &quot;KEGGmaps&quot; subfolder within FluxPuya folder.</span>
+0005 
+0006 <span class="comment">% O. Jamialahmadi</span>
+0007 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0008 <span class="comment">% Dec. 2015</span>
+0009 
+0010 Fileid2 = fopen(<span class="string">'KEGGmaps.txt'</span>,<span class="string">'r'</span>);
+0011 TempMaps = textscan(Fileid2,<span class="string">'%s %[^\n]'</span>);
+0012 TempMaps1 = cell(size(TempMaps{1},1),1);
+0013 <span class="keyword">for</span> count = 1:size(TempMaps{1},1)
+0014     TempMaps1{count}=[TempMaps{1}{count},<span class="string">' '</span>,TempMaps{2}{count}];
+0015 <span class="keyword">end</span>
+0016 TempMaps1 = strrep(TempMaps1,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0017 MapNme = regexp(TempMaps1,<span class="string">'\d{5}'</span>,<span class="string">'match'</span>);
+0018 MapNme = [MapNme{:}];
+0019 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0020 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0021 Pth = Pth1(1:tind-1);
+0022 ctYes = 1; ctNo = 1;
+0023 <span class="keyword">for</span> count = 1:numel(MapNme)
+0024     Link=[<span class="string">'http://rest.kegg.jp/get/rn'</span>,MapNme{count},<span class="string">'/kgml'</span>];
+0025     ImgLink=[<span class="string">'http://www.kegg.jp/kegg/pathway/map/map'</span>,MapNme{count},<span class="string">'.png'</span>];
+0026     I=imread(ImgLink);
+0027     [Dat,Stat1]=urlread(Link);
+0028     <span class="keyword">if</span> ~Stat1
+0029         fprintf(<span class="string">'%d-Error:No data was found for map%s\n'</span>,ctNo,MapNme{count});
+0030         ctNo = ctNo + 1;
+0031         <span class="keyword">continue</span>
+0032     <span class="keyword">else</span>
+0033         save([Pth,<span class="string">'\KEGGmaps\'</span>,MapNme{count},<span class="string">'.mat'</span>],<span class="string">'Dat'</span>,<span class="string">'I'</span>);
+0034         fprintf(<span class="string">'%d-Map%s data was saved successfully to KEGGmaps folder\n'</span><span class="keyword">...</span>
+0035             ,ctYes,MapNme{count});
+0036         ctYes = ctYes + 1;
+0037     <span class="keyword">end</span>
+0038 <span class="keyword">end</span>
+0039 DateCrt = date;
+0040 save([Pth,<span class="string">'\KEGGmaps\VersionDate.mat'</span>],<span class="string">'DateCrt'</span>)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

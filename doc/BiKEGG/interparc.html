@@ -1,0 +1,778 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of interparc</title>
+  <meta name="keywords" content="interparc">
+  <meta name="description" content="interparc (Copyright (c) 2012, John D'Errico): interpolate points along a curve in 2 or more dimensions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; interparc.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>interparc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>interparc (Copyright (c) 2012, John D'Errico): interpolate points along a curve in 2 or more dimensions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [pt,dudt,fofthandle] = interparc(t,px,py,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> interparc (Copyright (c) 2012, John D'Errico): interpolate points along a curve in 2 or more dimensions 
+ usage: pt = interparc(t,px,py)    % a 2-d curve
+ usage: pt = interparc(t,px,py,pz) % a 3-d curve
+ usage: pt = interparc(t,px,py,pz,pw,...) % a 4-d or higher dimensional curve
+ usage: pt = interparc(t,px,py,method) % a 2-d curve, method is specified
+ usage: [pt,dudt,fofthandle] = interparc(t,px,py,...) % also returns derivatives, and a function handle
+
+ Interpolates new points at any fractional point along
+ the curve defined by a list of points in 2 or more
+ dimensions. The curve may be defined by any sequence
+ of non-replicated points.
+
+ arguments: (input)
+  t   - vector of numbers, 0 &lt;= t &lt;= 1, that define
+        the fractional distance along the curve to
+        interpolate the curve at. t = 0 will generate
+        the very first point in the point list, and
+        t = 1 yields the last point in that list.
+        Similarly, t = 0.5 will yield the mid-point
+        on the curve in terms of arc length as the
+        curve is interpolated by a parametric spline.
+
+        If t is a scalar integer, at least 2, then
+        it specifies the number of equally spaced
+        points in arclength to be generated along
+        the curve.
+
+  px, py, pz, ... - vectors of length n, defining
+        points along the curve. n must be at least 2.
+        Exact Replicate points should not be present
+        in the curve, although there is no constraint
+        that the curve has replicate independent
+        variables.
+
+  method - (OPTIONAL) string flag - denotes the method
+        used to compute the points along the curve.
+
+        method may be any of 'linear', 'spline', or 'pchip',
+        or any simple contraction thereof, such as 'lin',
+        'sp', or even 'p'.
+        
+        method == 'linear' --&gt; Uses a linear chordal
+               approximation to interpolate the curve.
+               This method is the most efficient.
+
+        method == 'pchip' --&gt; Uses a parametric pchip
+               approximation for the interpolation
+               in arc length.
+
+        method == 'spline' --&gt; Uses a parametric spline
+               approximation for the interpolation in
+               arc length. Generally for a smooth curve,
+               this method may be most accurate.
+
+        method = 'csape' --&gt; if available, this tool will
+               allow a periodic spline fit for closed curves.
+               ONLY use this method if your points should
+               represent a closed curve.
+               
+               If the last point is NOT the same as the
+               first point on the curve, then the curve
+               will be forced to be periodic by this option.
+               That is, the first point will be replicated
+               onto the end.
+
+               If csape is not present in your matlab release,
+               then an error will result.
+
+        DEFAULT: 'spline'
+
+
+ arguments: (output)
+  pt - Interpolated points at the specified fractional
+        distance (in arc length) along the curve.
+
+  dudt - when a second return argument is required,
+       interparc will return the parametric derivatives
+       (dx/dt, dy/dt, dz/dt, ...) as an array.
+
+  fofthandle - a function handle, taking numbers in the interval [0,1]
+       and evaluating the function at those points.
+
+       Extrapolation will not be permitted by this call.
+       Any values of t that lie outside of the interval [0,1]
+       will be clipped to the endpoints of the curve.
+
+ Example:
+ % Interpolate a set of unequally spaced points around
+ % the perimeter of a unit circle, generating equally
+ % spaced points around the perimeter.
+ theta = sort(rand(15,1))*2*pi;
+ theta(end+1) = theta(1);
+ px = cos(theta);
+ py = sin(theta);
+
+ % interpolate using parametric splines
+ pt = interparc(100,px,py,'spline');
+
+ % Plot the result
+ plot(px,py,'r*',pt(:,1),pt(:,2),'b-o')
+ axis([-1.1 1.1 -1.1 1.1])
+ axis equal
+ grid on
+ xlabel X
+ ylabel Y
+ title 'Points in blue are uniform in arclength around the circle'
+
+
+ Example:
+ % For the previous set of points, generate exactly 6
+ % points around the parametric splines, verifying
+ % the uniformity of the arc length interpolant.
+ pt = interparc(6,px,py,'spline');
+
+ % Convert back to polar form. See that the radius
+ % is indeed 1, quite accurately.
+ [TH,R] = cart2pol(pt(:,1),pt(:,2))
+ % TH =
+ %       0.86005
+ %        2.1141
+ %       -2.9117
+ %        -1.654
+ %      -0.39649
+ %       0.86005
+ % R =
+ %             1
+ %        0.9997
+ %        0.9998
+ %       0.99999
+ %        1.0001
+ %             1
+
+ % Unwrap the polar angles, and difference them.
+ diff(unwrap(TH))
+ % ans =
+ %        1.2541
+ %        1.2573
+ %        1.2577
+ %        1.2575
+ %        1.2565
+
+ % Six points around the circle should be separated by
+ % 2*pi/5 radians, if they were perfectly uniform. The
+ % slight differences are due to the imperfect accuracy
+ % of the parametric splines.
+ 2*pi/5
+ % ans =
+ %        1.2566
+
+
+ See also: arclength, spline, pchip, interp1
+
+ Author: John D'Errico
+ e-mail: woodchips@rochester.rr.com
+ Release: 1.0
+ Release date: 3/15/2010</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pixFit.html" class="code" title="function pixFit(x,y,rxn)">pixFit</a>	pixFit</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function val = segkernel(t,y)</a></li><li><a href="#_sub2" class="code">function [value,isterminal,direction] = ode_events(t,y)</a></li><li><a href="#_sub3" class="code">function f_t = foft(t,spl)</a></li><li><a href="#_sub4" class="code">function [str,errorclass] = validstring(arg,valid)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [pt,dudt,fofthandle] = interparc(t,px,py,varargin)</a>
+0002 <span class="comment">% interparc (Copyright (c) 2012, John D'Errico): interpolate points along a curve in 2 or more dimensions</span>
+0003 <span class="comment">% usage: pt = interparc(t,px,py)    % a 2-d curve</span>
+0004 <span class="comment">% usage: pt = interparc(t,px,py,pz) % a 3-d curve</span>
+0005 <span class="comment">% usage: pt = interparc(t,px,py,pz,pw,...) % a 4-d or higher dimensional curve</span>
+0006 <span class="comment">% usage: pt = interparc(t,px,py,method) % a 2-d curve, method is specified</span>
+0007 <span class="comment">% usage: [pt,dudt,fofthandle] = interparc(t,px,py,...) % also returns derivatives, and a function handle</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Interpolates new points at any fractional point along</span>
+0010 <span class="comment">% the curve defined by a list of points in 2 or more</span>
+0011 <span class="comment">% dimensions. The curve may be defined by any sequence</span>
+0012 <span class="comment">% of non-replicated points.</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% arguments: (input)</span>
+0015 <span class="comment">%  t   - vector of numbers, 0 &lt;= t &lt;= 1, that define</span>
+0016 <span class="comment">%        the fractional distance along the curve to</span>
+0017 <span class="comment">%        interpolate the curve at. t = 0 will generate</span>
+0018 <span class="comment">%        the very first point in the point list, and</span>
+0019 <span class="comment">%        t = 1 yields the last point in that list.</span>
+0020 <span class="comment">%        Similarly, t = 0.5 will yield the mid-point</span>
+0021 <span class="comment">%        on the curve in terms of arc length as the</span>
+0022 <span class="comment">%        curve is interpolated by a parametric spline.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%        If t is a scalar integer, at least 2, then</span>
+0025 <span class="comment">%        it specifies the number of equally spaced</span>
+0026 <span class="comment">%        points in arclength to be generated along</span>
+0027 <span class="comment">%        the curve.</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%  px, py, pz, ... - vectors of length n, defining</span>
+0030 <span class="comment">%        points along the curve. n must be at least 2.</span>
+0031 <span class="comment">%        Exact Replicate points should not be present</span>
+0032 <span class="comment">%        in the curve, although there is no constraint</span>
+0033 <span class="comment">%        that the curve has replicate independent</span>
+0034 <span class="comment">%        variables.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%  method - (OPTIONAL) string flag - denotes the method</span>
+0037 <span class="comment">%        used to compute the points along the curve.</span>
+0038 <span class="comment">%</span>
+0039 <span class="comment">%        method may be any of 'linear', 'spline', or 'pchip',</span>
+0040 <span class="comment">%        or any simple contraction thereof, such as 'lin',</span>
+0041 <span class="comment">%        'sp', or even 'p'.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">%        method == 'linear' --&gt; Uses a linear chordal</span>
+0044 <span class="comment">%               approximation to interpolate the curve.</span>
+0045 <span class="comment">%               This method is the most efficient.</span>
+0046 <span class="comment">%</span>
+0047 <span class="comment">%        method == 'pchip' --&gt; Uses a parametric pchip</span>
+0048 <span class="comment">%               approximation for the interpolation</span>
+0049 <span class="comment">%               in arc length.</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">%        method == 'spline' --&gt; Uses a parametric spline</span>
+0052 <span class="comment">%               approximation for the interpolation in</span>
+0053 <span class="comment">%               arc length. Generally for a smooth curve,</span>
+0054 <span class="comment">%               this method may be most accurate.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%        method = 'csape' --&gt; if available, this tool will</span>
+0057 <span class="comment">%               allow a periodic spline fit for closed curves.</span>
+0058 <span class="comment">%               ONLY use this method if your points should</span>
+0059 <span class="comment">%               represent a closed curve.</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">%               If the last point is NOT the same as the</span>
+0062 <span class="comment">%               first point on the curve, then the curve</span>
+0063 <span class="comment">%               will be forced to be periodic by this option.</span>
+0064 <span class="comment">%               That is, the first point will be replicated</span>
+0065 <span class="comment">%               onto the end.</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%               If csape is not present in your matlab release,</span>
+0068 <span class="comment">%               then an error will result.</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%        DEFAULT: 'spline'</span>
+0071 <span class="comment">%</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">% arguments: (output)</span>
+0074 <span class="comment">%  pt - Interpolated points at the specified fractional</span>
+0075 <span class="comment">%        distance (in arc length) along the curve.</span>
+0076 <span class="comment">%</span>
+0077 <span class="comment">%  dudt - when a second return argument is required,</span>
+0078 <span class="comment">%       interparc will return the parametric derivatives</span>
+0079 <span class="comment">%       (dx/dt, dy/dt, dz/dt, ...) as an array.</span>
+0080 <span class="comment">%</span>
+0081 <span class="comment">%  fofthandle - a function handle, taking numbers in the interval [0,1]</span>
+0082 <span class="comment">%       and evaluating the function at those points.</span>
+0083 <span class="comment">%</span>
+0084 <span class="comment">%       Extrapolation will not be permitted by this call.</span>
+0085 <span class="comment">%       Any values of t that lie outside of the interval [0,1]</span>
+0086 <span class="comment">%       will be clipped to the endpoints of the curve.</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">% Example:</span>
+0089 <span class="comment">% % Interpolate a set of unequally spaced points around</span>
+0090 <span class="comment">% % the perimeter of a unit circle, generating equally</span>
+0091 <span class="comment">% % spaced points around the perimeter.</span>
+0092 <span class="comment">% theta = sort(rand(15,1))*2*pi;</span>
+0093 <span class="comment">% theta(end+1) = theta(1);</span>
+0094 <span class="comment">% px = cos(theta);</span>
+0095 <span class="comment">% py = sin(theta);</span>
+0096 <span class="comment">%</span>
+0097 <span class="comment">% % interpolate using parametric splines</span>
+0098 <span class="comment">% pt = interparc(100,px,py,'spline');</span>
+0099 <span class="comment">%</span>
+0100 <span class="comment">% % Plot the result</span>
+0101 <span class="comment">% plot(px,py,'r*',pt(:,1),pt(:,2),'b-o')</span>
+0102 <span class="comment">% axis([-1.1 1.1 -1.1 1.1])</span>
+0103 <span class="comment">% axis equal</span>
+0104 <span class="comment">% grid on</span>
+0105 <span class="comment">% xlabel X</span>
+0106 <span class="comment">% ylabel Y</span>
+0107 <span class="comment">% title 'Points in blue are uniform in arclength around the circle'</span>
+0108 <span class="comment">%</span>
+0109 <span class="comment">%</span>
+0110 <span class="comment">% Example:</span>
+0111 <span class="comment">% % For the previous set of points, generate exactly 6</span>
+0112 <span class="comment">% % points around the parametric splines, verifying</span>
+0113 <span class="comment">% % the uniformity of the arc length interpolant.</span>
+0114 <span class="comment">% pt = interparc(6,px,py,'spline');</span>
+0115 <span class="comment">%</span>
+0116 <span class="comment">% % Convert back to polar form. See that the radius</span>
+0117 <span class="comment">% % is indeed 1, quite accurately.</span>
+0118 <span class="comment">% [TH,R] = cart2pol(pt(:,1),pt(:,2))</span>
+0119 <span class="comment">% % TH =</span>
+0120 <span class="comment">% %       0.86005</span>
+0121 <span class="comment">% %        2.1141</span>
+0122 <span class="comment">% %       -2.9117</span>
+0123 <span class="comment">% %        -1.654</span>
+0124 <span class="comment">% %      -0.39649</span>
+0125 <span class="comment">% %       0.86005</span>
+0126 <span class="comment">% % R =</span>
+0127 <span class="comment">% %             1</span>
+0128 <span class="comment">% %        0.9997</span>
+0129 <span class="comment">% %        0.9998</span>
+0130 <span class="comment">% %       0.99999</span>
+0131 <span class="comment">% %        1.0001</span>
+0132 <span class="comment">% %             1</span>
+0133 <span class="comment">%</span>
+0134 <span class="comment">% % Unwrap the polar angles, and difference them.</span>
+0135 <span class="comment">% diff(unwrap(TH))</span>
+0136 <span class="comment">% % ans =</span>
+0137 <span class="comment">% %        1.2541</span>
+0138 <span class="comment">% %        1.2573</span>
+0139 <span class="comment">% %        1.2577</span>
+0140 <span class="comment">% %        1.2575</span>
+0141 <span class="comment">% %        1.2565</span>
+0142 <span class="comment">%</span>
+0143 <span class="comment">% % Six points around the circle should be separated by</span>
+0144 <span class="comment">% % 2*pi/5 radians, if they were perfectly uniform. The</span>
+0145 <span class="comment">% % slight differences are due to the imperfect accuracy</span>
+0146 <span class="comment">% % of the parametric splines.</span>
+0147 <span class="comment">% 2*pi/5</span>
+0148 <span class="comment">% % ans =</span>
+0149 <span class="comment">% %        1.2566</span>
+0150 <span class="comment">%</span>
+0151 <span class="comment">%</span>
+0152 <span class="comment">% See also: arclength, spline, pchip, interp1</span>
+0153 <span class="comment">%</span>
+0154 <span class="comment">% Author: John D'Errico</span>
+0155 <span class="comment">% e-mail: woodchips@rochester.rr.com</span>
+0156 <span class="comment">% Release: 1.0</span>
+0157 <span class="comment">% Release date: 3/15/2010</span>
+0158 
+0159 <span class="comment">% unpack the arguments and check for errors</span>
+0160 <span class="keyword">if</span> nargin &lt; 3
+0161   error(<span class="string">'ARCLENGTH:insufficientarguments'</span>, <span class="keyword">...</span>
+0162     <span class="string">'at least t, px, and py must be supplied'</span>)
+0163 <span class="keyword">end</span>
+0164 
+0165 t = t(:);
+0166 <span class="keyword">if</span> (numel(t) == 1) &amp;&amp; (t &gt; 1) &amp;&amp; (rem(t,1) == 0)
+0167   <span class="comment">% t specifies the number of points to be generated</span>
+0168   <span class="comment">% equally spaced in arclength</span>
+0169   t = linspace(0,1,t)';
+0170 <span class="keyword">elseif</span> any(t &lt; 0) || any(t &gt; 1)
+0171   error(<span class="string">'ARCLENGTH:impropert'</span>, <span class="keyword">...</span>
+0172     <span class="string">'All elements of t must be 0 &lt;= t &lt;= 1'</span>)
+0173 <span class="keyword">end</span>
+0174 
+0175 <span class="comment">% how many points will be interpolated?</span>
+0176 nt = numel(t);
+0177 
+0178 <span class="comment">% the number of points on the curve itself</span>
+0179 px = px(:);
+0180 py = py(:);
+0181 n = numel(px);
+0182 
+0183 <span class="comment">% are px and py both vectors of the same length?</span>
+0184 <span class="keyword">if</span> ~isvector(px) || ~isvector(py) || (length(py) ~= n)
+0185   error(<span class="string">'ARCLENGTH:improperpxorpy'</span>, <span class="keyword">...</span>
+0186     <span class="string">'px and py must be vectors of the same length'</span>)
+0187 <span class="keyword">elseif</span> n &lt; 2
+0188   error(<span class="string">'ARCLENGTH:improperpxorpy'</span>, <span class="keyword">...</span>
+0189     <span class="string">'px and py must be vectors of length at least 2'</span>)
+0190 <span class="keyword">end</span>
+0191 
+0192 <span class="comment">% compose px and py into a single array. this way,</span>
+0193 <span class="comment">% if more dimensions are provided, the extension</span>
+0194 <span class="comment">% is trivial.</span>
+0195 pxy = [px,py];
+0196 ndim = 2;
+0197 
+0198 <span class="comment">% the default method is 'linear'</span>
+0199 method = <span class="string">'spline'</span>;
+0200 
+0201 <span class="comment">% are there any other arguments?</span>
+0202 <span class="keyword">if</span> nargin &gt; 3
+0203   <span class="comment">% there are. check the last argument. Is it a string?</span>
+0204   <span class="keyword">if</span> ischar(varargin{end})
+0205     method = varargin{end};
+0206     varargin(end) = [];
+0207     
+0208     <span class="comment">% method may be any of {'linear', 'pchip', 'spline', 'csape'.}</span>
+0209     <span class="comment">% any any simple contraction thereof.</span>
+0210     valid = {<span class="string">'linear'</span>, <span class="string">'pchip'</span>, <span class="string">'spline'</span>, <span class="string">'csape'</span>};
+0211     [method,errstr] = <a href="#_sub4" class="code" title="subfunction [str,errorclass] = validstring(arg,valid)">validstring</a>(method,valid);
+0212     <span class="keyword">if</span> ~isempty(errstr)
+0213       error(<span class="string">'INTERPARC:incorrectmethod'</span>,errstr)
+0214     <span class="keyword">end</span>
+0215   <span class="keyword">end</span>
+0216   
+0217   <span class="comment">% anything that remains in varargin must add</span>
+0218   <span class="comment">% an additional dimension on the curve/polygon</span>
+0219   <span class="keyword">for</span> i = 1:numel(varargin)
+0220     pz = varargin{i};
+0221     pz = pz(:);
+0222     <span class="keyword">if</span> numel(pz) ~= n
+0223       error(<span class="string">'ARCLENGTH:improperpxorpy'</span>, <span class="keyword">...</span>
+0224         <span class="string">'pz must be of the same size as px and py'</span>)
+0225     <span class="keyword">end</span>
+0226     pxy = [pxy,pz]; <span class="comment">%#ok</span>
+0227   <span class="keyword">end</span>
+0228   
+0229   <span class="comment">% the final number of dimensions provided</span>
+0230   ndim = size(pxy,2);
+0231 <span class="keyword">end</span>
+0232 
+0233 <span class="comment">% if csape, then make sure the first point is replicated at the end.</span>
+0234 <span class="comment">% also test to see if csape is available</span>
+0235 <span class="keyword">if</span> method(1) == <span class="string">'c'</span>
+0236   <span class="keyword">if</span> exist(<span class="string">'csape'</span>,<span class="string">'file'</span>) == 0
+0237     error(<span class="string">'CSAPE was requested, but you lack the necessary toolbox.'</span>)
+0238   <span class="keyword">end</span>
+0239   
+0240   p1 = pxy(1,:);
+0241   pend = pxy(<span class="keyword">end</span>,:);
+0242   
+0243   <span class="comment">% get a tolerance on whether the first point is replicated.</span>
+0244   <span class="keyword">if</span> norm(p1 - pend) &gt; 10*eps(norm(max(abs(pxy),[],1)))
+0245     <span class="comment">% the two end points were not identical, so wrap the curve</span>
+0246     pxy(end+1,:) = p1;
+0247     nt = nt + 1;
+0248   <span class="keyword">end</span>
+0249 <span class="keyword">end</span>
+0250 
+0251 <span class="comment">% preallocate the result, pt</span>
+0252 pt = NaN(nt,ndim);
+0253 
+0254 <span class="comment">% Compute the chordal (linear) arclength</span>
+0255 <span class="comment">% of each segment. This will be needed for</span>
+0256 <span class="comment">% any of the methods.</span>
+0257 chordlen = sqrt(sum(diff(pxy,[],1).^2,2));
+0258 
+0259 <span class="comment">% Normalize the arclengths to a unit total</span>
+0260 chordlen = chordlen/sum(chordlen);
+0261 
+0262 <span class="comment">% cumulative arclength</span>
+0263 cumarc = [0;cumsum(chordlen)];
+0264 
+0265 <span class="comment">% The linear interpolant is trivial. do it as a special case</span>
+0266 <span class="keyword">if</span> method(1) == <span class="string">'l'</span>
+0267   <span class="comment">% The linear method.</span>
+0268   
+0269   <span class="comment">% which interval did each point fall in, in</span>
+0270   <span class="comment">% terms of t?</span>
+0271   [junk,tbins] = histc(t,cumarc); <span class="comment">%#ok</span>
+0272   
+0273   <span class="comment">% catch any problems at the ends</span>
+0274   tbins((tbins &lt;= 0) | (t &lt;= 0)) = 1;
+0275   tbins((tbins &gt;= n) | (t &gt;= 1)) = n - 1;
+0276   
+0277   <span class="comment">% interpolate</span>
+0278   s = (t - cumarc(tbins))./chordlen(tbins);
+0279   <span class="comment">% be nice, and allow the code to work on older releases</span>
+0280   <span class="comment">% that don't have bsxfun</span>
+0281   pt = pxy(tbins,:) + (pxy(tbins+1,:) - pxy(tbins,:)).*repmat(s,1,ndim);
+0282   
+0283   <span class="comment">% do we need to compute derivatives here?</span>
+0284   <span class="keyword">if</span> nargout &gt; 1
+0285     dudt = (pxy(tbins+1,:) - pxy(tbins,:))./repmat(chordlen(tbins),1,ndim);
+0286   <span class="keyword">end</span>
+0287   
+0288   <span class="comment">% do we need to create the spline as a piecewise linear function?</span>
+0289   <span class="keyword">if</span> nargout &gt; 2
+0290     spl = cell(1,ndim);
+0291     <span class="keyword">for</span> i = 1:ndim
+0292       coefs = [diff(pxy(:,i))./diff(cumarc),pxy(1:(end-1),i)];
+0293       spl{i} = mkpp(cumarc.',coefs);
+0294     <span class="keyword">end</span>
+0295     
+0296     <span class="comment">%create a function handle for evaluation, passing in the splines</span>
+0297     fofthandle = @(t) <a href="#_sub3" class="code" title="subfunction f_t = foft(t,spl)">foft</a>(t,spl);
+0298   <span class="keyword">end</span>
+0299   
+0300   <span class="comment">% we are done at this point</span>
+0301   <span class="keyword">return</span>
+0302 <span class="keyword">end</span>
+0303 
+0304 <span class="comment">% If we drop down to here, we have either a spline</span>
+0305 <span class="comment">% or csape or pchip interpolant to work with.</span>
+0306 
+0307 <span class="comment">% compute parametric splines</span>
+0308 spl = cell(1,ndim);
+0309 spld = spl;
+0310 diffarray = [3 0 0;0 2 0;0 0 1;0 0 0];
+0311 <span class="keyword">for</span> i = 1:ndim
+0312   <span class="keyword">switch</span> method
+0313     <span class="keyword">case</span> <span class="string">'pchip'</span>
+0314       spl{i} = pchip(cumarc,pxy(:,i));
+0315     <span class="keyword">case</span> <span class="string">'spline'</span>
+0316       spl{i} = spline(cumarc,pxy(:,i));
+0317       nc = numel(spl{i}.coefs);
+0318       <span class="keyword">if</span> nc &lt; 4
+0319         <span class="comment">% just pretend it has cubic segments</span>
+0320         spl{i}.coefs = [zeros(1,4-nc),spl{i}.coefs];
+0321         spl{i}.order = 4;
+0322       <span class="keyword">end</span>
+0323     <span class="keyword">case</span> <span class="string">'csape'</span>
+0324       <span class="comment">% csape was specified, so the curve is presumed closed,</span>
+0325       <span class="comment">% therefore periodic</span>
+0326       spl{i} = csape(cumarc,pxy(:,i),<span class="string">'periodic'</span>);
+0327       nc = numel(spl{i}.coefs);
+0328       <span class="keyword">if</span> nc &lt; 4
+0329         <span class="comment">% just pretend it has cubic segments</span>
+0330         spl{i}.coefs = [zeros(1,4-nc),spl{i}.coefs];
+0331         spl{i}.order = 4;
+0332       <span class="keyword">end</span>
+0333   <span class="keyword">end</span>
+0334   
+0335   <span class="comment">% and now differentiate them</span>
+0336   xp = spl{i};
+0337   xp.coefs = xp.coefs*diffarray;
+0338   xp.order = 3;
+0339   spld{i} = xp;
+0340 <span class="keyword">end</span>
+0341 
+0342 <span class="comment">% catch the case where there were exactly three points</span>
+0343 <span class="comment">% in the curve, and spline was used to generate the</span>
+0344 <span class="comment">% interpolant. In this case, spline creates a curve with</span>
+0345 <span class="comment">% only one piece, not two.</span>
+0346 <span class="keyword">if</span> (numel(cumarc) == 3) &amp;&amp; (method(1) == <span class="string">'s'</span>)
+0347   cumarc = spl{1}.breaks;
+0348   n = numel(cumarc);
+0349   chordlen = sum(chordlen);
+0350 <span class="keyword">end</span>
+0351 
+0352 <span class="comment">% Generate the total arclength along the curve</span>
+0353 <span class="comment">% by integrating each segment and summing the</span>
+0354 <span class="comment">% results. The integration scheme does its job</span>
+0355 <span class="comment">% using an ode solver.</span>
+0356 
+0357 <span class="comment">% polyarray here contains the derivative polynomials</span>
+0358 <span class="comment">% for each spline in a given segment</span>
+0359 polyarray = zeros(ndim,3);
+0360 seglen = zeros(n-1,1);
+0361 
+0362 <span class="comment">% options for ode45</span>
+0363 opts = odeset(<span class="string">'reltol'</span>,1.e-9);
+0364 <span class="keyword">for</span> i = 1:spl{1}.pieces
+0365   <span class="comment">% extract polynomials for the derivatives</span>
+0366   <span class="keyword">for</span> j = 1:ndim
+0367     polyarray(j,:) = spld{j}.coefs(i,:);
+0368   <span class="keyword">end</span>
+0369   
+0370   <span class="comment">% integrate the arclength for the i'th segment</span>
+0371   <span class="comment">% using ode45 for the integral. I could have</span>
+0372   <span class="comment">% done this part with quad too, but then it</span>
+0373   <span class="comment">% would not have been perfectly (numerically)</span>
+0374   <span class="comment">% consistent with the next operation in this tool.</span>
+0375   [tout,yout] = ode45(@(t,y) <a href="#_sub1" class="code" title="subfunction val = segkernel(t,y) ">segkernel</a>(t,y),[0,chordlen(i)],0,opts); <span class="comment">%#ok</span>
+0376   seglen(i) = yout(end);
+0377 <span class="keyword">end</span>
+0378 
+0379 <span class="comment">% and normalize the segments to have unit total length</span>
+0380 totalsplinelength = sum(seglen);
+0381 cumseglen = [0;cumsum(seglen)];
+0382 
+0383 <span class="comment">% which interval did each point fall into, in</span>
+0384 <span class="comment">% terms of t, but relative to the cumulative</span>
+0385 <span class="comment">% arc lengths along the parametric spline?</span>
+0386 [junk,tbins] = histc(t*totalsplinelength,cumseglen); <span class="comment">%#ok</span>
+0387 
+0388 <span class="comment">% catch any problems at the ends</span>
+0389 tbins((tbins &lt;= 0) | (t &lt;= 0)) = 1;
+0390 tbins((tbins &gt;= n) | (t &gt;= 1)) = n - 1;
+0391 
+0392 <span class="comment">% Do the fractional integration within each segment</span>
+0393 <span class="comment">% for the interpolated points. t is the parameter</span>
+0394 <span class="comment">% used to define the splines. It is defined in terms</span>
+0395 <span class="comment">% of a linear chordal arclength. This works nicely when</span>
+0396 <span class="comment">% a linear piecewise interpolant was used. However,</span>
+0397 <span class="comment">% what is asked for is an arclength interpolation</span>
+0398 <span class="comment">% in terms of arclength of the spline itself. Call s</span>
+0399 <span class="comment">% the arclength traveled along the spline.</span>
+0400 s = totalsplinelength*t;
+0401 
+0402 <span class="comment">% the ode45 options will now include an events property</span>
+0403 <span class="comment">% so we can catch zero crossings.</span>
+0404 opts = odeset(<span class="string">'reltol'</span>,1.e-9,<span class="string">'events'</span>,@<a href="#_sub2" class="code" title="subfunction [value,isterminal,direction] = ode_events(t,y) ">ode_events</a>);
+0405 
+0406 ti = t;
+0407 <span class="keyword">for</span> i = 1:nt
+0408   <span class="comment">% si is the piece of arc length that we will look</span>
+0409   <span class="comment">% for in this spline segment.</span>
+0410   si = s(i) - cumseglen(tbins(i));
+0411   
+0412   <span class="comment">% extract polynomials for the derivatives</span>
+0413   <span class="comment">% in the interval the point lies in</span>
+0414   <span class="keyword">for</span> j = 1:ndim
+0415     polyarray(j,:) = spld{j}.coefs(tbins(i),:);
+0416   <span class="keyword">end</span>
+0417   
+0418   <span class="comment">% we need to integrate in t, until the integral</span>
+0419   <span class="comment">% crosses the specified value of si. Because we</span>
+0420   <span class="comment">% have defined totalsplinelength, the lengths will</span>
+0421   <span class="comment">% be normalized at this point to a unit length.</span>
+0422   <span class="comment">%</span>
+0423   <span class="comment">% Start the ode solver at -si, so we will just</span>
+0424   <span class="comment">% look for an event where y crosses zero.</span>
+0425   [tout,yout,te,ye] = ode45(@(t,y) <a href="#_sub1" class="code" title="subfunction val = segkernel(t,y) ">segkernel</a>(t,y),[0,chordlen(tbins(i))],-si,opts); <span class="comment">%#ok</span>
+0426   
+0427   <span class="comment">% we only need that point where a zero crossing occurred</span>
+0428   <span class="comment">% if no crossing was found, then we can look at each end.</span>
+0429   <span class="keyword">if</span> ~isempty(te)
+0430     ti(i) = te(1) + cumarc(tbins(i));
+0431   <span class="keyword">else</span>
+0432     <span class="comment">% a crossing must have happened at the very</span>
+0433     <span class="comment">% beginning or the end, and the ode solver</span>
+0434     <span class="comment">% missed it, not trapping that event.</span>
+0435     <span class="keyword">if</span> abs(yout(1)) &lt; abs(yout(end))
+0436       <span class="comment">% the event must have been at the start.</span>
+0437       ti(i) = tout(1) + cumarc(tbins(i));
+0438     <span class="keyword">else</span>
+0439       <span class="comment">% the event must have been at the end.</span>
+0440       ti(i) = tout(end) + cumarc(tbins(i));
+0441     <span class="keyword">end</span>
+0442   <span class="keyword">end</span>
+0443 <span class="keyword">end</span>
+0444 
+0445 <span class="comment">% Interpolate the parametric splines at ti to get</span>
+0446 <span class="comment">% our interpolated value.</span>
+0447 <span class="keyword">for</span> L = 1:ndim
+0448   pt(:,L) = ppval(spl{L},ti);
+0449 <span class="keyword">end</span>
+0450 
+0451 <span class="comment">% do we need to compute first derivatives here at each point?</span>
+0452 <span class="keyword">if</span> nargout &gt; 1
+0453   dudt = zeros(nt,ndim);
+0454   <span class="keyword">for</span> L = 1:ndim
+0455     dudt(:,L) = ppval(spld{L},ti);
+0456   <span class="keyword">end</span>
+0457 <span class="keyword">end</span>
+0458 
+0459 <span class="comment">% create a function handle for evaluation, passing in the splines</span>
+0460 <span class="keyword">if</span> nargout &gt; 2
+0461   fofthandle = @(t) <a href="#_sub3" class="code" title="subfunction f_t = foft(t,spl)">foft</a>(t,spl);
+0462 <span class="keyword">end</span>
+0463 
+0464 <span class="comment">% ===============================================</span>
+0465 <span class="comment">%  nested function for the integration kernel</span>
+0466 <span class="comment">% ===============================================</span>
+0467   <a name="_sub1" href="#_subfunctions" class="code">function val = segkernel(t,y) </a><span class="comment">%#ok</span>
+0468     <span class="comment">% sqrt((dx/dt)^2 + (dy/dt)^2 + ...)</span>
+0469     val = zeros(size(t));
+0470     <span class="keyword">for</span> k = 1:ndim
+0471       val = val + polyval(polyarray(k,:),t).^2;
+0472     <span class="keyword">end</span>
+0473     val = sqrt(val);
+0474     
+0475   <span class="keyword">end</span> <span class="comment">% function segkernel</span>
+0476 
+0477 <span class="comment">% ===============================================</span>
+0478 <span class="comment">%  nested function for ode45 integration events</span>
+0479 <span class="comment">% ===============================================</span>
+0480   <a name="_sub2" href="#_subfunctions" class="code">function [value,isterminal,direction] = ode_events(t,y) </a><span class="comment">%#ok</span>
+0481     <span class="comment">% ode event trap, looking for zero crossings of y.</span>
+0482     value = y;
+0483     isterminal = ones(size(y));
+0484     direction = ones(size(y));
+0485   <span class="keyword">end</span> <span class="comment">% function ode_events</span>
+0486 
+0487 <span class="keyword">end</span> <span class="comment">% mainline - interparc</span>
+0488 
+0489 
+0490 <span class="comment">% ===============================================</span>
+0491 <span class="comment">%       end mainline - interparc</span>
+0492 <span class="comment">% ===============================================</span>
+0493 <span class="comment">%       begin subfunctions</span>
+0494 <span class="comment">% ===============================================</span>
+0495 
+0496 <span class="comment">% ===============================================</span>
+0497 <span class="comment">%  subfunction for evaluation at any point externally</span>
+0498 <span class="comment">% ===============================================</span>
+0499 <a name="_sub3" href="#_subfunctions" class="code">function f_t = foft(t,spl)</a>
+0500 <span class="comment">% tool allowing the user to evaluate the interpolant at any given point for any values t in [0,1]</span>
+0501 pdim = numel(spl);
+0502 f_t = zeros(numel(t),pdim);
+0503 
+0504 <span class="comment">% convert t to a column vector, clipping it to [0,1] as we do.</span>
+0505 t = max(0,min(1,t(:)));
+0506 
+0507 <span class="comment">% just loop over the splines in the cell array of splines</span>
+0508 <span class="keyword">for</span> i = 1:pdim
+0509   f_t(:,i) = ppval(spl{i},t);
+0510 <span class="keyword">end</span>
+0511 <span class="keyword">end</span> <span class="comment">% function foft</span>
+0512 
+0513 
+0514 <a name="_sub4" href="#_subfunctions" class="code">function [str,errorclass] = validstring(arg,valid)</a>
+0515 <span class="comment">% validstring: compares a string against a set of valid options</span>
+0516 <span class="comment">% usage: [str,errorclass] = validstring(arg,valid)</span>
+0517 <span class="comment">%</span>
+0518 <span class="comment">% If a direct hit, or any unambiguous shortening is found, that</span>
+0519 <span class="comment">% string is returned. Capitalization is ignored.</span>
+0520 <span class="comment">%</span>
+0521 <span class="comment">% arguments: (input)</span>
+0522 <span class="comment">%  arg - character string, to be tested against a list</span>
+0523 <span class="comment">%        of valid choices. Capitalization is ignored.</span>
+0524 <span class="comment">%</span>
+0525 <span class="comment">%  valid - cellstring array of alternative choices</span>
+0526 <span class="comment">%</span>
+0527 <span class="comment">% Arguments: (output)</span>
+0528 <span class="comment">%  str - string - resulting choice resolved from the</span>
+0529 <span class="comment">%        list of valid arguments. If no unambiguous</span>
+0530 <span class="comment">%        choice can be resolved, then str will be empty.</span>
+0531 <span class="comment">%</span>
+0532 <span class="comment">%  errorclass - string - A string argument that explains</span>
+0533 <span class="comment">%        the error. It will be one of the following</span>
+0534 <span class="comment">%        possibilities:</span>
+0535 <span class="comment">%</span>
+0536 <span class="comment">%        ''  --&gt; No error. An unambiguous match for arg</span>
+0537 <span class="comment">%                was found among the choices.</span>
+0538 <span class="comment">%</span>
+0539 <span class="comment">%        'No match found' --&gt; No match was found among</span>
+0540 <span class="comment">%                the choices provided in valid.</span>
+0541 <span class="comment">%</span>
+0542 <span class="comment">%        'Ambiguous argument' --&gt; At least two ambiguous</span>
+0543 <span class="comment">%                matches were found among those provided</span>
+0544 <span class="comment">%                in valid.</span>
+0545 <span class="comment">%</span>
+0546 <span class="comment">%</span>
+0547 <span class="comment">% Example:</span>
+0548 <span class="comment">%  valid = {'off' 'on' 'The sky is falling'}</span>
+0549 <span class="comment">%</span>
+0550 <span class="comment">%</span>
+0551 <span class="comment">% See also: parse_pv_pairs, strmatch, strcmpi</span>
+0552 <span class="comment">%</span>
+0553 <span class="comment">% Author: John D'Errico</span>
+0554 <span class="comment">% e-mail: woodchips@rochester.rr.com</span>
+0555 <span class="comment">% Release: 1.0</span>
+0556 <span class="comment">% Release date: 3/25/2010</span>
+0557 
+0558 ind = find(strncmpi(lower(arg),valid,numel(arg)));
+0559 <span class="keyword">if</span> isempty(ind)
+0560   <span class="comment">% No hit found</span>
+0561   errorclass = <span class="string">'No match found'</span>;
+0562   str = <span class="string">''</span>;
+0563 <span class="keyword">elseif</span> (length(ind) &gt; 1)
+0564   <span class="comment">% Ambiguous arg, hitting more than one of the valid options</span>
+0565   errorclass = <span class="string">'Ambiguous argument'</span>;
+0566   str = <span class="string">''</span>;
+0567   <span class="keyword">return</span>
+0568 <span class="keyword">else</span>
+0569   errorclass = <span class="string">''</span>;
+0570   str = valid{ind};
+0571 <span class="keyword">end</span>
+0572 
+0573 <span class="keyword">end</span> <span class="comment">% function validstring</span>
+0574</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

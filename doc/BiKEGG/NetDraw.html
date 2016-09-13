@@ -1,0 +1,997 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of NetDraw</title>
+  <meta name="keywords" content="NetDraw">
+  <meta name="description" content="NetDraw">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; NetDraw.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>NetDraw
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>NetDraw</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function NetDraw (Outflx,RxnCds,MapChoice,InOpts) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NetDraw
+ uses KGML file of global metabolic pathway of KEGG (map01100)
+ to extract KEGG rxn IDs and their corresponding coordinates. 
+ The overall structure of NetDraw is similar to that of KeggDraw
+ with minor modifications on subfunctions. Further details can be found in
+ the BiKEGG user manual
+ 
+ Inputs:
+ Outflx = A mXn matrix containing input flux data, which m corresponds to
+        KEGG reaction IDs and n corresponds to time-series values.
+ RxnCds = A cell array of strings comprising of KEGG reaction IDs (m rows).
+ MapChoice = KEGG map ID.
+ 
+ Optional inputs:
+ InOpts = A struct containing the following fields:
+ SVal = Check if user wants to save images : 1 (yes) or 0 (no), default:0.
+ Timevalue = The time step between two consecutive images (default: 0.1 s).
+ Netstat = Cehck if user wants to use KEGG maps and KGML files online(1)
+           /offline(0) (default = 1). Data in KEGGmpas folder will be
+           used in case of offline mode.
+ Svid = Check if user wants to convert a sequence of images to an animated
+         GIF file: 2 (GIF), 0 (no); default: 0 :: Video option is not valid
+         for NetDraw
+ 
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ June. 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>	ArrowheadProcess</li><li><a href="BaseMapReader.html" class="code" title="function basemap = BaseMapReader(Netstat)">BaseMapReader</a>	BaseMapReader</li><li><a href="Img2Animation.html" class="code" title="function Img2Animation (Idf)">Img2Animation</a>	Img2Animation</li><li><a href="KeggDrawTable.html" class="code" title="function varargout = KeggDrawTable(varargin)">KeggDrawTable</a>	KeggDrawTable(GUI)</li><li><a href="MapAdjuster.html" class="code" title="function varargout = MapAdjuster(varargin)">MapAdjuster</a>	MapAdjuster(GUI)</li><li><a href="MapTrimmer.html" class="code" title="function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)">MapTrimmer</a>	MapTrimmer</li><li><a href="MapTrimmerF.html" class="code" title="function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,DoubleIds,Idx,LineStrength,ColSpec)">MapTrimmerF</a>	MapTrimmerF</li><li><a href="OverlapChecker.html" class="code" title="function [I,ArX,ArY,ArrowChek,DoubleData] = OverlapChecker(I,ArX,ArY,OverlapData,flx,McmCollect,field_intsect_overlay,LineStrength)">OverlapChecker</a>	OverlapChecker</li><li><a href="SaveFlxImgs.html" class="code" title="function SaveFlxImgs (hax,FolderPath,k,ImgRes,ImgFrmt)">SaveFlxImgs</a>	SavFlxImgs</li><li><a href="SaveImgs.html" class="code" title="function varargout = SaveImgs(varargin)">SaveImgs</a>	SaveImgs(GUI)</li><li><a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>	arrowhead</li><li><a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>	pixFill</li><li><a href="pixHover.html" class="code" title="function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1)">pixHover</a>	pixHover</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [flxOut,rxnCdsI] = ChckRptRxns (flx,rxnCds,CurrentMap,BiGGI)</a></li><li><a href="#_sub2" class="code">function OutSel = StubSel(InSel)</a></li><li><a href="#_sub3" class="code">function [OutFlx,OutRxn,OutBigg] = ChckMultiRxns(BiGG4KeggDraw,RxnCds,rxns4thismap)</a></li><li><a href="#_sub4" class="code">function [rxnOut,flxOut] = ConsistRxns(BiGG4KeggDraw,rxnIn,flxIn,MapChoice)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function NetDraw (Outflx,RxnCds,MapChoice,InOpts)</a>
+0002 <span class="comment">% NetDraw</span>
+0003 <span class="comment">% uses KGML file of global metabolic pathway of KEGG (map01100)</span>
+0004 <span class="comment">% to extract KEGG rxn IDs and their corresponding coordinates.</span>
+0005 <span class="comment">% The overall structure of NetDraw is similar to that of KeggDraw</span>
+0006 <span class="comment">% with minor modifications on subfunctions. Further details can be found in</span>
+0007 <span class="comment">% the BiKEGG user manual</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:</span>
+0010 <span class="comment">% Outflx = A mXn matrix containing input flux data, which m corresponds to</span>
+0011 <span class="comment">%        KEGG reaction IDs and n corresponds to time-series values.</span>
+0012 <span class="comment">% RxnCds = A cell array of strings comprising of KEGG reaction IDs (m rows).</span>
+0013 <span class="comment">% MapChoice = KEGG map ID.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Optional inputs:</span>
+0016 <span class="comment">% InOpts = A struct containing the following fields:</span>
+0017 <span class="comment">% SVal = Check if user wants to save images : 1 (yes) or 0 (no), default:0.</span>
+0018 <span class="comment">% Timevalue = The time step between two consecutive images (default: 0.1 s).</span>
+0019 <span class="comment">% Netstat = Cehck if user wants to use KEGG maps and KGML files online(1)</span>
+0020 <span class="comment">%           /offline(0) (default = 1). Data in KEGGmpas folder will be</span>
+0021 <span class="comment">%           used in case of offline mode.</span>
+0022 <span class="comment">% Svid = Check if user wants to convert a sequence of images to an animated</span>
+0023 <span class="comment">%         GIF file: 2 (GIF), 0 (no); default: 0 :: Video option is not valid</span>
+0024 <span class="comment">%         for NetDraw</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% O. Jamialahmadi</span>
+0027 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0028 <span class="comment">% June. 2016</span>
+0029 
+0030 <span class="comment">% Optional inputs ---------------------------------------------------------</span>
+0031 <span class="keyword">if</span> exist(<span class="string">'InOpts'</span>,<span class="string">'var'</span>)
+0032     OptFields = fieldnames(InOpts);
+0033     <span class="keyword">for</span> count = 1:numel(OptFields)
+0034         <span class="keyword">if</span> strcmpi(<span class="string">'SVal'</span>,OptFields{count})
+0035             SVal = InOpts.(OptFields{count});
+0036         <span class="keyword">elseif</span> strcmpi(<span class="string">'Timevalue'</span>,OptFields{count})
+0037             Timevalue = InOpts.(OptFields{count});
+0038         <span class="keyword">elseif</span> strcmpi(<span class="string">'Netstat'</span>,OptFields{count})
+0039             Netstat = InOpts.(OptFields{count});
+0040         <span class="keyword">elseif</span> strcmpi(<span class="string">'Svid'</span>,OptFields{count})
+0041             Svid = InOpts.(OptFields{count});
+0042         <span class="keyword">end</span>
+0043     <span class="keyword">end</span>
+0044 <span class="keyword">end</span>
+0045 <span class="comment">% -------------------------------------------------------------------------</span>
+0046 <span class="comment">% Check internet connection</span>
+0047 <span class="keyword">if</span> ~exist(<span class="string">'Netstat'</span>,<span class="string">'var'</span>) || isempty(Netstat)
+0048     Netstat = 1;
+0049 <span class="keyword">end</span>
+0050 TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0051 <span class="keyword">if</span> Netstat
+0052     [~,Stat1]=urlread(TestLink);
+0053     <span class="keyword">if</span> ~Stat1
+0054         msgbox({<span class="string">'This step requires a stable internet connection'</span>;<span class="keyword">...</span>
+0055             <span class="string">'Seemingly you are offline!'</span>});
+0056         <span class="keyword">return</span>
+0057     <span class="keyword">end</span>
+0058 <span class="keyword">end</span>
+0059 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0060 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0061 Pth = Pth1(1:tind-1);
+0062 <span class="comment">%==========================================================================</span>
+0063 BiGG4KeggDraw = getappdata(0,<span class="string">'BiGG4KeggDraw'</span>); <span class="comment">% For further modification</span>
+0064 <span class="comment">% Read basemap data ==================</span>
+0065 basemap = <a href="BaseMapReader.html" class="code" title="function basemap = BaseMapReader(Netstat)">BaseMapReader</a>(Netstat);
+0066 <span class="comment">% Read rxn2map ========================</span>
+0067 Fileid1 = fopen(<span class="string">'rxn2map.txt'</span>,<span class="string">'r'</span>);
+0068 rxn2map = textscan(Fileid1,<span class="string">'%s %s'</span>);
+0069 RawRxns1 = rxn2map{1};
+0070 RawMaps = rxn2map{2};
+0071 [Loci1,~] = regexp(RawMaps, <span class="string">'path:rn'</span>);
+0072 Loci2 = ~cellfun(<span class="string">'isempty'</span>, Loci1);
+0073 RawMaps(Loci2) = [];
+0074 RawRxns1(Loci2) = [];
+0075 Maps = strrep(RawMaps,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0076 Rxns1 = strrep(RawRxns1,<span class="string">'rn:'</span>,<span class="string">''</span>); 
+0077 fclose(Fileid1);
+0078 AllRN = ({});
+0079 AllRNids = [];
+0080 AllRNcol = ({});
+0081 Allflx = [];
+0082 AllrxnCds = ({}); 
+0083 AllBiGGI = ({});
+0084 <span class="keyword">for</span> mpct = 1:numel(MapChoice)  
+0085     rxns4thismap = Rxns1(ismember(Maps,MapChoice{mpct})); <span class="comment">% rxns in the current map</span>
+0086     wherxn = find(ismember(basemap.r.rxn,rxns4thismap));
+0087     RN = basemap.r.rxn(wherxn); <span class="comment">% rxns of current map in basemap</span>
+0088     RNids = basemap.r.rxnid(wherxn);
+0089     RNcol = basemap.r.col(wherxn);
+0090     <span class="comment">%==========================================================================</span>
+0091     <span class="comment">% Analyzing flux data ====================================================</span>
+0092     <span class="comment">% RxnCds should be compared to RN, in order to identify which reactions</span>
+0093     <span class="comment">% from the Outflx data are present in current KEGG map</span>
+0094     <span class="keyword">if</span> isempty(Outflx)
+0095         msgbox(<span class="string">'Flux data must be read first!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0096         <span class="keyword">return</span>
+0097     <span class="keyword">end</span>
+0098 
+0099     <span class="comment">% Cehck rxnCodes with HMR IDs and replace them with KEGG ones==========</span>
+0100     Hind = strfind(RxnCds,<span class="string">'HMR'</span>);
+0101     <span class="keyword">if</span> sum([Hind{:}])
+0102         fname = <span class="string">'HMR2KEGG.mat'</span>;
+0103         <span class="keyword">if</span> ~exist(fname,<span class="string">'file'</span>)
+0104              waitfor(msgbox([<span class="string">'The '</span>,fname,<span class="string">' Does not'</span>,<span class="keyword">...</span>
+0105                  <span class="string">' exist in local directory.'</span>,<span class="keyword">...</span>
+0106                  <span class="string">'Open it manually'</span>],<span class="string">'Warning'</span>,<span class="string">'warn'</span>));
+0107              [pname,fname1]=uigetfile({<span class="string">'*.mat'</span>;<span class="string">'*.xlsx'</span>},<span class="keyword">...</span>
+0108                  [<span class="string">'Select the '</span>,fname,<span class="string">' file'</span>]);
+0109              D=importdata([fname1,pname]);
+0110         <span class="keyword">else</span>
+0111             D= importdata(fname);
+0112         <span class="keyword">end</span>
+0113         KEGG=D.KEGG;HMR=D.HMR;
+0114         [Fr,Sn]=ismember(RxnCds,HMR);
+0115         <span class="keyword">for</span> ind=1:length(Fr)
+0116             <span class="keyword">if</span> Fr(ind)
+0117                 RxnCds{ind}=KEGG{Sn(ind)};
+0118             <span class="keyword">end</span>
+0119         <span class="keyword">end</span>
+0120     <span class="keyword">end</span> 
+0121     <span class="comment">%======================================================================</span>
+0122     [MultiFlx,MultiRxn,MultiBigg] = <a href="#_sub3" class="code" title="subfunction [OutFlx,OutRxn,OutBigg] = ChckMultiRxns(BiGG4KeggDraw,RxnCds,rxns4thismap)">ChckMultiRxns</a>(BiGG4KeggDraw,RxnCds,rxns4thismap);
+0123     MultiRxn1 = []; MultiFlx1 = []; MultiRN = []; MultiRNids = []; MultiRNcol = [];
+0124     MultiBigg1 = [];
+0125     <span class="keyword">for</span> m1 = 1:numel(MultiRxn)
+0126         where_multi = find(ismember(basemap.r.rxn,MultiRxn{m1}));
+0127         <span class="keyword">if</span> ~isempty(where_multi)
+0128             MultiRxn1 = [MultiRxn1;MultiRxn(m1)];
+0129             MultiFlx1 = [MultiFlx1;MultiFlx(m1,:)];
+0130             MultiRN = [MultiRN,basemap.r.rxn(where_multi)];
+0131             MultiRNids = [MultiRNids,basemap.r.rxnid(where_multi)];
+0132             MultiRNcol = [MultiRNcol,basemap.r.col(where_multi)];
+0133             MultiBigg1 = [MultiBigg1;MultiBigg(m1)];
+0134         <span class="keyword">end</span>
+0135     <span class="keyword">end</span>
+0136     MultiRxn = MultiRxn1;
+0137     MultiFlx = MultiFlx1;
+0138     MultiBigg = MultiBigg1;
+0139     <span class="keyword">if</span> size(RN,2) &gt; size(RN,1)
+0140         RN = RN';
+0141     <span class="keyword">end</span>
+0142     <span class="keyword">if</span> size(MultiRN,2) &gt; size(MultiRN,1)
+0143         MultiRN = MultiRN';
+0144     <span class="keyword">end</span>
+0145     <span class="keyword">if</span> size(RNids,2) &gt; size(RNids,1)
+0146         RNids = RNids';
+0147     <span class="keyword">end</span>
+0148     <span class="keyword">if</span> size(MultiRNids,2) &gt; size(MultiRNids,1)
+0149         MultiRNids = MultiRNids';
+0150     <span class="keyword">end</span>
+0151     <span class="keyword">if</span> size(RNcol,2) &gt; size(RNcol,1)
+0152         RNcol = RNcol';
+0153     <span class="keyword">end</span>
+0154     <span class="keyword">if</span> size(MultiRNcol,2) &gt; size(MultiRNcol,1)
+0155         MultiRNcol = MultiRNcol';
+0156     <span class="keyword">end</span>
+0157     <span class="keyword">if</span> size(MultiRxn,2) &gt; size(MultiRxn,1)
+0158         MultiRxn = MultiRxn';
+0159     <span class="keyword">end</span>
+0160     <span class="keyword">if</span> size(MultiBigg,2) &gt; size(MultiBigg,1)
+0161         MultiBigg = MultiBigg';
+0162     <span class="keyword">end</span>
+0163     AllrxnCds = [AllrxnCds;MultiRxn];
+0164     AllRN = [AllRN;RN;MultiRN];
+0165     AllRNids = [AllRNids;RNids;MultiRNids];
+0166     Allflx = [Allflx;MultiFlx];
+0167     AllBiGGI = [AllBiGGI;MultiBigg];
+0168     AllRNcol = [AllRNcol;RNcol;MultiRNcol];
+0169     
+0170 <span class="keyword">end</span>
+0171 [rxnCds,flx1] = <a href="#_sub4" class="code" title="subfunction [rxnOut,flxOut] = ConsistRxns(BiGG4KeggDraw,rxnIn,flxIn,MapChoice)">ConsistRxns</a>(BiGG4KeggDraw,RxnCds,Outflx,MapChoice);
+0172 <span class="keyword">if</span> size(rxnCds,2) &gt; size(rxnCds,1)   
+0173     rxnCds = rxnCds';
+0174 <span class="keyword">end</span>
+0175 [f1,~]=ismember(rxnCds,AllRN);
+0176 flx=flx1(f1,:);
+0177 rxnCds = rxnCds(f1);
+0178 BiGG4KeggDraw1 = getappdata(0,<span class="string">'BiGG4KeggDraw1'</span>);
+0179 BiGGI = BiGG4KeggDraw1(f1);
+0180 <span class="keyword">if</span> size(BiGGI,2) &gt; size(BiGGI,1)
+0181     BiGGI = BiGGI';
+0182 <span class="keyword">end</span>
+0183 AllrxnCds = [AllrxnCds;rxnCds];
+0184 Allflx = [Allflx;flx];
+0185 AllBiGGI = [AllBiGGI;BiGGI];
+0186 
+0187 MixBiggRxn = strcat(AllrxnCds,AllBiGGI);
+0188 [~, nflx] = unique(MixBiggRxn);
+0189 Allflx = Allflx(nflx,:);
+0190 AllrxnCds = AllrxnCds(nflx); AllBiGGI = AllBiGGI(nflx);
+0191 <span class="comment">% Check repeated rxns on this map and let user choose one,among several</span>
+0192 <span class="comment">% BiGG IDs, for which the flux value will be displayed on the map.</span>
+0193 [flx,rxnCds] = <a href="#_sub1" class="code" title="subfunction [flxOut,rxnCdsI] = ChckRptRxns (flx,rxnCds,CurrentMap,BiGGI) ">ChckRptRxns</a>(Allflx,AllrxnCds,MapChoice,AllBiGGI);
+0194 
+0195 [rxnCds,nflx1] = unique(rxnCds);
+0196 flx = flx(nflx1,:);
+0197 InrxnCds = rxnCds; Inflx = flx;
+0198 <span class="comment">%----------------------------------------------------------------------</span>
+0199 <span class="keyword">if</span> isempty(flx)
+0200     uiwait(msgbox(<span class="string">'The flux data are not is current pathway!'</span>,<span class="keyword">...</span>
+0201         <span class="string">'Warning'</span>,<span class="string">'warn'</span>));
+0202     close (h);
+0203     <span class="keyword">return</span>
+0204 <span class="keyword">end</span>
+0205 <span class="comment">%======================================================================</span>
+0206 load(which(<span class="string">'Pixdata.mat'</span>))
+0207 fnames = fieldnames(pix_x);
+0208 copt2 = 1;
+0209 rxnCds1={0};rxnPlusid = ({}); rxnCol = ({}); these_ids1 = (0);
+0210 <span class="keyword">for</span> copt = 1:numel(AllRN)
+0211     Temprxn = find(ismember(AllRN,AllRN{copt}));
+0212     <span class="keyword">for</span> copt1 = 1:numel(Temprxn)
+0213         these_ids1(copt2) = AllRNids(Temprxn(copt1));
+0214         rxnPlusid{copt2} = [AllRN{Temprxn(copt1)},num2str(these_ids1(copt2))];
+0215         rxnCol{copt2} = AllRNcol{Temprxn(copt1)}; <span class="comment">% Identify rxns based on their color to remove rxns in other pathways</span>
+0216         rxnCds1{copt2} = AllRN{copt};
+0217         copt2 = copt2 + 1;
+0218     <span class="keyword">end</span>
+0219 <span class="keyword">end</span>
+0220 [rxnPlusid,plusn] = unique(rxnPlusid);
+0221 rxnCds = rxnCds1(plusn);
+0222 rxnCol = rxnCol(plusn);
+0223 these_ids1 = these_ids1(plusn);
+0224 rcid = basemap.rc.rxnid;
+0225 rc_subid = basemap.rc.subid;
+0226 rc_proid = basemap.rc.prodid;
+0227 [shared_ids,~,rcid_n] = intersect(these_ids1,rcid);
+0228 S_rxn = ({}); s3 = 1; S_mat = (0); S_rxnp = ({}); S_cpdcum = []; S_color = ({});
+0229 <span class="keyword">for</span> s11 = 1:numel(shared_ids)
+0230     S_sub_temp = rc_subid{rcid_n(s11)};
+0231     S_pro_temp = rc_proid{rcid_n(s11)};
+0232     S_cpdcum = [S_cpdcum,S_sub_temp,S_pro_temp];
+0233 <span class="keyword">end</span>
+0234 S_cpdcum = unique(S_cpdcum); <span class="comment">% Unique all compounds for these rxns</span>
+0235 
+0236 <span class="comment">% Generate unsigned-stoichiometric matrix and subsequent rxn-rxn graph</span>
+0237 <span class="keyword">for</span> s1 = 1:numel(shared_ids)
+0238     where_rxn = find(these_ids1==shared_ids(s1));
+0239     S_sub_temp = rc_subid{rcid_n(s1)};
+0240     S_pro_temp = rc_proid{rcid_n(s1)};
+0241     <span class="keyword">for</span> s2 = 1:numel(where_rxn)
+0242         S_rxnp{s3} = rxnPlusid{where_rxn(s2)};
+0243         S_rxn{s3} = rxnCds{where_rxn(s2)}; <span class="comment">% Rxns for</span>
+0244         S_color{s3} = rxnCol{where_rxn(s2)};
+0245         [~,S_sub_temp_idx,~] = intersect(S_cpdcum,S_sub_temp);
+0246         [~,S_pro_temp_idx,~] = intersect(S_cpdcum,S_pro_temp);
+0247         <span class="keyword">if</span> size(S_sub_temp_idx,1) &gt; size(S_sub_temp_idx,2)
+0248             S_sub_temp_idx = S_sub_temp_idx';
+0249         <span class="keyword">end</span>
+0250         <span class="keyword">if</span> size(S_pro_temp_idx,1) &gt; size(S_pro_temp_idx,2)
+0251             S_pro_temp_idx = S_pro_temp_idx';
+0252         <span class="keyword">end</span>
+0253         S_mat([S_sub_temp_idx,S_pro_temp_idx],s3) = 1; 
+0254         s3 = s3 + 1;
+0255     <span class="keyword">end</span>
+0256 <span class="keyword">end</span>
+0257 S_mat = sparse(S_mat);
+0258 <span class="comment">% Cpd-cpd graph------------------------------------------------------------</span>
+0259 <span class="comment">% S_graph = zeros(size(S_mat,1)); t_graph = ({});</span>
+0260 <span class="comment">% for i1=1:size(S_mat,1)</span>
+0261 <span class="comment">%     nr = find(S_mat(i1,:));</span>
+0262 <span class="comment">%     if ~isempty(nr)</span>
+0263 <span class="comment">%         for i2 = 1:numel(nr)</span>
+0264 <span class="comment">%             t_graph{i2} = find(S_mat(:,nr(i2)));</span>
+0265 <span class="comment">%             if size(t_graph{i2},1) &gt; size(t_graph{i2},2)</span>
+0266 <span class="comment">%                 t_graph{i2} = t_graph{i2}';</span>
+0267 <span class="comment">%             end</span>
+0268 <span class="comment">%         end</span>
+0269 <span class="comment">%         t_con=[t_graph{:}]; t_con=unique(t_con);</span>
+0270 <span class="comment">%         clear t_graph</span>
+0271 <span class="comment">%         S_graph(i1,setdiff(t_con,i1)) = 1;</span>
+0272 <span class="comment">%     end</span>
+0273 <span class="comment">% end</span>
+0274 <span class="comment">% Rxn-rxn graph -----------------------------------------------------------</span>
+0275 S_graph = zeros(size(S_mat,2)); t_graph = ({});
+0276 <span class="keyword">for</span> i1=1:size(S_mat,2)
+0277     nr = find(S_mat(:,i1));
+0278     <span class="keyword">if</span> ~isempty(nr)
+0279         <span class="keyword">for</span> i2 = 1:numel(nr)
+0280             t_graph{i2} = find(S_mat(nr(i2),:));
+0281             <span class="keyword">if</span> size(t_graph{i2},1) &gt; size(t_graph{i2},2)
+0282                 t_graph{i2} = t_graph{i2}';
+0283             <span class="keyword">end</span>
+0284         <span class="keyword">end</span>
+0285         t_con=[t_graph{:}]; t_con=unique(t_con);
+0286         clear t_graph
+0287         S_graph(i1,setdiff(t_con,i1)) = 1;
+0288     <span class="keyword">end</span>
+0289 <span class="keyword">end</span>
+0290 b_graph = biograph(S_graph);
+0291 [S_bins, where_bins] = conncomp(b_graph); <span class="comment">% Connected parts of rxn-rxn graph</span>
+0292 freq_bins = histc(where_bins,1:S_bins);
+0293 [~,max_freq_bin] = max(freq_bins);
+0294 Secplace_freq_bin = find(freq_bins&gt;2);
+0295  <span class="comment">% All cpds present in the strongest (most connected) part of cpd-cpd</span>
+0296  <span class="comment">% graph:</span>
+0297 <span class="comment">% core_cpds = S_cpdcum(where_bins == max_freq_bin);</span>
+0298 core_rxns= S_rxnp(where_bins == max_freq_bin); <span class="comment">% All cpds present in the strongest (most connected) part of rxn-rxn graph</span>
+0299 Secids = [];
+0300 <span class="keyword">for</span> sctr = 1:numel(Secplace_freq_bin)
+0301     Secids = [Secids,find(where_bins == Secplace_freq_bin(sctr))];
+0302 <span class="keyword">end</span>
+0303 Secondcore_rxns= S_rxnp(Secids);
+0304 [~,orph_id] = intersect(where_bins,find(freq_bins == 1));
+0305 <span class="comment">% [~,double_id] = intersect(where_bins,find(freq_bins == 2));</span>
+0306 <span class="comment">% double_rxns = S_rxnp(double_id);</span>
+0307 orphan_rxns = S_rxnp(orph_id); <span class="comment">% Single rxns which are not connected to any part: These rxns should be removed.</span>
+0308 <span class="comment">% Identify repeated rxns on the final map and remove redundancies based on</span>
+0309 <span class="comment">% core_cpds (from graph connectivity assessment): Among</span>
+0310 <span class="comment">% different version of same rxn (same rxn name and different rxn id), only</span>
+0311 <span class="comment">% those with high connectedness are retained.</span>
+0312 <span class="comment">% Dump color check ////////////////////////////////////////////////////////</span>
+0313 Prominent_col = S_color(where_bins == max_freq_bin);
+0314 Prominent_col = unique(Prominent_col);
+0315 <span class="comment">%//////////////////////////////////////////////////////////////////////////</span>
+0316 [~,S_rxn_idx,~] = unique(S_rxn);
+0317 S_rxn_rptd = S_rxn(setdiff(1:numel(S_rxn),S_rxn_idx)); 
+0318 rmv_rxnPlus_id = []; plus_id = 1;
+0319 <span class="keyword">for</span> c1 = 1:numel(S_rxn_rptd)
+0320     where_rptd = find(ismember(S_rxn,S_rxn_rptd{c1}));
+0321     rmv_mat = []; rmv_id = 1;
+0322     <span class="keyword">for</span> c2 = 1:numel(where_rptd)
+0323 <span class="comment">%         cpds4rptd = find(S_mat(:,where_rptd(c2))); % Only for cpd-cpd graph</span>
+0324         <span class="keyword">if</span> ~isempty(setdiff(S_rxnp(where_rptd(c2)),core_rxns)) &amp;&amp; <span class="keyword">...</span>
+0325               ~isempty(setdiff(S_color(where_rptd(c2)),Prominent_col))     
+0326             rmv_mat(rmv_id) = where_rptd(c2); <span class="comment">% Those who failed the connectivity test</span>
+0327             rmv_id = rmv_id + 1;
+0328         <span class="keyword">end</span>
+0329     <span class="keyword">end</span>
+0330     <span class="keyword">for</span> c3 = 1:numel(rmv_mat)
+0331         rmv_rxnPlus_id(plus_id) = rmv_mat(c3);
+0332         plus_id = plus_id + 1;
+0333     <span class="keyword">end</span>
+0334 <span class="keyword">end</span>
+0335 <span class="comment">% Final check for orphan rxns after removal of rmv_rxnPlus_id ids</span>
+0336 S_graph1 = S_graph;
+0337 S_graph1(rmv_rxnPlus_id,:) = [];
+0338 S_graph1(:,rmv_rxnPlus_id) = [];
+0339 b_graph1 = biograph(S_graph1);
+0340 [S_bins1, where_bins1] = conncomp(b_graph1); 
+0341 freq_bins1 = histc(where_bins1,1:S_bins1);
+0342 [~,orph_id1] = intersect(where_bins1,find(freq_bins1 == 1));
+0343 S_rxnp1 = S_rxnp;
+0344 S_rxnp1(rmv_rxnPlus_id) = [];
+0345 orphan_rxns1 = S_rxnp1(orph_id1);
+0346 <span class="comment">%--------------------------------------------------------------------------</span>
+0347 <span class="comment">% Check for orphan multiple rxns or their children : These rxns do not have</span>
+0348 <span class="comment">% any cpd on basemap, so, do not appear in rxn-rxn graph and therefore,</span>
+0349 <span class="comment">% cannot be identified. To identify these rxns, cpd2rxn is used and through</span>
+0350 <span class="comment">% comparison with cpds in core rxns, its orphanage state can be stablished.</span>
+0351 multirxns_id = setdiff(these_ids1,shared_ids);
+0352 [~, multirxns_id] = intersect(these_ids1,multirxns_id);
+0353 multirxns = rxnCds(multirxns_id);
+0354 <span class="comment">% Read cpd2rxn</span>
+0355 Fileid = fopen(<span class="string">'cpd2rxn.txt'</span>,<span class="string">'r'</span>);
+0356 cpd2rxn = textscan(Fileid,<span class="string">'%s %s'</span>);
+0357 rxnData = strrep(cpd2rxn{2},<span class="string">'rn:'</span>,<span class="string">''</span>);
+0358 cpds = strrep(cpd2rxn{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0359 fclose(Fileid);
+0360 <span class="comment">% Identify cpds of rxns with good connectedness (&gt;2)</span>
+0361 SecCore_ids = these_ids1(ismember(S_rxnp,Secondcore_rxns));
+0362 [~,SecCore_idx] = intersect(basemap.rc.rxnid,SecCore_ids);
+0363 core2_subs = basemap.rc.sub(SecCore_idx); core2_subs = [core2_subs{:}];
+0364 core2_pros = basemap.rc.prod(SecCore_idx); core2_pros = [core2_pros{:}];
+0365 core2_cpds = [core2_subs,core2_pros]; core2_cpds = unique(core2_cpds);
+0366 m2 = 1; rmv_mult_id = [];
+0367 <span class="keyword">for</span> m1 = 1:numel(multirxns)
+0368     curr_cpds = cpds(ismember(rxnData,multirxns(m1)));
+0369     <span class="keyword">if</span> isempty(intersect(curr_cpds,core2_cpds)) || <span class="keyword">...</span>
+0370             (~any(strcmp(MapChoice,<span class="string">'00640'</span>)) &amp;&amp; strcmp(multirxns(m1),<span class="string">'R00928'</span>))
+0371         rmv_mult_id(m2) = multirxns_id(m1);
+0372         m2 = m2 + 1;
+0373     <span class="keyword">end</span>
+0374 <span class="keyword">end</span>
+0375 rxnCds(rmv_mult_id) = [];
+0376 rxnPlusid(rmv_mult_id) = [];
+0377 these_ids1(rmv_mult_id) = [];
+0378 <span class="comment">%--------------------------------------------------------------------------</span>
+0379 <span class="comment">% Modify final rxns and remove orphans and redundants</span>
+0380 rmv_rxnPlus = S_rxnp(rmv_rxnPlus_id); <span class="comment">% Rxns to be removed from final map</span>
+0381 rxnCds(ismember(rxnPlusid,rmv_rxnPlus)) = [];
+0382 these_ids1(ismember(rxnPlusid,rmv_rxnPlus)) = [];
+0383 rxnPlusid(ismember(rxnPlusid,rmv_rxnPlus)) = [];
+0384 rxnCds(ismember(rxnPlusid,orphan_rxns)) = [];
+0385 these_ids1(ismember(rxnPlusid,orphan_rxns)) = [];
+0386 rxnPlusid(ismember(rxnPlusid,orphan_rxns)) = []; <span class="comment">% Remove orphan rxns</span>
+0387 rxnCds(ismember(rxnPlusid,orphan_rxns1)) = [];
+0388 these_ids1(ismember(rxnPlusid,orphan_rxns1)) = [];
+0389 rxnPlusid(ismember(rxnPlusid,orphan_rxns1)) = []; <span class="comment">% Remove orphan rxns after removal of redundant rxns</span>
+0390 <span class="comment">%Flux data arrangement-----------------------------------------------------</span>
+0391 [On2,~] = ismember(rxnPlusid,fnames); <span class="comment">% Idx of all rxns in these maps present in basemap</span>
+0392 field_intsect = rxnPlusid(On2); <span class="comment">% Reference to all rxns in these maps for reading coordinates</span>
+0393 rxnCds = rxnCds(On2); <span class="comment">% Rearrange all rxn IDs in these maps</span>
+0394 
+0395 overlay_rxnPlus = rxnPlusid(ismember(rxnCds,InrxnCds)); <span class="comment">% Idx of rxns for which flux rates are provided</span>
+0396 [~,o2] = ismember(rxnCds,InrxnCds); <span class="comment">% Rearrange rxn IDs and fluxes based on Idx</span>
+0397 F_flx = [];
+0398 o2 = o2(find(o2)); OverlayRxnsIDs = InrxnCds(o2);
+0399 <span class="keyword">for</span> m1 = 1:numel(o2)
+0400     F_flx(m1,:) = Inflx(o2(m1),:);
+0401 <span class="keyword">end</span>
+0402 [On1,~] = (ismember(overlay_rxnPlus,fnames)); <span class="comment">% Find idxs of rxns for which flux rates are provided and present in basemap</span>
+0403 field_intsect_overlay = overlay_rxnPlus(On1); <span class="comment">% Reference to all rxns with flux rates</span>
+0404 F_flx = F_flx(On1,:); <span class="comment">% All flux rates</span>
+0405 OverlayRxnsIDs = OverlayRxnsIDs(On1); <span class="comment">% KEGG rxn IDs corresponding to field_intsect_overlay</span>
+0406 flx = F_flx;
+0407 <span class="comment">%--------------------------------------------------------------------------</span>
+0408 LineStrength = 7;
+0409 pixx = []; pixy =[];
+0410 <span class="keyword">for</span> i4 = 1:numel(field_intsect)
+0411     pixx = [pixx;pix_x.(field_intsect{i4})];
+0412     pixy = [pixy;pix_y.(field_intsect{i4})];
+0413 <span class="keyword">end</span>
+0414 min_x = min(pixx); max_x = max(pixx); min_y = min(pixy); max_y = max(pixy);
+0415 pixx = []; pixy = []; Allx = ({}); Ally = ({}); Allx4Arrow = ({});Ally4Arrow = ({});
+0416 RefOverlapData = cell(numel(field_intsect),1);
+0417 I = ones(max_y-min_y+50,max_x-min_x+50,3);
+0418 I(:,:,1) = I(:,:,1).*0.8; I(:,:,2) = I(:,:,2).*0.992; I(:,:,3) = I(:,:,3).*0.8;
+0419  
+0420 <span class="keyword">for</span> i4 = 1:numel(field_intsect)
+0421     pixx = pix_x.(field_intsect{i4})-min_x+10;
+0422     pixy = pix_y.(field_intsect{i4})-min_y+10;
+0423     RefOverlapData{i4} = [num2str(numel(pixx)),<span class="string">','</span>,<span class="keyword">...</span>
+0424         num2str(mean(pixx)),<span class="string">','</span>,num2str(numel(pixy)),<span class="string">','</span>,num2str(mean(pixy))];
+0425     Allx4Arrow{i4} = pixx; Ally4Arrow{i4} = pixy;
+0426     [I,pixx_temp,pixy_temp,pixx_temp1,pixy_temp1] = <a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>(I,pixx,pixy,LineStrength,[0 0 0]);
+0427     <span class="keyword">if</span> numel(pixx_temp)&gt;20; pixx_temp(1:10)=[]; pixx_temp(end-10:end)=[];<span class="keyword">end</span>;
+0428     <span class="keyword">if</span> numel(pixy_temp)&gt;20; pixy_temp(1:10)=[]; pixy_temp(end-10:end)=[];<span class="keyword">end</span>;
+0429     <span class="keyword">if</span> numel(pixx_temp1)&gt;20; pixx_temp1(1:10)=[]; pixx_temp1(end-10:end)=[];<span class="keyword">end</span>;
+0430     <span class="keyword">if</span> numel(pixy_temp1)&gt;20; pixy_temp1(1:10)=[]; pixy_temp1(end-10:end)=[];<span class="keyword">end</span>;
+0431     Allx{i4} = [pixx_temp;pixx_temp1];
+0432     Ally{i4} = [pixy_temp;pixy_temp1];
+0433     clear pixx pixy
+0434 <span class="keyword">end</span>
+0435 
+0436 <span class="comment">% Compounds ---------------------------------------------------------------</span>
+0437 [~,n1] = intersect(basemap.rc.rxnid,these_ids1);
+0438 a1 = basemap.rc.subid(n1); a1 = [a1{:}];
+0439 b1 = basemap.rc.prodid(n1); b1 = [b1{:}];
+0440 a=[a1,b1];
+0441 a=unique(a);
+0442 [~,n21]=intersect(basemap.c.cpdid,a);
+0443 [~,n22]=intersect(basemap.c.glid,a);
+0444 cpdnames1 = basemap.c.cpd(n21);
+0445 cpdnames2 = basemap.c.gl(n22);
+0446 cpdnames = [cpdnames1,cpdnames2];
+0447 cpdxy1 = basemap.c.cpdxy(n21,:);
+0448 cpdxy2 = basemap.c.glxy(n22,:);
+0449 cpdxy = [cpdxy1;cpdxy2];
+0450 x_cpd = cpdxy(:,1) - min_x - 18;
+0451 y_cpd = cpdxy(:,2) - min_y;
+0452 
+0453 <span class="comment">% Flux overlay ============================================================</span>
+0454 <span class="comment">% The time step between two consecutive images:</span>
+0455 <span class="keyword">if</span> ~exist(<span class="string">'Timevalue'</span>,<span class="string">'var'</span>) || isempty(Timevalue)
+0456     Timevalue=0.1;
+0457 <span class="keyword">end</span>
+0458 
+0459 <span class="comment">% Time points: % Disabled in current settings /////////////////////////////</span>
+0460 <span class="comment">% if ~exist('mTime','var') || isempty(mTime)</span>
+0461 <span class="comment">%     mTime=1:size(Outflx,2);</span>
+0462 <span class="comment">% end</span>
+0463 <span class="comment">%</span>
+0464 <span class="comment">% if ~exist('TimeUnit','var') || isempty(TimeUnit)</span>
+0465 <span class="comment">%     TimeUnit=' ';</span>
+0466 <span class="comment">% end</span>
+0467 <span class="comment">%//////////////////////////////////////////////////////////////////////////</span>
+0468 <span class="keyword">if</span> ~exist(<span class="string">'Svid'</span>,<span class="string">'var'</span>) || isempty(Svid)
+0469     Svid = 0; <span class="comment">%Does not convert images to video</span>
+0470 <span class="keyword">end</span>
+0471 <span class="comment">% Check wether user wants to save images (using 'Save images checkbox')</span>
+0472 <span class="keyword">if</span> ~exist(<span class="string">'SVal'</span>,<span class="string">'var'</span>) || isempty(SVal)
+0473     SVal = 0; <span class="comment">% Does not save images.</span>
+0474 <span class="keyword">end</span>
+0475 <span class="keyword">if</span> SVal
+0476     FolderNm=<span class="string">'NetDraw output images'</span>;
+0477     Tn=uigetdir(pwd,[<span class="string">'Folder to save images. To save in current folder:'</span>,<span class="keyword">...</span>
+0478     <span class="string">'Cancel'</span>]);
+0479     <span class="keyword">if</span> ~Tn
+0480         <span class="keyword">if</span> ~exist(FolderNm,<span class="string">'file'</span>) <span class="comment">% Check if folder already exists</span>
+0481             mkdir(FolderNm);
+0482             FolderPath=fullfile(pwd,FolderNm);
+0483         <span class="keyword">else</span>
+0484             FolderPath=fullfile(pwd,FolderNm);
+0485         <span class="keyword">end</span>
+0486     <span class="keyword">else</span>
+0487         <span class="keyword">if</span> ~exist(fullfile(Tn,FolderNm),<span class="string">'file'</span>) <span class="comment">% Check if folder already exists</span>
+0488             mkdir(fullfile(Tn,FolderNm));
+0489             FolderPath=fullfile(Tn,FolderNm);
+0490         <span class="keyword">else</span>
+0491             FolderPath=fullfile(Tn,FolderNm);
+0492         <span class="keyword">end</span>
+0493     <span class="keyword">end</span>
+0494 <span class="keyword">end</span>
+0495 Cm=jet(numel(field_intsect_overlay)); <span class="comment">% [Warning] Changing Cm matrix is not recommended</span>
+0496 <span class="keyword">if</span> numel(MapChoice) &gt; 4
+0497     TempTitle = MapChoice(1:4);
+0498     TempTitle = strjoin(TempTitle,<span class="string">','</span>);
+0499     TempTitle = [TempTitle,<span class="string">',...'</span>];
+0500 <span class="keyword">else</span>
+0501     TempTitle = strjoin(MapChoice,<span class="string">','</span>);
+0502 <span class="keyword">end</span>
+0503 <span class="comment">%Draw images on this panel</span>
+0504 H1 = figure;
+0505 h1 = axes;
+0506 set(H1,<span class="string">'position'</span>,get(0,<span class="string">'screensize'</span>));
+0507 set(h1,<span class="string">'position'</span>,[0,0,1,1],<span class="string">'xtick'</span>,[],<span class="string">'ytick'</span>,[]);
+0508 set(H1,<span class="string">'toolbar'</span>,<span class="string">'figure'</span>);
+0509 set(H1,<span class="string">'menubar'</span>,<span class="string">'figure'</span>);
+0510 set(H1,<span class="string">'name'</span>,TempTitle,<span class="string">'numbertitle'</span>,<span class="string">'off'</span>)
+0511 <span class="comment">% Arbitrary color and font properties % Disabled in current settings///////</span>
+0512 <span class="comment">% if ~exist('Viso','var') || ~Viso</span>
+0513 <span class="comment">%     TextFont.FontName = 'Arial';</span>
+0514 <span class="comment">%     TextFont.FontWeight = 'normal';</span>
+0515 <span class="comment">%     TextFont.FontAngle = 'normal';</span>
+0516 <span class="comment">%     TextFont.FontUnits = 'points';</span>
+0517 <span class="comment">%     TextFont.FontSize = 8;</span>
+0518 <span class="comment">% end</span>
+0519 <span class="comment">% if exist('Viso','var') &amp;&amp; Viso</span>
+0520 <span class="comment">%     waitfor(VisualProp)</span>
+0521 <span class="comment">%     TextFont = getappdata(0,'TextFont');</span>
+0522 <span class="comment">%     if isempty(TextFont)</span>
+0523 <span class="comment">%         TextFont.FontName = 'Arial';</span>
+0524 <span class="comment">%         TextFont.FontWeight = 'normal';</span>
+0525 <span class="comment">%         TextFont.FontAngle = 'normal';</span>
+0526 <span class="comment">%         TextFont.FontUnits = 'points';</span>
+0527 <span class="comment">%         TextFont.FontSize = 8;</span>
+0528 <span class="comment">%     end</span>
+0529 <span class="comment">% end</span>
+0530 <span class="comment">%//////////////////////////////////////////////////////////////////////////</span>
+0531 <span class="comment">% Visualization -----------------------------------------------------------</span>
+0532 flx_abs = abs(flx);
+0533 <span class="keyword">for</span> k=1:size(flx,2)
+0534     ArX = ({}); ArY = ArX; McmCollect = zeros(size(flx,1),3); 
+0535     OverlapData = cell(size(flx,1),1);
+0536     <span class="keyword">for</span> m=1:size(flx,1)
+0537         <span class="comment">% Normalize colors and insertion into enzyme boxes</span>
+0538         flxMax=max(abs(flx(:)));
+0539         flxMin=min(abs(flx(:)));
+0540         <span class="keyword">if</span> flxMax==flxMin <span class="comment">% One row (i.e. for 1 rxn)</span>
+0541             flxMax=max(abs(flx(:)));
+0542             flxMin=min(abs(flx(:)));
+0543         <span class="keyword">end</span>
+0544         flxSl=(size(Cm,1)-1)./(flxMax-flxMin);
+0545         <span class="keyword">if</span> isinf(flxSl) <span class="comment">% in case of flxMax == flxMin</span>
+0546             flxSl = 1e15.*(size(Cm,1)-1);
+0547         <span class="keyword">end</span>
+0548         Mcm=ceil((flx_abs(m,k)-flxMax).*flxSl+size(Cm,1));
+0549 
+0550         <span class="comment">% Show the image:</span>
+0551         pixx = pix_x.(field_intsect_overlay{m})-min_x+10;
+0552         pixy = pix_y.(field_intsect_overlay{m})-min_y+10;
+0553         OverlapData{m} = [num2str(numel(pixx)),<span class="string">','</span>,<span class="keyword">...</span>
+0554             num2str(mean(pixx)),<span class="string">','</span>,num2str(numel(pixy)),<span class="string">','</span>,num2str(mean(pixy))];
+0555         I = <a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>(I,pixx,pixy,LineStrength,[Cm(Mcm,1) Cm(Mcm,2) Cm(Mcm,3)]);
+0556         ArX{m} = pixx; ArY{m} = pixy;
+0557         McmCollect(m,:) = [Cm(Mcm,1) Cm(Mcm,2) Cm(Mcm,3)];               
+0558         clear pixx pixy        
+0559     <span class="keyword">end</span>
+0560      <span class="comment">%---------------------------------------------------------------------</span>
+0561     [I,ArXo,ArYo,ArrowChek,RxnId] = <a href="OverlapChecker.html" class="code" title="function [I,ArX,ArY,ArrowChek,DoubleData] = OverlapChecker(I,ArX,ArY,OverlapData,flx,McmCollect,field_intsect_overlay,LineStrength)">OverlapChecker</a>(I,ArX,ArY,OverlapData,<span class="keyword">...</span>
+0562         flx(:,k),McmCollect,field_intsect_overlay,LineStrength);
+0563     [ArrowX,ArrowY,Cntrs] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(Allx4Arrow,Ally4Arrow,<span class="keyword">...</span>
+0564         min_x,min_y,field_intsect,basemap,RxnId,RefOverlapData,<span class="string">'bigg'</span>,field_intsect_overlay);
+0565     I = <a href="MapTrimmer.html" class="code" title="function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)">MapTrimmer</a>(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,[0.8 0.992 0.8]);
+0566     [ArrowX1,ArrowY1,Cntrs1,Director] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(ArXo,<span class="keyword">...</span>
+0567         ArYo,min_x,min_y,field_intsect_overlay,basemap,[],[],<span class="string">'bigg'</span>,[]);
+0568     I = <a href="MapTrimmerF.html" class="code" title="function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,DoubleIds,Idx,LineStrength,ColSpec)">MapTrimmerF</a>(I,ArrowX1,ArrowY1,Cntrs1,ArXo,ArYo,RxnId,<span class="keyword">...</span>
+0569         field_intsect_overlay,LineStrength,[0.8 0.992 0.8]);
+0570     <span class="comment">% Compounds overlay ---------------------------------------------------</span>
+0571     <span class="keyword">for</span> i1 = 1:size(cpdxy,1)
+0572         cc1 = x_cpd(i1)-0.7*cpdxy(i1,4):x_cpd(i1)+cpdxy(i1,4)*0.7;
+0573         cc2 = y_cpd(i1)-cpdxy(i1,4)*0.7:y_cpd(i1)+cpdxy(i1,4)*0.7;
+0574         [x,y] = meshgrid(cc1,cc2);
+0575         f1= ((x-x_cpd(i1)).^2+(y-y_cpd(i1)).^2) &lt;=(cpdxy(i1,4)*0.7)^2;
+0576         f2= ((x-x_cpd(i1)).^2+(y-y_cpd(i1)).^2) &lt;=(cpdxy(i1,4)*0.55)^2;
+0577         x1 = x(f1); y1= y(f1); x1=round(x1); y1=round(y1);
+0578         x2 = x(f2); y2= y(f2); x2=round(x2); y2=round(y2);
+0579         x1(~y1) = []; y1(~y1) = [];
+0580         x2(~y2) = []; y2(~y2) = [];
+0581         <span class="keyword">for</span> i2 = 1:numel(x1) 
+0582             I(y1(i2),x1(i2),1) = 0.502;
+0583             I(y1(i2),x1(i2),2) = 0.502;
+0584             I(y1(i2),x1(i2),3) = 0;
+0585         <span class="keyword">end</span>
+0586         <span class="keyword">for</span> i2 = 1:numel(x2)
+0587             I(y2(i2),x2(i2),1) = 0;
+0588             I(y2(i2),x2(i2),2) = 1;
+0589             I(y2(i2),x2(i2),3) = 0.498;
+0590         <span class="keyword">end</span>
+0591         clear f1 x1 x2 y1 y2 x y cc1 cc2
+0592     <span class="keyword">end</span>
+0593     imshow(I,<span class="string">'InitialMagnification'</span>, <span class="string">'fit'</span>,<span class="string">'Parent'</span>,h1); 
+0594     <span class="comment">% Disabled in current settings ////////////////////////////////////////</span>
+0595     <span class="comment">% Show time-series values on the corresponding image</span>
+0596 <span class="comment">%     TimePropUDF ('One',TextFont,TimeUnit,mTime,k,h1)</span>
+0597     <span class="comment">%//////////////////////////////////////////////////////////////////////</span>
+0598     <a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>(ArrowX,ArrowY,[],0,4,[]); 
+0599     flxDirect.D = Director; flxDirect.F = flx(:,k);
+0600     <a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>(ArrowX1,ArrowY1,ArrowChek,McmCollect,4,flxDirect);
+0601 
+0602     <span class="comment">% Process pixhover settings--------------------------------------------</span>
+0603     Mdl = getappdata(0,<span class="string">'Mdl'</span>);
+0604     Uni = load(which(<span class="string">'UniModelKEGG.mat'</span>));
+0605     CRxns = getappdata(0,<span class="string">'CRxns'</span>); <span class="comment">% Map of consistent rxns</span>
+0606     <span class="keyword">if</span> ~isempty(CRxns) &amp;&amp; k == 1
+0607         ConOverlayRxnID = OverlayRxnsIDs;
+0608         <span class="keyword">for</span> cnter = 1:numel(CRxns.C)
+0609             ConOverlayRxnID(ismember(OverlayRxnsIDs,CRxns.C{cnter})) = <span class="keyword">...</span>
+0610                 {[CRxns.C{cnter},<span class="string">'('</span>,CRxns.O{cnter},<span class="string">')'</span>]};
+0611             OverlayRxnsIDs(ismember(OverlayRxnsIDs,CRxns.C{cnter})) = <span class="keyword">...</span>
+0612                 CRxns.O(cnter);
+0613         <span class="keyword">end</span>
+0614     <span class="keyword">elseif</span> isempty(CRxns)
+0615         ConOverlayRxnID = OverlayRxnsIDs;
+0616     <span class="keyword">end</span>
+0617     K = Uni.B2Kegg.K; K1 = Mdl.B2Kegg.K;
+0618     B = Uni.B2Kegg.B; B1 = Mdl.B2Kegg.B;
+0619     clear Uni
+0620     HoverUs.K = K1; HoverUs.B = B1;
+0621     HoverUs.R = OverlayRxnsIDs; HoverUs.P = field_intsect_overlay';
+0622     HoverUs.CR = ConOverlayRxnID;
+0623     HoverAll.R = rxnCds; HoverAll.P = field_intsect;
+0624     HoverAll.K = K; HoverAll.B = B;
+0625     <a href="pixHover.html" class="code" title="function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1)">pixHover</a>(x_cpd,y_cpd,0.7*cpdxy(1,4),cpdnames,Allx,Ally,<span class="keyword">...</span>
+0626         HoverAll,HoverUs,abs(flx(:,k)),h1,H1)
+0627 
+0628     <span class="comment">% Show colorbar--------------------------------------------------------</span>
+0629     flxstr=linspace(flxMin,flxMax,7);
+0630     flxstr1=cell(numel(flxstr),1);
+0631     <span class="keyword">for</span> ir=1:numel(flxstr)
+0632         flxstr1{ir,1}=num2str(flxstr(ir),2);
+0633     <span class="keyword">end</span>
+0634     ch = colorbar(<span class="string">'peer'</span>,h1);
+0635     set(ch,<span class="string">'yticklabel'</span>,flxstr1)
+0636     <span class="comment">% Check for further settings ------------------------------------------</span>
+0637     IsWanting = input(<span class="string">'Do you want to post-process the image? (y/n):'</span>,<span class="string">'s'</span>);
+0638     <span class="keyword">if</span> isempty(IsWanting) || strcmp(IsWanting,<span class="string">'y'</span>)
+0639         setappdata(0,<span class="string">'Img'</span>,I);
+0640         setappdata(0,<span class="string">'ParentAx'</span>,h1);
+0641         setappdata(0,<span class="string">'ParentFig'</span>,H1);
+0642         PostData.field_intsect = field_intsect;PostData.Allx=Allx;
+0643         PostData.Ally=Ally;PostData.min_x=min_x;PostData.min_y=min_y;
+0644         PostData.RefOverlapData=RefOverlapData;PostData.Allx4Arrow=Allx4Arrow;
+0645         PostData.Ally4Arrow=Ally4Arrow;PostData.ArX=ArX;PostData.ArY=ArY;
+0646         PostData.OverlapData=OverlapData;PostData.field_intsect_overlay=field_intsect_overlay;
+0647         PostData.ArXo=ArXo;PostData.ArYo=ArYo;PostData.ArrowChek=ArrowChek;
+0648         PostData.RxnId=RxnId;PostData.ArrowX=ArrowX;PostData.ArrowY=ArrowY;
+0649         PostData.Cntrs=Cntrs;PostData.ArrowX1=ArrowX1;PostData.ArrowY1=ArrowY1;
+0650         PostData.Cntrs1=Cntrs1;PostData.McmCollect=McmCollect;
+0651         PostData.cpdnames=cpdnames;PostData.cpdxy=cpdxy;PostData.x_cpd=x_cpd;
+0652         PostData.y_cpd=y_cpd;PostData.flx=flx;PostData.rxnCds=rxnCds;
+0653         PostData.max_x=max_x;PostData.max_y=max_y;PostData.basemap=basemap;
+0654         PostData.OverlayRxnsIDs = OverlayRxnsIDs; PostData.k = k;
+0655         PostData.ConOverlayRxnID = ConOverlayRxnID;
+0656 <span class="comment">%         PostData.TimeUnit=TimeUnit;PostData.TextFont=TextFont;</span>
+0657 <span class="comment">%         PostData.mTime=mTime;</span>
+0658         setappdata(0,<span class="string">'PostData'</span>,PostData);
+0659         uiwait(<a href="MapAdjuster.html" class="code" title="function varargout = MapAdjuster(varargin)">MapAdjuster</a>);
+0660     <span class="keyword">end</span>
+0661     <span class="comment">% Save to image files within a new folder------------------------------</span>
+0662     <span class="keyword">if</span> SVal
+0663         <span class="keyword">if</span> k == 1
+0664             waitfor(<a href="SaveImgs.html" class="code" title="function varargout = SaveImgs(varargin)">SaveImgs</a>)
+0665             ImgRes = getappdata(0,<span class="string">'ImgRes'</span>);
+0666             ImgFrmt = getappdata(0,<span class="string">'ImgFrmt'</span>);
+0667             <span class="keyword">if</span> isempty(ImgRes)
+0668                 ImgRes=1; <span class="comment">% Corresponds to 300 dpi in SaveFlxImgs</span>
+0669             <span class="keyword">elseif</span> isempty(ImgFrmt)
+0670                 ImgFrmt=1; <span class="comment">% Corresponds to PNG in SaveFlxImgs</span>
+0671             <span class="keyword">end</span>
+0672         <span class="keyword">end</span>
+0673         <a href="SaveFlxImgs.html" class="code" title="function SaveFlxImgs (hax,FolderPath,k,ImgRes,ImgFrmt)">SaveFlxImgs</a>(getappdata(0,<span class="string">'ParentFig'</span>),FolderPath,k,ImgRes,ImgFrmt);
+0674     <span class="keyword">end</span>
+0675     <span class="comment">%----------------------------------------------------------------------</span>
+0676     pause(Timevalue); <span class="comment">% Time step between consecutive images</span>
+0677 <span class="keyword">end</span>
+0678 <span class="keyword">if</span> Svid
+0679     <a href="Img2Animation.html" class="code" title="function Img2Animation (Idf)">Img2Animation</a>(Svid)
+0680 <span class="keyword">end</span>
+0681 
+0682 <span class="comment">%==========================================================================</span>
+0683 <span class="comment">% Subfunctions ------------------------------------------------------------</span>
+0684 <span class="comment">%==========================================================================</span>
+0685 <a name="_sub1" href="#_subfunctions" class="code">function [flxOut,rxnCdsI] = ChckRptRxns (flx,rxnCds,CurrentMap,BiGGI) </a><span class="comment">% NetDraw</span>
+0686 <span class="comment">% First, rxns are pruned based on manual assessment of pathways</span>
+0687 rxnCdsI = rxnCds;
+0688 
+0689 Fileid1 = fopen(<span class="string">'rxnbiggmap.txt'</span>,<span class="string">'r'</span>);
+0690 Rxnbmap = textscan(Fileid1,<span class="string">'%s %s %s %d'</span>);
+0691 Rtemp = Rxnbmap{1}; Btemp = Rxnbmap{2}; Mtemp = Rxnbmap{3};
+0692 Dtemp = Rxnbmap{4};
+0693 fclose(Fileid1);
+0694 AllrxnCdsI = ({}); AllBiGGI = ({}); Allflx = [];
+0695 <span class="keyword">for</span> i1 = 1:numel(CurrentMap)
+0696     <span class="keyword">if</span> any(ismember(Mtemp,CurrentMap{i1}))
+0697         ChR = Rtemp(ismember(Mtemp,CurrentMap{i1}));
+0698         ChB = Btemp(ismember(Mtemp,CurrentMap{i1}));
+0699         ChD = Dtemp(ismember(Mtemp,CurrentMap{i1}));
+0700         <span class="keyword">for</span> ct = 1:numel(ChR)
+0701             n1_chr = find(ismember(rxnCdsI,ChR{ct}));
+0702             n1_chb = find(ismember(BiGGI,ChB{ct}));
+0703             <span class="keyword">if</span> ~isempty(intersect(n1_chr,n1_chb))
+0704                 Rmvit = intersect(n1_chr,n1_chb);
+0705                 <span class="keyword">for</span> ct1 = 1:numel(Rmvit)
+0706                     <span class="keyword">if</span> strcmp(BiGGI{Rmvit(ct1)},ChB{ct})
+0707                         Tmpflx = flx(Rmvit(ct1),:);
+0708                     <span class="keyword">end</span>
+0709                 <span class="keyword">end</span>
+0710                 rxnCdsI(Rmvit) = [];
+0711                 BiGGI(Rmvit) = [];
+0712                 flx(Rmvit,:) = [];
+0713                 <span class="keyword">if</span> ChD(ct)
+0714                     CurL1 = numel(rxnCdsI) + 1;
+0715                     rxnCdsI{CurL1} = ChR{ct};
+0716                     BiGGI{CurL1} = ChB{ct};
+0717                     flx(CurL1,:) = Tmpflx;
+0718                 <span class="keyword">end</span>
+0719             <span class="keyword">end</span>
+0720         <span class="keyword">end</span>
+0721     <span class="keyword">end</span>
+0722     <span class="keyword">if</span> size(rxnCdsI,2) &gt; size(rxnCdsI,1)
+0723         rxnCdsI = rxnCdsI';
+0724     <span class="keyword">end</span>
+0725     <span class="keyword">if</span> size(BiGGI,2) &gt; size(BiGGI,2)
+0726         BiGGI = BiGGI';
+0727     <span class="keyword">end</span>
+0728     AllrxnCdsI = [AllrxnCdsI;rxnCdsI];
+0729     AllBiGGI = [AllBiGGI;BiGGI];
+0730     Allflx = [Allflx;flx];
+0731 <span class="keyword">end</span>
+0732 MixBiggRxn = strcat(AllrxnCdsI,AllBiGGI);
+0733 [~, nflx] = unique(MixBiggRxn);
+0734 Allflx = Allflx(nflx,:);
+0735 AllrxnCdsI = AllrxnCdsI(nflx); AllBiGGI = AllBiGGI(nflx);
+0736 rxnCdsI = AllrxnCdsI;
+0737 BiGGI = AllBiGGI;
+0738 flx = Allflx;
+0739 <span class="comment">%------</span>
+0740 [R1,~,R3] = unique(rxnCdsI,<span class="string">'stable'</span>);
+0741 countR = 1;RptCount=(0);
+0742 <span class="keyword">while</span> numel(R3)
+0743     RptCount(countR) = numel(find(R3==R3(1)));
+0744     R3(R3==R3(1)) = [];
+0745     countR = countR+1;
+0746 <span class="keyword">end</span>
+0747 FndRxnLoci = find(RptCount&gt;1);
+0748 RptRxns = {0}; RptBiggs = {0};RptFlx= {0};
+0749 <span class="keyword">for</span> tctr = 1:numel(FndRxnLoci)
+0750     RptRxnsI = R1(FndRxnLoci(tctr));
+0751     RptRxns{tctr} = rxnCdsI(ismember(rxnCdsI,RptRxnsI));
+0752     RptBiggs{tctr} = BiGGI(ismember(rxnCdsI,RptRxnsI));
+0753     RptFlxLoci = ismember(rxnCdsI,RptRxnsI);
+0754     RptFlx{tctr} = flx(RptFlxLoci,:);
+0755 <span class="keyword">end</span>
+0756 <span class="keyword">if</span> any(RptCount&gt;1) 
+0757     setappdata(0,<span class="string">'RptBiggs'</span>,RptBiggs);
+0758     setappdata(0,<span class="string">'CurrentMap'</span>,<span class="string">'All maps'</span>);
+0759     setappdata(0,<span class="string">'RptRxns'</span>,RptRxns);
+0760     setappdata(0,<span class="string">'RptFlx'</span>,RptFlx);
+0761     waitfor(<a href="KeggDrawTable.html" class="code" title="function varargout = KeggDrawTable(varargin)">KeggDrawTable</a>)
+0762     SlctdIds = getappdata(0,<span class="string">'data1'</span>);
+0763     <span class="keyword">if</span> ~isempty(SlctdIds)
+0764         NtSel = RptBiggs(ismember(SlctdIds,<span class="string">'Not slected'</span>));
+0765         OwnSel = <a href="#_sub2" class="code" title="subfunction OutSel = StubSel(InSel)">StubSel</a>(NtSel);
+0766         SlctdIds(ismember(SlctdIds,<span class="string">'Not slected'</span>)) = OwnSel;
+0767     <span class="keyword">else</span>
+0768         SlctdIds = <a href="#_sub2" class="code" title="subfunction OutSel = StubSel(InSel)">StubSel</a>(RptBiggs);
+0769     <span class="keyword">end</span>
+0770     <span class="comment">% Refine flx</span>
+0771     <span class="keyword">for</span> count = 1:numel(SlctdIds)
+0772         Fi = find(ismember(RptBiggs{count},SlctdIds{count}));
+0773         <span class="keyword">for</span> count1 = 1:size(RptFlx{count},1)
+0774             RptFlx{count}(count1,:) = RptFlx{count}(Fi,:);
+0775         <span class="keyword">end</span>
+0776     <span class="keyword">end</span>
+0777     <span class="keyword">for</span> count1 = 1:size(RptRxns,2)
+0778         Fi1 = find(ismember(rxnCdsI,RptRxns{count1}));
+0779         flx(Fi1,:) = RptFlx{count1};
+0780     <span class="keyword">end</span>
+0781     flxOut = flx;
+0782     
+0783 <span class="keyword">else</span>
+0784     flxOut = flx;
+0785 <span class="keyword">end</span>
+0786 <span class="comment">% Remove all appdata</span>
+0787 AT=getappdata(0);
+0788 AT1 = fieldnames(AT);
+0789 <span class="keyword">for</span> co = 1:length(AT1)
+0790     <span class="keyword">if</span> ~strcmp(AT1{co},<span class="string">'BiGG4KeggDraw'</span>) &amp;&amp; ~strcmp(AT1{co},<span class="string">'MultiB'</span>)<span class="keyword">...</span>
+0791             &amp;&amp; ~strcmp(AT1{co},<span class="string">'MultiK'</span>) &amp;&amp; ~strcmp(AT1{co},<span class="string">'MultiFlx'</span>) <span class="keyword">...</span>
+0792             &amp;&amp; ~strcmp(AT1{co},<span class="string">'BiGGModel'</span>) &amp;&amp; ~strcmp(AT1{co},<span class="string">'Mdl'</span>) <span class="keyword">...</span>
+0793             &amp;&amp; ~strcmp(AT1{co},<span class="string">'CRxns'</span>)
+0794         rmappdata(0,AT1{co});
+0795     <span class="keyword">end</span>
+0796 <span class="keyword">end</span>
+0797 <span class="comment">%--------------------------------------------------------------------------</span>
+0798 <a name="_sub2" href="#_subfunctions" class="code">function OutSel = StubSel(InSel)</a>
+0799 OutSel = {0};
+0800 <span class="keyword">for</span> count1 = 1:numel(InSel)
+0801     Tinder = regexp(InSel{count1},<span class="string">'\w*p$'</span>); <span class="comment">%Peroxisome</span>
+0802     Tinder = find(~cellfun(<span class="string">'isempty'</span>, Tinder));
+0803     CurSel = InSel{count1};
+0804     <span class="keyword">if</span> (numel(CurSel)-numel(Tinder))==1
+0805         OutSel{count1} = CurSel{~ismember(CurSel,CurSel(Tinder))};
+0806     <span class="keyword">else</span> <span class="comment">%Nothing found or code cannot decide</span>
+0807         OutSel{count1} = CurSel{1};
+0808     <span class="keyword">end</span>
+0809 <span class="keyword">end</span>
+0810 <span class="comment">%--------------------------------------------------------------------------</span>
+0811 <a name="_sub3" href="#_subfunctions" class="code">function [OutFlx,OutRxn,OutBigg] = ChckMultiRxns(BiGG4KeggDraw,RxnCds,rxns4thismap)</a>
+0812 MultiB = getappdata(0,<span class="string">'MultiB'</span>); 
+0813 MultiK = getappdata(0,<span class="string">'MultiK'</span>);
+0814 MultiFlx = getappdata(0,<span class="string">'MultiFlx'</span>);
+0815 
+0816 OutFlx =[];
+0817 OutBigg = ({});
+0818 OutRxn = ({});
+0819 <span class="keyword">while</span> numel(MultiB)
+0820     Bigg1Loci = find(ismember(MultiB,MultiB{1}));
+0821     KeggTemp = MultiK(Bigg1Loci);
+0822     <span class="keyword">if</span> all(ismember(KeggTemp,rxns4thismap)) <span class="comment">% All child rxns are present in map</span>
+0823         FlxTemp = MultiFlx(Bigg1Loci(1),:);
+0824         OutFlx = [OutFlx;FlxTemp];
+0825         OutRxn = [OutRxn;RxnCds(ismember(BiGG4KeggDraw,MultiB{1}))];
+0826         OutBigg = [OutBigg;MultiB{1}];
+0827     <span class="keyword">end</span>
+0828     MultiB(Bigg1Loci) = [];
+0829     MultiK(Bigg1Loci) = [];
+0830     MultiFlx(Bigg1Loci,:) = [];
+0831 <span class="keyword">end</span>
+0832 <span class="comment">% -------------------------------------------------------------------------</span>
+0833 <a name="_sub4" href="#_subfunctions" class="code">function [rxnOut,flxOut] = ConsistRxns(BiGG4KeggDraw,rxnIn,flxIn,MapChoice)</a>
+0834 
+0835 <span class="comment">% Read rxn2map ========================</span>
+0836 Fileid1 = fopen(<span class="string">'rxn2map.txt'</span>,<span class="string">'r'</span>);
+0837 rxn2map = textscan(Fileid1,<span class="string">'%s %s'</span>);
+0838 RawRxns1 = rxn2map{1};
+0839 RawMaps = rxn2map{2};
+0840 [Loci1,~] = regexp(RawMaps, <span class="string">'path:rn'</span>);
+0841 Loci2 = ~cellfun(<span class="string">'isempty'</span>, Loci1);
+0842 RawMaps(Loci2) = [];
+0843 RawRxns1(Loci2) = [];
+0844 Maps = strrep(RawMaps,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0845 Rxns1 = strrep(RawRxns1,<span class="string">'rn:'</span>,<span class="string">''</span>); 
+0846 <span class="comment">% Read ec2rxn =========================</span>
+0847 Fileid1 = fopen(<span class="string">'ec2rxn.txt'</span>,<span class="string">'r'</span>);
+0848 ec2rxn = textscan(Fileid1,<span class="string">'%s %s'</span>);
+0849 RawEc= ec2rxn{1};
+0850 RawRxns = ec2rxn{2};
+0851 EC = strrep(RawEc,<span class="string">'ec:'</span>,<span class="string">''</span>);
+0852 Rxns = strrep(RawRxns,<span class="string">'rn:'</span>,<span class="string">''</span>);
+0853 FoundRxnsID = (0); RxnChk = rxnIn;
+0854 fclose(Fileid1);
+0855 <span class="comment">% Read cpd2rxn =======================</span>
+0856 Fileid = fopen(<span class="string">'cpd2rxn.txt'</span>,<span class="string">'r'</span>);
+0857 cpd2rxn = textscan(Fileid,<span class="string">'%s %s'</span>);
+0858 rxnData = strrep(cpd2rxn{2},<span class="string">'rn:'</span>,<span class="string">''</span>);
+0859 cpds = strrep(cpd2rxn{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0860 <span class="comment">% Read cpd2weight ===================</span>
+0861 Fileid = fopen(<span class="string">'cpd2weight.txt'</span>,<span class="string">'r'</span>);
+0862 cpd2weight = textscan(Fileid,<span class="string">'%s %f'</span>);
+0863 cpd4weight = strrep(cpd2weight{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0864 Weight = cpd2weight{2};
+0865 fclose(Fileid);
+0866 
+0867 fprintf(<span class="string">'\nRxn consistency for %s(of %d): '</span>,<span class="string">'All pathways'</span>,numel(rxnIn))
+0868 ctr = 1; cnter = 1; OriginalRxns = ({}); ConsRxns = ({});
+0869 <span class="keyword">for</span> count = 1:numel(rxnIn)
+0870     Rns4Map = Maps(ismember(Rxns1,rxnIn{count}));
+0871       <span class="keyword">if</span> count&gt;1
+0872           <span class="keyword">for</span> j=0:log10(count-1)
+0873               fprintf(<span class="string">'\b'</span>); 
+0874           <span class="keyword">end</span>
+0875       <span class="keyword">end</span>
+0876       fprintf(<span class="string">'%d'</span>, count);
+0877     <span class="keyword">if</span> ~any(ismember(Rns4Map,MapChoice)) <span class="comment">%Otherwise there is no need to identify</span>
+0878         <span class="comment">% reactions for this map</span>
+0879         FoundRxnsID(ctr) = count;
+0880         ctr = ctr+1;
+0881         TempEC=EC(ismember(Rxns,rxnIn{count}));
+0882         TempRns = Rxns(ismember(EC,TempEC));
+0883         TempRns = unique(TempRns);
+0884         TempRns(ismember(TempRns,rxnIn{count})) = [];
+0885         TempFlx = flxIn(count,:);
+0886         CurLen = numel(rxnIn) + 1;
+0887         cpds4curRxn = cpds(ismember(rxnData,rxnIn{count}));
+0888         W4curCpds = Weight(ismember(cpd4weight,cpds4curRxn));
+0889         <span class="keyword">for</span> count1 = 1:numel(TempRns)
+0890             TempRns2Map1 = Maps(ismember(Rxns1,TempRns{count1}));
+0891             ChkCur = any(ismember(RxnChk,TempRns{count1}));
+0892             <span class="keyword">if</span> any(ismember(TempRns2Map1,MapChoice)) &amp;&amp; ~ChkCur
+0893                 cpds4TempRxn = cpds(ismember(rxnData,TempRns{count1}));
+0894                 W4TempCpds = Weight(ismember(cpd4weight,cpds4TempRxn));
+0895                 <span class="keyword">if</span> numel(W4curCpds) == numel(W4TempCpds) &amp;&amp;<span class="keyword">...</span>
+0896                         isempty(setdiff(W4curCpds,W4TempCpds)) &amp;&amp; <span class="keyword">...</span>
+0897                         ~any(strcmp(TempRns{count1},{<span class="string">'R02630'</span>,<span class="string">'R03232'</span>})) <span class="comment">% Exceptional condition</span>
+0898                     rxnIn{CurLen} = TempRns{count1};
+0899                     flxIn(CurLen,:) = TempFlx;
+0900                     BiGG4KeggDraw{CurLen} = BiGG4KeggDraw{count};
+0901                     CurLen = CurLen+1;
+0902                     OriginalRxns{cnter} = rxnIn{count};
+0903                     ConsRxns{cnter} = TempRns{count1};
+0904                     cnter = cnter + 1;
+0905                 <span class="keyword">end</span>
+0906             <span class="keyword">end</span>
+0907         <span class="keyword">end</span>
+0908     <span class="keyword">end</span>
+0909 <span class="keyword">end</span>
+0910 fprintf(<span class="string">'\n'</span>)
+0911 <span class="keyword">if</span> FoundRxnsID
+0912     flxIn(FoundRxnsID,:) = [];
+0913     rxnIn(FoundRxnsID) = [];
+0914     BiGG4KeggDraw(FoundRxnsID) = [];
+0915     setappdata(0,<span class="string">'BiGG4KeggDraw1'</span>,BiGG4KeggDraw);
+0916 <span class="keyword">end</span>
+0917 rxnOut = rxnIn;
+0918 flxOut = flxIn;
+0919 <span class="keyword">if</span> ~isempty(OriginalRxns) <span class="comment">% A map between consisten rxns and those in model</span>
+0920     CRxns.O = OriginalRxns; CRxns.C = ConsRxns;
+0921     setappdata(0,<span class="string">'CRxns'</span>,CRxns)
+0922 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

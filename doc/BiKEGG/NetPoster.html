@@ -1,0 +1,229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of NetPoster</title>
+  <meta name="keywords" content="NetPoster">
+  <meta name="description" content="NetPoster">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; NetPoster.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>NetPoster
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>NetPoster</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> NetPoster
+ is a subfunction of MapAdjuster for post-processing the
+ customized metabolic maps created by NetDraw, and possesses a structure
+ very similar to that of the NetDraw.
+ 
+ Inputs:
+ LineStrength: User defined of reactions' line width.
+ OverlapC: Check if user wants to remove (0) or retain (1) overlapping
+ reactions on the created map.
+ ColormapC: Check if user wants to remove (1) or apply (0) color mapping.
+ BackCol: Background color.
+ CpdCol: Compounds' color.
+ inactiveCol: Inactive reactions' color.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>	ArrowheadProcess</li><li><a href="MapTrimmer.html" class="code" title="function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)">MapTrimmer</a>	MapTrimmer</li><li><a href="MapTrimmerF.html" class="code" title="function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,DoubleIds,Idx,LineStrength,ColSpec)">MapTrimmerF</a>	MapTrimmerF</li><li><a href="OverlapChecker.html" class="code" title="function [I,ArX,ArY,ArrowChek,DoubleData] = OverlapChecker(I,ArX,ArY,OverlapData,flx,McmCollect,field_intsect_overlay,LineStrength)">OverlapChecker</a>	OverlapChecker</li><li><a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>	arrowhead</li><li><a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>	pixFill</li><li><a href="pixHover.html" class="code" title="function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1)">pixHover</a>	pixHover</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="MapAdjuster.html" class="code" title="function varargout = MapAdjuster(varargin)">MapAdjuster</a>	MapAdjuster(GUI)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)</a>
+0002 <span class="comment">% NetPoster</span>
+0003 <span class="comment">% is a subfunction of MapAdjuster for post-processing the</span>
+0004 <span class="comment">% customized metabolic maps created by NetDraw, and possesses a structure</span>
+0005 <span class="comment">% very similar to that of the NetDraw.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">% LineStrength: User defined of reactions' line width.</span>
+0009 <span class="comment">% OverlapC: Check if user wants to remove (0) or retain (1) overlapping</span>
+0010 <span class="comment">% reactions on the created map.</span>
+0011 <span class="comment">% ColormapC: Check if user wants to remove (1) or apply (0) color mapping.</span>
+0012 <span class="comment">% BackCol: Background color.</span>
+0013 <span class="comment">% CpdCol: Compounds' color.</span>
+0014 <span class="comment">% inactiveCol: Inactive reactions' color.</span>
+0015 
+0016 <span class="comment">% O. Jamialahmadi</span>
+0017 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0018 <span class="comment">% July 2016</span>
+0019 
+0020 
+0021 PostData = getappdata(0,<span class="string">'PostData'</span>);
+0022 h1 = getappdata(0,<span class="string">'ParentAx'</span>);
+0023 H1 = getappdata(0,<span class="string">'ParentFig'</span>);
+0024 delete(h1); delete(H1);
+0025 <span class="comment">% Create new canvas -------------------------------------------------------</span>
+0026 H1 = figure;
+0027 h1 = axes;
+0028 set(H1,<span class="string">'position'</span>,get(0,<span class="string">'screensize'</span>));
+0029 set(h1,<span class="string">'position'</span>,[0,0,1,1],<span class="string">'xtick'</span>,[],<span class="string">'ytick'</span>,[]);
+0030 set(H1,<span class="string">'toolbar'</span>,<span class="string">'figure'</span>);
+0031 set(H1,<span class="string">'menubar'</span>,<span class="string">'figure'</span>);
+0032 setappdata(0,<span class="string">'ParentAx'</span>,h1); setappdata(0,<span class="string">'ParentFig'</span>,H1);
+0033 <span class="comment">% Set Background color ----------------------------------------------------</span>
+0034 <span class="keyword">if</span> isempty(BackCol) || numel(BackCol) == 1
+0035     BackColr = [0.8,0.992,0.8];
+0036 <span class="keyword">else</span>
+0037     BackColr = BackCol;
+0038 <span class="keyword">end</span>
+0039 I = ones(PostData.max_y-PostData.min_y+50,<span class="keyword">...</span>
+0040     PostData.max_x-PostData.min_x+50,3);
+0041 I(:,:,1) = I(:,:,1).*BackColr(1);
+0042 I(:,:,2) = I(:,:,2).*BackColr(2); 
+0043 I(:,:,3) = I(:,:,3).*BackColr(3);
+0044 <span class="comment">% Set inactive rxns -------------------------------------------------------</span>
+0045 Allx4Arrow = PostData.Allx4Arrow; Ally4Arrow = PostData.Ally4Arrow;
+0046 <span class="keyword">if</span> isempty(inactiveCol) || numel(inactiveCol) == 1
+0047     Flaginactive = [0 0 0];
+0048 <span class="keyword">else</span>
+0049     Flaginactive = inactiveCol;
+0050 <span class="keyword">end</span>
+0051 <span class="keyword">for</span> i1 = 1:numel(Allx4Arrow)
+0052     I = <a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>(I,Allx4Arrow{i1},Ally4Arrow{i1},LineStrength,Flaginactive);
+0053 <span class="keyword">end</span>
+0054 <span class="comment">% Flux overlay ------------------------------------------------------------</span>
+0055 field_intsect_overlay = PostData.field_intsect_overlay;
+0056 field_intsect = PostData.field_intsect;
+0057 Cm=jet(numel(field_intsect_overlay)); flx = PostData.flx;
+0058 flx_abs = abs(flx);
+0059 <span class="keyword">for</span> k=PostData.k
+0060     McmCollect = zeros(size(flx,1),3); 
+0061     <span class="keyword">if</span> ~ColormapC
+0062         <span class="keyword">for</span> m=1:size(flx,1)
+0063             <span class="comment">% Normalize colors and insertion into enzyme boxes</span>
+0064             flxMax=max(abs(flx(:)));
+0065             flxMin=min(abs(flx(:)));
+0066             <span class="keyword">if</span> flxMax==flxMin <span class="comment">% One row (i.e. for 1 rxn)</span>
+0067                 flxMax=max(abs(flx(:)));
+0068                 flxMin=min(abs(flx(:)));
+0069             <span class="keyword">end</span>
+0070             flxSl=(size(Cm,1)-1)./(flxMax-flxMin);
+0071             <span class="keyword">if</span> isinf(flxSl) <span class="comment">% in case of flxMax == flxMin</span>
+0072                 flxSl = 1e15.*(size(Cm,1)-1);
+0073             <span class="keyword">end</span>
+0074             Mcm=ceil((flx_abs(m,k)-flxMax).*flxSl+size(Cm,1));
+0075 
+0076             I = <a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>(I,PostData.ArX{m},PostData.ArY{m},LineStrength,<span class="keyword">...</span>
+0077                 [Cm(Mcm,1) Cm(Mcm,2) Cm(Mcm,3)]);
+0078             McmCollect(m,:) = [Cm(Mcm,1) Cm(Mcm,2) Cm(Mcm,3)];               
+0079             clear pixx pixy
+0080         <span class="keyword">end</span>
+0081     <span class="keyword">else</span> <span class="comment">% No color for flux carrying rxns</span>
+0082         <span class="keyword">for</span> m=1:size(flx,1)
+0083             I = <a href="pixFill.html" class="code" title="function [I,pixx,pixy,pixx1,pixy1] = pixFill(I,pixx,pixy,LineStrength,ColSpec)">pixFill</a>(I,PostData.ArX{m},PostData.ArY{m},LineStrength,<span class="keyword">...</span>
+0084                 Flaginactive);
+0085             McmCollect(m,:) = Flaginactive;            
+0086         <span class="keyword">end</span>
+0087     <span class="keyword">end</span>
+0088     ArX = PostData.ArX; ArY = PostData.ArY; OverlapData = PostData.OverlapData;
+0089     min_x = PostData.min_x; min_y = PostData.min_y; basemap = PostData.basemap;
+0090     RefOverlapData = PostData.RefOverlapData;
+0091     <span class="keyword">if</span> OverlapC
+0092         [I,ArXo,ArYo,ArrowChek,RxnId] = <a href="OverlapChecker.html" class="code" title="function [I,ArX,ArY,ArrowChek,DoubleData] = OverlapChecker(I,ArX,ArY,OverlapData,flx,McmCollect,field_intsect_overlay,LineStrength)">OverlapChecker</a>(I,ArX,ArY,OverlapData,<span class="keyword">...</span>
+0093         flx(:,k),McmCollect,field_intsect_overlay,LineStrength);
+0094         [ArrowX,ArrowY,Cntrs] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(Allx4Arrow,Ally4Arrow,<span class="keyword">...</span>
+0095             min_x,min_y,field_intsect,basemap,RxnId,RefOverlapData,<span class="string">'bigg'</span>,field_intsect_overlay);
+0096         I = <a href="MapTrimmer.html" class="code" title="function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)">MapTrimmer</a>(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,BackColr);
+0097         [ArrowX1,ArrowY1,Cntrs1,Director] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(ArXo,ArYo,min_x,min_y,<span class="keyword">...</span>
+0098             field_intsect_overlay,basemap,[],[],<span class="string">'bigg'</span>,[]);
+0099         I = <a href="MapTrimmerF.html" class="code" title="function I = MapTrimmerF(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,DoubleIds,Idx,LineStrength,ColSpec)">MapTrimmerF</a>(I,ArrowX1,ArrowY1,Cntrs1,ArXo,ArYo,RxnId,field_intsect_overlay,LineStrength,BackColr);
+0100     <span class="keyword">else</span>
+0101         [ArrowX,ArrowY,Cntrs] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(Allx4Arrow,Ally4Arrow,<span class="keyword">...</span>
+0102             min_x,min_y,field_intsect,basemap,[],[],<span class="string">'bigg'</span>,[]);
+0103         I = <a href="MapTrimmer.html" class="code" title="function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)">MapTrimmer</a>(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,BackColr);
+0104         [ArrowX1,ArrowY1,~,Director] = <a href="ArrowheadProcess.html" class="code" title="function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx)">ArrowheadProcess</a>(ArX,ArY,min_x,min_y,<span class="keyword">...</span>
+0105             field_intsect_overlay,basemap,[],[],<span class="string">'bigg'</span>,[]);
+0106     <span class="keyword">end</span>
+0107     <span class="comment">% Compounds overlay ---------------------------------------------------</span>
+0108     <span class="keyword">if</span> isempty(CpdCol) || numel(CpdCol) == 1
+0109         CpdColr = [0,1,0.498];
+0110     <span class="keyword">else</span>
+0111         CpdColr = CpdCol;
+0112     <span class="keyword">end</span>
+0113     <span class="keyword">for</span> i1 = 1:size(PostData.cpdxy,1)
+0114         cc1 = PostData.x_cpd(i1)-PostData.cpdxy(i1,4)*0.7:PostData.x_cpd(i1)+PostData.cpdxy(i1,4)*0.7;
+0115         cc2 = PostData.y_cpd(i1)-PostData.cpdxy(i1,4)*0.7:PostData.y_cpd(i1)+PostData.cpdxy(i1,4)*0.7;
+0116         [x,y] = meshgrid(cc1,cc2);
+0117         f1= ((x-PostData.x_cpd(i1)).^2+(y-PostData.y_cpd(i1)).^2) &lt;=(PostData.cpdxy(i1,4)*0.7)^2 ;
+0118         f2= ((x-PostData.x_cpd(i1)).^2+(y-PostData.y_cpd(i1)).^2) &lt;=(PostData.cpdxy(i1,4)*0.55)^2 ;
+0119         x1 = x(f1); y1= y(f1);x1=round(x1); y1=round(y1);
+0120         x2 = x(f2); y2= y(f2); x2=round(x2); y2=round(y2);
+0121         x1(~y1) = []; y1(~y1) = [];
+0122         x2(~y2) = []; y2(~y2) = [];
+0123         <span class="keyword">for</span> i2 = 1:numel(x1)
+0124             I(y1(i2),x1(i2),1) = 0.502;
+0125             I(y1(i2),x1(i2),2) = 0.502;
+0126             I(y1(i2),x1(i2),3) = 0;
+0127         <span class="keyword">end</span>
+0128         <span class="keyword">for</span> i2 = 1:numel(x2)
+0129             I(y2(i2),x2(i2),1) = CpdColr(1);
+0130             I(y2(i2),x2(i2),2) = CpdColr(2);
+0131             I(y2(i2),x2(i2),3) = CpdColr(3);
+0132         <span class="keyword">end</span>
+0133         clear f1 x1 x2 cc1 cc2
+0134     <span class="keyword">end</span>
+0135     <span class="comment">% Show map ------------------------------------------------------------</span>
+0136     imshow(I,<span class="string">'InitialMagnification'</span>, <span class="string">'fit'</span>,<span class="string">'Parent'</span>,h1); 
+0137     <span class="comment">% Show time-series values on the corresponding image</span>
+0138 <span class="comment">%     TimePropUDF ('One',PostData.TextFont,PostData.TimeUnit,PostData.mTime,k,h1)</span>
+0139     <a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>(ArrowX,ArrowY,[],Flaginactive,LineStrength/2,[]);
+0140     flxDirect.D = Director; flxDirect.F = flx(:,k);
+0141     <span class="keyword">if</span> OverlapC
+0142         <a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>(ArrowX1,ArrowY1,ArrowChek,McmCollect,LineStrength/2,flxDirect);
+0143     <span class="keyword">else</span>
+0144         <a href="arrowhead.html" class="code" title="function arrowhead(Xin1,Yin1,ArrowChek,McmCollect,ArWidth,flxDirect)">arrowhead</a>(ArrowX1,ArrowY1,[],McmCollect,LineStrength/2,flxDirect);
+0145     <span class="keyword">end</span>
+0146     
+0147     Mdl = getappdata(0,<span class="string">'Mdl'</span>);
+0148     Uni = load(which(<span class="string">'UniModelKEGG.mat'</span>));
+0149     K = Uni.B2Kegg.K; K1 = Mdl.B2Kegg.K;
+0150     B = Uni.B2Kegg.B; B1 = Mdl.B2Kegg.B;
+0151     clear Uni
+0152     HoverUs.K = K1; HoverUs.B = B1;
+0153     HoverUs.R = PostData.OverlayRxnsIDs; HoverUs.P = field_intsect_overlay';
+0154     HoverUs.CR = PostData.ConOverlayRxnID; 
+0155     HoverAll.R = PostData.rxnCds; HoverAll.P = field_intsect;
+0156     HoverAll.K = K; HoverAll.B = B;
+0157     <a href="pixHover.html" class="code" title="function pixHover(x,y,rad,cnames,Allx,Ally,AllHover,HoverUs,flx,h1,H1)">pixHover</a>(PostData.x_cpd,PostData.y_cpd,0.7*PostData.cpdxy(1,4),PostData.cpdnames<span class="keyword">...</span>
+0158         ,PostData.Allx,PostData.Ally,<span class="keyword">...</span>
+0159         HoverAll,HoverUs,abs(flx(:,k)),h1,H1)
+0160     <span class="comment">% Show colorbar--------------------------------------------------------</span>
+0161     <span class="keyword">if</span> ~ColormapC
+0162         flxstr=linspace(flxMin,flxMax,7);
+0163         flxstr1=cell(numel(flxstr),1);
+0164         <span class="keyword">for</span> ir=1:numel(flxstr)
+0165             flxstr1{ir,1}=num2str(flxstr(ir),2);
+0166         <span class="keyword">end</span>
+0167         ch = colorbar(<span class="string">'peer'</span>,h1);
+0168         set(ch,<span class="string">'yticklabel'</span>,flxstr1)
+0169     <span class="keyword">end</span>
+0170 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

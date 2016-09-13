@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MapTrimmer</title>
+  <meta name="keywords" content="MapTrimmer">
+  <meta name="description" content="MapTrimmer">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; MapTrimmer.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MapTrimmer
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MapTrimmer</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MapTrimmer
+ is a subfunction of NetDraw for drawing removing extra pixels
+ after attaching arrowheads to reaction ends. 
+ 
+ Inputs:
+ I: An array containing the customized metabolic map.
+ ArrowX,ArrowY,Cntrs: Outputs from ArrowheadProcess.
+ Allx4Arrow,Ally4Arrow: All reactions' coordinates.
+ LineStrength: Reaction width.
+ ColSpec: Color code corresponding to that of the reactions.
+ 
+ Output:
+ I: Modified image without extra pixels.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function I = MapTrimmer(I,ArrowX,ArrowY,Cntrs,Allx4Arrow,Ally4Arrow,LineStrength,ColSpec)</a>
+0002 <span class="comment">% MapTrimmer</span>
+0003 <span class="comment">% is a subfunction of NetDraw for drawing removing extra pixels</span>
+0004 <span class="comment">% after attaching arrowheads to reaction ends.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% I: An array containing the customized metabolic map.</span>
+0008 <span class="comment">% ArrowX,ArrowY,Cntrs: Outputs from ArrowheadProcess.</span>
+0009 <span class="comment">% Allx4Arrow,Ally4Arrow: All reactions' coordinates.</span>
+0010 <span class="comment">% LineStrength: Reaction width.</span>
+0011 <span class="comment">% ColSpec: Color code corresponding to that of the reactions.</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Output:</span>
+0014 <span class="comment">% I: Modified image without extra pixels.</span>
+0015 
+0016 <span class="comment">% O. Jamialahmadi</span>
+0017 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0018 <span class="comment">% July 2016</span>
+0019 
+0020 <span class="keyword">for</span> i1 = 1:numel(ArrowX)
+0021     <span class="keyword">if</span> isempty(ArrowX{i1})
+0022         <span class="keyword">continue</span>
+0023     <span class="keyword">end</span>
+0024     Xin = ArrowX{i1}; Yin = ArrowY{i1}; Cents = Cntrs{i1};
+0025     pixx = Allx4Arrow{i1};
+0026     pixy = Ally4Arrow{i1};
+0027     <span class="keyword">if</span> ~std(pixx)
+0028         pixx1 = pixx + LineStrength/2;
+0029         pixx = pixx - LineStrength/2;
+0030         pixy1 = pixy;
+0031     <span class="keyword">elseif</span> ~std(pixy)
+0032         pixy1 = pixy + LineStrength/2;
+0033         pixy = pixy - LineStrength/2;
+0034         pixx1 = pixx;
+0035     <span class="keyword">else</span>
+0036         pixx1 = pixx + LineStrength/2;
+0037         pixx = pixx - LineStrength/2;
+0038         pixy1 = pixy + LineStrength/2;
+0039         pixy = pixy - LineStrength/2;
+0040     <span class="keyword">end</span>
+0041     
+0042     <span class="keyword">for</span> cnt = 1:size(Xin,1)
+0043         X = Xin(cnt,:); Y = Yin(cnt,:); Cent = Cents(cnt,:);
+0044         DistToCpd = hypot( Allx4Arrow{i1} - Cent(1), Ally4Arrow{i1} - Cent(2));
+0045         CpdDistToPoint1 = hypot( X(1) - Cent(1), Y(1) - Cent(2));
+0046 <span class="comment">%         CpdDistToPoint2 = hypot( X(2) - Cent(1), Y(2) - Cent(2));</span>
+0047         Ind = find(DistToCpd &lt; 0.8*CpdDistToPoint1);<span class="comment">% &amp; DistToCpd&gt;CpdDistToPoint2);</span>
+0048         pixx1T = pixx1(Ind); pixxT = pixx(Ind);        
+0049         pixy1T = pixy1(Ind); pixyT = pixy(Ind);
+0050         pixx1T = round(pixx1T); pixxT = round(pixxT);
+0051         pixy1T = round(pixy1T); pixyT = round(pixyT);
+0052         <span class="keyword">for</span> i5 = 1:numel(pixxT)
+0053             I(pixyT(i5):pixy1T(i5),pixxT(i5),1) = ColSpec(1);
+0054             I(pixyT(i5),pixxT(i5):pixx1T(i5),1) = ColSpec(1); 
+0055             I(pixyT(i5):pixy1T(i5),pixxT(i5),2) = ColSpec(2);
+0056             I(pixyT(i5),pixxT(i5):pixx1T(i5),2) = ColSpec(2); 
+0057             I(pixyT(i5):pixy1T(i5),pixxT(i5),3) = ColSpec(3);
+0058             I(pixyT(i5),pixxT(i5):pixx1T(i5),3) = ColSpec(3); 
+0059         <span class="keyword">end</span>
+0060     <span class="keyword">end</span>
+0061 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

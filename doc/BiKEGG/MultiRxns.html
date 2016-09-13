@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of MultiRxns</title>
+  <meta name="keywords" content="MultiRxns">
+  <meta name="description" content="MultiRxns">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; MultiRxns.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>MultiRxns
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MultiRxns</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Po,Hout1] = MultiRxns(K) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MultiRxns
+ gets a set of reactions and based on data provided in KEGG
+ database for each reaction, searches for multi-step reactions and saves
+ each multi-step reaction along with all of its single-step reactions
+ (Child reactions).
+ Inputs:
+ K = A cell array of KEGG reactions identifiers.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="Bigg2Kegg.html" class="code" title="function Bigg2Kegg(Idfier)">Bigg2Kegg</a>	BiKEGG</li><li><a href="MultiRxnsLib.html" class="code" title="function MultiRxnsLib">MultiRxnsLib</a>	MultiRxnsLib</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function Hout = SecLump(Hin)</a></li><li><a href="#_sub2" class="code">function Hout1 = SecCheck (Hin1)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Po,Hout1] = MultiRxns(K)</a>
+0002 <span class="comment">% MultiRxns</span>
+0003 <span class="comment">% gets a set of reactions and based on data provided in KEGG</span>
+0004 <span class="comment">% database for each reaction, searches for multi-step reactions and saves</span>
+0005 <span class="comment">% each multi-step reaction along with all of its single-step reactions</span>
+0006 <span class="comment">% (Child reactions).</span>
+0007 <span class="comment">% Inputs:</span>
+0008 <span class="comment">% K = A cell array of KEGG reactions identifiers.</span>
+0009 
+0010 <span class="comment">% Output:</span>
+0011 <span class="comment">% Po = A cell array of multi-step reactions found in K</span>
+0012 <span class="comment">% Hout1 = A cell array of decomposed single-step reactions corresponding to</span>
+0013 <span class="comment">%         each reaction in Po</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% O. Jamialahmadi</span>
+0016 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0017 <span class="comment">% Nov. 2015</span>
+0018 <span class="comment">% EDITED:</span>
+0019 <span class="comment">% Jan. 2016 : Offline mode was included for reducing the cpu time</span>
+0020 
+0021 NetStat = 0; <span class="comment">% Offline mode</span>
+0022 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0023 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0024 Pth = Pth1(1:tind-1);
+0025 Pth3 = fullfile(Pth,<span class="string">'BiGG2KEGG\Multirxns.mat'</span>);
+0026 Pth2 = fullfile(Pth,<span class="string">'OfflineRxnData'</span>);
+0027 <span class="keyword">if</span> exist(Pth3,<span class="string">'file'</span>)
+0028     load (Pth3)
+0029     <span class="keyword">if</span> exist(<span class="string">'Multirxns'</span>,<span class="string">'var'</span>)
+0030         Crxns = Multirxns.C;
+0031         Prxns = Multirxns.P;
+0032         PoT = Prxns(ismember(Prxns,K));
+0033         Hout1T = Crxns(ismember(Prxns,K));
+0034         K = K(~ismember(K,Prxns));
+0035     <span class="keyword">end</span>
+0036 <span class="keyword">end</span>
+0037 <span class="keyword">if</span> isempty(K)
+0038     Po = PoT;
+0039     Hout1 = Hout1T;
+0040     <span class="keyword">return</span>
+0041 <span class="keyword">end</span>
+0042 <span class="comment">% Check internet connection</span>
+0043 <span class="keyword">if</span> NetStat
+0044     TestLink=<span class="string">'http://rest.kegg.jp'</span>;
+0045     [~,Stat1]=urlread(TestLink);
+0046     <span class="keyword">if</span> ~Stat1
+0047         msgbox({<span class="string">'Function: MultiRxns needs a stable internet connection'</span>;<span class="keyword">...</span>
+0048             <span class="string">'Seemingly you are offline!'</span>});
+0049         <span class="keyword">return</span>
+0050     <span class="keyword">end</span>
+0051 <span class="keyword">end</span>
+0052 
+0053 ct=1;
+0054 <span class="keyword">for</span> count = 1:numel(K)
+0055     cts=1; setappdata(0,<span class="string">'cts'</span>,cts)
+0056     <span class="keyword">if</span> exist(<span class="string">'Po'</span>,<span class="string">'var'</span>) &amp;&amp; any(strcmp(K{count},Po))
+0057         <span class="keyword">continue</span> <span class="comment">% No need to check again</span>
+0058     <span class="keyword">end</span>
+0059     <span class="keyword">if</span> NetStat
+0060         A = urlread([<span class="string">'http://rest.kegg.jp/get/'</span>,K{count}]);
+0061     <span class="keyword">else</span>
+0062         load([Pth2,<span class="string">'\'</span>,K{count},<span class="string">'.mat'</span>]);
+0063         A = RnDat;
+0064         clear RnDat
+0065     <span class="keyword">end</span>
+0066     [~,c2]=regexp(A,<span class="string">'COMMENT\s'</span>);
+0067     <span class="keyword">if</span> ~isempty(c2)
+0068         [c3,~]=regexp(A,<span class="string">'RPAIR'</span>);
+0069         <span class="keyword">if</span> isempty(c3)
+0070             [c3,~]=regexp(A,<span class="string">'ENZYME'</span>);
+0071         <span class="keyword">end</span>
+0072         Temp = A(c2:c3-1);
+0073         Tip1 = regexp(Temp,<span class="string">'\w*-step\&gt;'</span>);
+0074         <span class="keyword">if</span> ~isempty(Tip1)
+0075             Temp2 = Temp(Tip1:end);
+0076             c4 = regexp(Temp2,<span class="string">'R\d{4}'</span>);
+0077             <span class="keyword">if</span> ~isempty(c4)
+0078                 c5 = regexp(Temp2,<span class="string">'+'</span>);
+0079                 c54 = sort([c4,c5]);
+0080                 c5Loci = find(ismember(c54,c5));
+0081                 c5LociP = c5Loci+1; c5LociM = c5Loci-1;
+0082                 c5Loci1 = unique([c5LociP,c5LociM]);
+0083                 c6 = regexp(A,<span class="string">'part of'</span>, <span class="string">'once'</span>);
+0084                 c7 = regexp(A,<span class="string">'second step of'</span>, <span class="string">'once'</span>);
+0085                 c8 = regexp(A,<span class="string">'first step of'</span>, <span class="string">'once'</span>);
+0086                 <span class="keyword">if</span> ~isempty(c5) &amp;&amp; isempty(c6) &amp;&amp; isempty(c7) &amp;&amp; isempty(c8)
+0087                     Po{ct}=K{count};
+0088                     <span class="keyword">for</span> lop = 1:numel(c5Loci1)
+0089                         Pol{ct}{lop} = Temp2(c54(c5Loci1(lop)):c54(c5Loci1(lop))+5);
+0090                     <span class="keyword">end</span>
+0091                     Hout = <a href="#_sub1" class="code" title="subfunction Hout = SecLump(Hin)">SecLump</a>(Pol{ct});
+0092                     <span class="keyword">if</span> ~isempty(Hout)
+0093                         Hout1{ct} = <a href="#_sub2" class="code" title="subfunction Hout1 = SecCheck (Hin1)">SecCheck</a>(Hout);
+0094                         <span class="keyword">if</span> ~isempty(Hout1{ct})
+0095                             fprintf(<span class="string">'Multi-step reaction was found:%d of %d:%s\n'</span>,<span class="keyword">...</span>
+0096                                 count,numel(K),K{count});
+0097                         <span class="keyword">end</span>
+0098                         ct=ct+1;
+0099                     <span class="keyword">end</span>
+0100                 <span class="keyword">end</span>
+0101             <span class="keyword">end</span>
+0102         <span class="keyword">end</span>
+0103         clear c2 c3 c4 c5 c6 c7 c8
+0104     <span class="keyword">end</span>
+0105 <span class="keyword">end</span>
+0106 <span class="keyword">if</span> exist(<span class="string">'Po'</span>,<span class="string">'var'</span>)
+0107     Po = [Po,PoT];
+0108 <span class="keyword">else</span>
+0109     Po = PoT;
+0110 <span class="keyword">end</span>
+0111 <span class="keyword">if</span> exist(<span class="string">'Hout1'</span>,<span class="string">'var'</span>)
+0112     Hout1 = [Hout1,Hout1T];
+0113 <span class="keyword">else</span>
+0114     Hout1 = Hout1T;
+0115 <span class="keyword">end</span>
+0116 
+0117 <a name="_sub1" href="#_subfunctions" class="code">function Hout = SecLump(Hin)</a>
+0118 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0119 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0120 Pth = Pth1(1:tind-1);
+0121 Pth2 = fullfile(Pth,<span class="string">'OfflineRxnData'</span>);
+0122 NetStat = 0;
+0123 ct=1;
+0124 <span class="keyword">for</span> count = 1:length(Hin)
+0125     <span class="keyword">if</span> NetStat
+0126         A = urlread([<span class="string">'http://rest.kegg.jp/get/'</span>,Hin{count}]);
+0127     <span class="keyword">else</span>
+0128         load([Pth2,<span class="string">'\'</span>,Hin{count},<span class="string">'.mat'</span>]);
+0129         A = RnDat;
+0130         clear RnDat
+0131     <span class="keyword">end</span>
+0132     [~,c2]=regexp(A,<span class="string">'COMMENT\s'</span>);
+0133     <span class="keyword">if</span> ~isempty(c2)
+0134         [c3,~]=regexp(A,<span class="string">'RPAIR'</span>);
+0135         <span class="keyword">if</span> isempty(c3)
+0136             [c3,~]=regexp(A,<span class="string">'ENZYME'</span>);
+0137         <span class="keyword">end</span>
+0138         Temp = A(c2:c3-1);
+0139         Tip1 = regexp(Temp,<span class="string">'\w*-dependent enzyme\&gt;'</span>);
+0140         <span class="keyword">if</span> ~isempty(Tip1)
+0141             Temp2 = Temp(Tip1:end);
+0142             c4 = regexp(Temp2,<span class="string">'R\d{4}'</span>);
+0143             <span class="keyword">for</span> lop = 1:numel(c4)
+0144                 Pol{ct}{lop} = Temp2(c4(lop):c4(lop)+5);
+0145             <span class="keyword">end</span>
+0146             Hout = <a href="#_sub1" class="code" title="subfunction Hout = SecLump(Hin)">SecLump</a>(Pol{ct});
+0147             ct = ct+1;
+0148         <span class="keyword">else</span>
+0149             
+0150             cts=getappdata(0,<span class="string">'cts'</span>);
+0151             Hout{cts} = Hin{count};
+0152             cts=cts+1;
+0153             setappdata(0,<span class="string">'cts'</span>,cts) 
+0154         <span class="keyword">end</span>
+0155     <span class="keyword">else</span>
+0156         cts=getappdata(0,<span class="string">'cts'</span>);
+0157         Hout{cts} = Hin{count};
+0158         cts=cts+1;
+0159         setappdata(0,<span class="string">'cts'</span>,cts)
+0160     <span class="keyword">end</span>
+0161 <span class="keyword">end</span>
+0162 
+0163 <a name="_sub2" href="#_subfunctions" class="code">function Hout1 = SecCheck (Hin1)</a>
+0164 Fileid1 = fopen(<span class="string">'rxn2map.txt'</span>,<span class="string">'r'</span>);
+0165 rxn2map = textscan(Fileid1,<span class="string">'%s %s'</span>);
+0166 RawRxns = rxn2map{1};
+0167 RawMaps = rxn2map{2};
+0168 [Loci1,~] = regexp(RawMaps, <span class="string">'path:rn'</span>);
+0169 Loci2 = ~cellfun(<span class="string">'isempty'</span>, Loci1);
+0170 RawMaps(Loci2) = [];
+0171 RawRxns(Loci2) = [];
+0172 Maps = strrep(RawMaps,<span class="string">'path:map'</span>,<span class="string">''</span>);
+0173 Rxns = strrep(RawRxns,<span class="string">'rn:'</span>,<span class="string">''</span>);
+0174 MapsTemp={0};
+0175 <span class="keyword">for</span> count = 1:length(Hin1)
+0176     MapsTemp{count} = Maps(ismember(Rxns,Hin1{count}))';
+0177     <span class="keyword">if</span> isempty(MapsTemp{count})
+0178         Hout1 = [];
+0179         <span class="keyword">break</span>
+0180     <span class="keyword">end</span>
+0181 <span class="keyword">end</span>
+0182 <span class="keyword">if</span> ~exist(<span class="string">'Hout1'</span>,<span class="string">'var'</span>)
+0183     MapsT = [MapsTemp{:}];
+0184     MapsTU = unique(MapsT);
+0185     <span class="keyword">if</span> numel(MapsT)&gt;numel(MapsTU)
+0186         Hout1 = Hin1;
+0187     <span class="keyword">end</span>
+0188 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

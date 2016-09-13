@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of SaveImgs</title>
+  <meta name="keywords" content="SaveImgs">
+  <meta name="description" content="SaveImgs(GUI)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; SaveImgs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>SaveImgs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>SaveImgs(GUI)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = SaveImgs(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> SaveImgs(GUI)
+ A GUI tool for SaveFlxImgs getting the user defined information
+(format,resolution,...) for exporting images created by NetDraw|KeggDraw
+
+ O. Jamialahmadi
+ TMU, Chem. Eng. Dept., Biotech. Group 
+ June 2016</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KeggDraw.html" class="code" title="function KeggDraw (Outflx,RxnCds,MapChoice,flxType,InOpts)">KeggDraw</a>	KeggDraw</li><li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function SaveImgs_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = SaveImgs_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function ImgResPopupmenu_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function ImgResPopupmenu_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function ImgFormatPopupmenu_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function ImgFormatPopupmenu_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function Donepushbutton1_Callback(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = SaveImgs(varargin)</a>
+0002 <span class="comment">% SaveImgs(GUI)</span>
+0003 <span class="comment">% A GUI tool for SaveFlxImgs getting the user defined information</span>
+0004 <span class="comment">%(format,resolution,...) for exporting images created by NetDraw|KeggDraw</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% O. Jamialahmadi</span>
+0007 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0008 <span class="comment">% June 2016</span>
+0009 
+0010 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0011 gui_Singleton = 1;
+0012 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0013                    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0014                    <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction SaveImgs_OpeningFcn(hObject, eventdata, handles, varargin)">SaveImgs_OpeningFcn</a>, <span class="keyword">...</span>
+0015                    <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = SaveImgs_OutputFcn(hObject, eventdata, handles)">SaveImgs_OutputFcn</a>, <span class="keyword">...</span>
+0016                    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0017                    <span class="string">'gui_Callback'</span>,   []);
+0018 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0019     gui_State.gui_Callback = str2func(varargin{1});
+0020 <span class="keyword">end</span>
+0021 
+0022 <span class="keyword">if</span> nargout
+0023     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0024 <span class="keyword">else</span>
+0025     gui_mainfcn(gui_State, varargin{:});
+0026 <span class="keyword">end</span>
+0027 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0028 
+0029 
+0030 <span class="comment">% --- Executes just before SaveImgs is made visible.</span>
+0031 <a name="_sub1" href="#_subfunctions" class="code">function SaveImgs_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0032 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0033 <span class="comment">% hObject    handle to figure</span>
+0034 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0035 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0036 <span class="comment">% varargin   command line arguments to SaveImgs (see VARARGIN)</span>
+0037 set(handles.ImgResPopupmenu,<span class="string">'String'</span>,{<span class="string">'300'</span>,<span class="string">'350'</span>,<span class="string">'400'</span>,<span class="string">'450'</span>,<span class="keyword">...</span>
+0038         <span class="string">'500'</span>,<span class="string">'550'</span>,<span class="string">'600'</span>,<span class="string">'1200'</span>});
+0039 set(handles.ImgFormatPopupmenu,<span class="string">'String'</span>,{<span class="string">'PNG'</span>,<span class="string">'JPEG'</span>,<span class="string">'BMP'</span>,<span class="keyword">...</span>
+0040         <span class="string">'TIFF'</span>,<span class="string">'PDF'</span>});
+0041 <span class="comment">% Choose default command line output for SaveImgs</span>
+0042 handles.output = hObject;
+0043 
+0044 <span class="comment">% Update handles structure</span>
+0045 guidata(hObject, handles);
+0046 
+0047 <span class="comment">% UIWAIT makes SaveImgs wait for user response (see UIRESUME)</span>
+0048 <span class="comment">% uiwait(handles.figure1);</span>
+0049 
+0050 
+0051 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0052 <a name="_sub2" href="#_subfunctions" class="code">function varargout = SaveImgs_OutputFcn(hObject, eventdata, handles) </a>
+0053 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0054 <span class="comment">% hObject    handle to figure</span>
+0055 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0056 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0057 
+0058 <span class="comment">% Get default command line output from handles structure</span>
+0059 varargout{1} = handles.output;
+0060 
+0061 
+0062 <span class="comment">% --- Executes on selection change in ImgResPopupmenu.</span>
+0063 <a name="_sub3" href="#_subfunctions" class="code">function ImgResPopupmenu_Callback(hObject, eventdata, handles)</a>
+0064 <span class="comment">% hObject    handle to ImgResPopupmenu (see GCBO)</span>
+0065 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0066 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0067 
+0068 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns ImgResPopupmenu contents as cell array</span>
+0069 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from ImgResPopupmenu</span>
+0070 
+0071 
+0072 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0073 <a name="_sub4" href="#_subfunctions" class="code">function ImgResPopupmenu_CreateFcn(hObject, eventdata, handles)</a>
+0074 <span class="comment">% hObject    handle to ImgResPopupmenu (see GCBO)</span>
+0075 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0076 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0077 
+0078 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0079 <span class="comment">%       See ISPC and COMPUTER.</span>
+0080 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0081     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0082 <span class="keyword">end</span>
+0083 
+0084 
+0085 <span class="comment">% --- Executes on selection change in ImgFormatPopupmenu.</span>
+0086 <a name="_sub5" href="#_subfunctions" class="code">function ImgFormatPopupmenu_Callback(hObject, eventdata, handles)</a>
+0087 <span class="comment">% hObject    handle to ImgFormatPopupmenu (see GCBO)</span>
+0088 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0089 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0090 
+0091 <span class="comment">% Hints: contents = cellstr(get(hObject,'String')) returns ImgFormatPopupmenu contents as cell array</span>
+0092 <span class="comment">%        contents{get(hObject,'Value')} returns selected item from ImgFormatPopupmenu</span>
+0093 
+0094 
+0095 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0096 <a name="_sub6" href="#_subfunctions" class="code">function ImgFormatPopupmenu_CreateFcn(hObject, eventdata, handles)</a>
+0097 <span class="comment">% hObject    handle to ImgFormatPopupmenu (see GCBO)</span>
+0098 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0099 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0100 
+0101 <span class="comment">% Hint: popupmenu controls usually have a white background on Windows.</span>
+0102 <span class="comment">%       See ISPC and COMPUTER.</span>
+0103 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0104     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0105 <span class="keyword">end</span>
+0106 
+0107 
+0108 <span class="comment">% --- Executes on button press in Donepushbutton1.</span>
+0109 <a name="_sub7" href="#_subfunctions" class="code">function Donepushbutton1_Callback(hObject, eventdata, handles)</a>
+0110 <span class="comment">% hObject    handle to Donepushbutton1 (see GCBO)</span>
+0111 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0112 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0113 ImgFrmt=get(handles.ImgFormatPopupmenu,<span class="string">'Value'</span>);
+0114 setappdata(0,<span class="string">'ImgFrmt'</span>,ImgFrmt);
+0115 ImgRes=get(handles.ImgResPopupmenu,<span class="string">'Value'</span>);
+0116 setappdata(0,<span class="string">'ImgRes'</span>,ImgRes);
+0117 close(gcf)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of GetData4MultiRxns</title>
+  <meta name="keywords" content="GetData4MultiRxns">
+  <meta name="description" content="GetData4MultiRxns">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; GetData4MultiRxns.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>GetData4MultiRxns
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>GetData4MultiRxns</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function GetData4MultiRxns </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GetData4MultiRxns
+ Gets offline data from KEGG database for each reaction in
+ the KEGG for later use in MultiRxn function.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="UpdateDBase.html" class="code" title="function varargout = UpdateDBase(varargin)">UpdateDBase</a>	UpdateDBase(GUI)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function GetData4MultiRxns</a>
+0002 <span class="comment">% GetData4MultiRxns</span>
+0003 <span class="comment">% Gets offline data from KEGG database for each reaction in</span>
+0004 <span class="comment">% the KEGG for later use in MultiRxn function.</span>
+0005 
+0006 <span class="comment">% O. Jamialahmadi</span>
+0007 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0008 <span class="comment">% Jan. 2016</span>
+0009 
+0010 RawRns = urlread(<span class="string">'http://rest.kegg.jp/list/rn'</span>);
+0011 Rns = regexp(RawRns, <span class="string">'R\d{5}'</span>, <span class="string">'match'</span>); <span class="comment">% All KEGG rxns</span>
+0012 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0013 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0014 Pth = Pth1(1:tind-1);
+0015 Pth = fullfile(Pth,<span class="string">'OfflineRxnData'</span>);
+0016 fprintf(<span class="string">'\nDownloading rxn data (of %d): '</span>,numel(Rns))
+0017 <span class="keyword">for</span> ct = 1:numel(Rns)
+0018     <span class="keyword">if</span> ct&gt;1
+0019         <span class="keyword">for</span> j=0:log10(ct-1)
+0020             fprintf(<span class="string">'\b'</span>); 
+0021         <span class="keyword">end</span>
+0022     <span class="keyword">end</span>
+0023     fprintf(<span class="string">'%d'</span>, ct);
+0024     RnDat = urlread([<span class="string">'http://rest.kegg.jp/get/'</span>,Rns{ct}]);
+0025     save([Pth,<span class="string">'\'</span>,Rns{ct},<span class="string">'.mat'</span>],<span class="string">'RnDat'</span>)
+0026     <span class="comment">% In case of using txt file format</span>
+0027 <span class="comment">%     Pth1 = [Pth,'\',Rns{ct},'.txt'];</span>
+0028 <span class="comment">%     Idf = fopen(Pth1,'w');</span>
+0029 <span class="comment">%     fprintf(Idf,RnDat);</span>
+0030 <span class="comment">%     fclose(Idf);</span>
+0031 <span class="keyword">end</span>
+0032 DateCrt = date;
+0033 save([Pth,<span class="string">'\'</span>,<span class="string">'VersionDate.mat'</span>],<span class="string">'DateCrt'</span>)
+0034 fprintf(<span class="string">'\n'</span>)
+0035 disp(<span class="string">'All reaction data has been downloaded and saved successfully!'</span>)</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

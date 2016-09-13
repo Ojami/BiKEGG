@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Weight4TransRxns</title>
+  <meta name="keywords" content="Weight4TransRxns">
+  <meta name="description" content="Weight4TransRxns">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; Weight4TransRxns.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>Weight4TransRxns
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Weight4TransRxns</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Weight4TransRxns(Idfier) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Weight4TransRxns
+ This function generates the Weight4TranRxns.txt file containing all KEGG
+ reactions in which there are 2,4 or 6 KEGG compounds, along with their
+ corresponding component weights. This text file will be used in Bigg2Kegg
+ function to identify potential equivalent KEGG reactions for BiGG
+ transport reactions.
+ Input:
+     - Idfier : A number: 2 | 4 | 6 , respectively denoting transport
+     reactions with 2, 4 and 6 components.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="UpdateDBase.html" class="code" title="function varargout = UpdateDBase(varargin)">UpdateDBase</a>	UpdateDBase(GUI)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Weight4TransRxns(Idfier)</a>
+0002 <span class="comment">% Weight4TransRxns</span>
+0003 <span class="comment">% This function generates the Weight4TranRxns.txt file containing all KEGG</span>
+0004 <span class="comment">% reactions in which there are 2,4 or 6 KEGG compounds, along with their</span>
+0005 <span class="comment">% corresponding component weights. This text file will be used in Bigg2Kegg</span>
+0006 <span class="comment">% function to identify potential equivalent KEGG reactions for BiGG</span>
+0007 <span class="comment">% transport reactions.</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">%     - Idfier : A number: 2 | 4 | 6 , respectively denoting transport</span>
+0010 <span class="comment">%     reactions with 2, 4 and 6 components.</span>
+0011 
+0012 <span class="comment">% O. Jamialahmadi</span>
+0013 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0014 <span class="comment">% Jan. 2016</span>
+0015 
+0016 Fileid = fopen(<span class="string">'cpd2rxn.txt'</span>,<span class="string">'r'</span>);
+0017 cpd2rxn = textscan(Fileid,<span class="string">'%s %s'</span>);
+0018 rxnData = strrep(cpd2rxn{2},<span class="string">'rn:'</span>,<span class="string">''</span>);
+0019 cpds = strrep(cpd2rxn{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0020 fclose(Fileid);
+0021 <span class="comment">% Read cpd2weight ===================</span>
+0022 Fileid = fopen(<span class="string">'cpd2weight.txt'</span>,<span class="string">'r'</span>);
+0023 cpd2weight = textscan(Fileid,<span class="string">'%s %f'</span>);
+0024 cpd4weight = strrep(cpd2weight{1},<span class="string">'cpd:'</span>,<span class="string">''</span>);
+0025 Weight = cpd2weight{2};
+0026 fclose(Fileid);
+0027 CurLen = 1; W4CurCpds = ({}); CanRxn = ({});
+0028 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0029 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0030 Pth = Pth1(1:tind-1);
+0031 
+0032 <span class="keyword">if</span> (Idfier == 2)
+0033     fprintf(<span class="string">'Generating W4TranRxns2.txt for rxn: '</span>)
+0034     Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'W4TranRxns2.txt'</span>];
+0035     Fid = fopen(Pth1,<span class="string">'w'</span>);
+0036 <span class="keyword">elseif</span> (Idfier == 4)
+0037     fprintf(<span class="string">'Generating W4TranRxns4.txt for rxn: '</span>)
+0038     Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'W4TranRxns4.txt'</span>];
+0039     Fid = fopen(Pth1,<span class="string">'w'</span>);
+0040 <span class="keyword">elseif</span> (Idfier == 6)
+0041     fprintf(<span class="string">'Generating W4TranRxns6.txt for rxn: '</span>)
+0042     Pth1 = [Pth,<span class="string">'\'</span>,<span class="string">'W4TranRxns6.txt'</span>];
+0043     Fid = fopen(Pth1,<span class="string">'w'</span>);
+0044 <span class="keyword">end</span>
+0045 <span class="keyword">for</span> count = 1:numel(rxnData)
+0046     <span class="keyword">if</span> count&gt;1
+0047         <span class="keyword">for</span> j=0:log10(count-1)
+0048             fprintf(<span class="string">'\b'</span>); 
+0049         <span class="keyword">end</span>
+0050     <span class="keyword">end</span>
+0051     fprintf(<span class="string">'%d'</span>, count);
+0052     TNum = sum(ismember(rxnData,rxnData{count}));
+0053     <span class="keyword">if</span> TNum == Idfier
+0054         CurCpds = cpds(ismember(rxnData,rxnData{count}));
+0055         W4CurCpdsT = Weight(ismember(cpd4weight,CurCpds));
+0056         <span class="keyword">if</span> numel(W4CurCpdsT) == Idfier &amp;&amp; ~any(ismember(CanRxn,rxnData{count})) <span class="keyword">...</span>
+0057                 &amp;&amp; (2.*numel(unique(W4CurCpdsT)) == Idfier)
+0058             W4CurCpds{CurLen} = W4CurCpdsT;
+0059             CanRxn{CurLen} = rxnData{count};
+0060             CurLen = CurLen + 1;
+0061         <span class="keyword">end</span>       
+0062     <span class="keyword">end</span>
+0063 <span class="keyword">end</span>
+0064 
+0065 <span class="keyword">if</span> (Idfier == 2)
+0066     <span class="keyword">for</span> ct = 1:numel(W4CurCpds)
+0067         fprintf(Fid,<span class="string">'%s\t%f\t%f\n'</span>,CanRxn{ct},W4CurCpds{ct});
+0068     <span class="keyword">end</span>
+0069 <span class="keyword">elseif</span> (Idfier == 4)
+0070     <span class="keyword">for</span> ct = 1:numel(W4CurCpds)
+0071         fprintf(Fid,<span class="string">'%s\t%f\t%f\t%f\t%f\n'</span>,CanRxn{ct},W4CurCpds{ct});
+0072     <span class="keyword">end</span>
+0073 <span class="keyword">elseif</span> (Idfier == 6)
+0074     <span class="keyword">for</span> ct = 1:numel(W4CurCpds)
+0075         fprintf(Fid,<span class="string">'%s\t%f\t%f\t%f\t%f\t%f\t%f\n'</span>,CanRxn{ct},W4CurCpds{ct});
+0076     <span class="keyword">end</span>
+0077 <span class="keyword">end</span>
+0078 fclose(Fid);</pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

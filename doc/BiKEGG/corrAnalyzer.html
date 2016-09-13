@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of corrAnalyzer</title>
+  <meta name="keywords" content="corrAnalyzer">
+  <meta name="description" content="corrAnalyzer">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; corrAnalyzer.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>corrAnalyzer
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>corrAnalyzer</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function corr = corrAnalyzer </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> corrAnalyzer
+ compares the reconciled reactions in BiGG and KEGG databases
+ taken from MetaNetX repository and BiKEGG (specifically, Bigg2Kegg
+ function). 
+ WARNING: To execute this function, you need to include all BiGG models
+ in a folder named &quot;BiGG Models&quot;.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function corr = corrAnalyzer</a>
+0002 <span class="comment">% corrAnalyzer</span>
+0003 <span class="comment">% compares the reconciled reactions in BiGG and KEGG databases</span>
+0004 <span class="comment">% taken from MetaNetX repository and BiKEGG (specifically, Bigg2Kegg</span>
+0005 <span class="comment">% function).</span>
+0006 <span class="comment">% WARNING: To execute this function, you need to include all BiGG models</span>
+0007 <span class="comment">% in a folder named &quot;BiGG Models&quot;.</span>
+0008 
+0009 <span class="comment">% O. Jamialahmadi</span>
+0010 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0011 <span class="comment">% Apr. 2016</span>
+0012 
+0013 
+0014 clc
+0015 Pth1 = which (<span class="string">'Bigg2Kegg.m'</span>);
+0016 tind = find(Pth1==<span class="string">'\'</span>,1,<span class="string">'last'</span>);
+0017 Pth = Pth1(1:tind-1);
+0018 Pth2 = fullfile(Pth,<span class="string">'BiGG2KEGG\*.mat'</span>);
+0019 Pth3 = fullfile(Pth,<span class="string">'BiGG2KEGG'</span>);
+0020 Pth22 = fullfile(Pth,<span class="string">'BiGG Models\*.xml'</span>);
+0021 Pth33 = fullfile(Pth,<span class="string">'BiGG Models'</span>);
+0022 
+0023 <span class="comment">% Read MetaNetX data</span>
+0024 Fileid = fopen(fullfile(Pth,<span class="string">'MetaNetX.txt'</span>),<span class="string">'r'</span>);
+0025 rawmetanet = textscan(Fileid,<span class="string">'%s %[^\n]'</span>);
+0026 fclose(Fileid);
+0027 metaid = rawmetanet{2}; metaref = rawmetanet{1};
+0028 metabigg = regexp(metaref,<span class="string">'bigg:\w*'</span>);
+0029 metabigg = ~cellfun(<span class="string">'isempty'</span>,metabigg);
+0030 metabigg1 = metaid(metabigg);
+0031 <span class="keyword">for</span> ct = 1:numel(metabigg1)
+0032     metabigg11(ct) = cellstr(metabigg1{ct});
+0033 <span class="keyword">end</span>
+0034 clear metabigg1
+0035 metabigg1 = metabigg11;
+0036 metabigg = metaref(metabigg); metabigg = strrep(metabigg,<span class="string">'bigg:'</span>,<span class="string">''</span>);
+0037 metakegg = regexp(metaref,<span class="string">'kegg:\w*'</span>);
+0038 metakegg = ~cellfun(<span class="string">'isempty'</span>,metakegg);
+0039 metakegg1 = metaid(metakegg);
+0040 <span class="keyword">for</span> ct = 1:numel(metakegg1)
+0041     metakegg11(ct) = cellstr(metakegg1{ct});
+0042 <span class="keyword">end</span>
+0043 clear metakegg1
+0044 metakegg1 = metakegg11;
+0045 metakegg = metaref(metakegg); metakegg = strrep(metakegg,<span class="string">'kegg:'</span>,<span class="string">''</span>);
+0046 clear metaref metaid rawmetanet metakegg11 metabigg11
+0047 netbigg = metabigg(ismember(metabigg1,metakegg1));
+0048 ct2 = 1; netkegg = ({});
+0049 <span class="keyword">for</span> ct = 1:numel(metabigg1)
+0050     netloci = find(ismember(metakegg1,metabigg1{ct}));
+0051     <span class="keyword">if</span> ~isempty(netloci)
+0052         <span class="keyword">for</span> ct1 = 1:numel(netloci)
+0053             netkegg{ct2}{ct1} = metakegg{netloci(ct1)};
+0054         <span class="keyword">end</span>
+0055         ct2 = ct2 + 1;
+0056     <span class="keyword">end</span>
+0057 <span class="keyword">end</span>
+0058 
+0059 <span class="comment">% Read data from bigg2kegg</span>
+0060 BMatfiles = dir(Pth2);
+0061 BMatfiles1 = dir(Pth22);
+0062 xmlname1 = struct2cell(BMatfiles1);
+0063 xmlname = xmlname1(1,:);
+0064 xmlname = strrep(xmlname,<span class="string">'.xml'</span>,<span class="string">''</span>);
+0065 ct1 = 1;
+0066 <span class="keyword">for</span> ct = 1:numel(BMatfiles)
+0067     <span class="keyword">if</span> ~strcmp(BMatfiles(ct).name,<span class="string">'BiGG2KEGG_HMRbased-RECON1.mat'</span>) &amp;&amp; <span class="keyword">...</span>
+0068             ~strcmp(BMatfiles(ct).name,<span class="string">'Multirxns.mat'</span>) &amp;&amp; <span class="keyword">...</span>
+0069             ~strcmp(BMatfiles(ct).name,<span class="string">'UniModelKEGG.mat'</span>)
+0070         BNames = BMatfiles(ct).name;
+0071         btempname = BNames(1:end-8);
+0072         load(fullfile(Pth3,BNames))
+0073         B=B2Kegg.B;K=B2Kegg.K;
+0074         modelname = xmlname(ismember(xmlname,btempname));
+0075         model = readCbModel(fullfile(Pth33,[modelname{1},<span class="string">'.xml'</span>]));
+0076         modelrxn = model.rxns;
+0077         currnetkegg = netkegg(ismember(netbigg,modelrxn));
+0078         metxn = numel(currnetkegg);
+0079         bikegg = sum(ismember(modelrxn,B));
+0080         corr(ct1).m = metxn; corr(ct1).bi = bikegg;
+0081         corr(ct1).mRxns = netbigg(ismember(netbigg,modelrxn)); corr(ct1).biRxns = modelrxn(ismember(modelrxn,B));
+0082         corr(ct1).bRxns = currnetkegg;
+0083         names{ct1} = modelname{1};
+0084         clear B2Kegg
+0085         ct1 = ct1 + 1;
+0086     <span class="keyword">end</span>
+0087 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

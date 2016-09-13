@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ArrowheadProcess</title>
+  <meta name="keywords" content="ArrowheadProcess">
+  <meta name="description" content="ArrowheadProcess">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">BiKEGG</a> &gt; ArrowheadProcess.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for BiKEGG&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ArrowheadProcess
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ArrowheadProcess</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,idx,basemap,JumpData,RefOverlapData,ID,flx_idx) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ArrowheadProcess
+ is a subfunction of NetDraw for identifiying the
+ appropriate coordinates for drawing arrowheads on metabolic maps.
+ Inputs:
+ Xin1, Yin1: Reaction coordinates
+ min_x, min_y: Minimum of coordinates on the current customized map
+ basemap: KGML data of KEGG global metabolic pathway
+ JumpData: Details (ID) for overlapping flux carrying reactions
+ RefOverlapData: Details (ID) for all reactions in the current customized
+ map.
+ ID: Reaction directionality based on either KEGG or BiGG (string)
+ flx_idx: Details (ID) for all flux carrying reactions
+ 
+ Outputs:
+ ArX,ArY: Appropriate coordinates for overlaying arrowheads on map.
+ Cntrs: Centers' coordinates corresponding to ArX and ArY for MapTrimmer
+ or MapTrimmerF functions.
+ Director: Reaction directionality for arrowhead function.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="KEGG2BiGGMets.html" class="code" title="function [Metkegg,Metbigg] = KEGG2BiGGMets(D,CbModel)">KEGG2BiGGMets</a>	KEGG2BiGGMets</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="NetDraw.html" class="code" title="function NetDraw (Outflx,RxnCds,MapChoice,InOpts)">NetDraw</a>	NetDraw</li><li><a href="NetPoster.html" class="code" title="function NetPoster(LineStrength,OverlapC,ColormapC,BackCol,CpdCol,inactiveCol)">NetPoster</a>	NetPoster</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function AllCoords = getBiGGrxns(idx,basemap)</a></li><li><a href="#_sub2" class="code">function metCoords = getCoords(basemap,indx,Stat)</a></li><li><a href="#_sub3" class="code">function [ProdCoords,SubCoords] = getCoords4KEGG(basemap,indx)</a></li><li><a href="#_sub4" class="code">function [ArX,ArY,Cntrs,Director] = PostMod(ArX,ArY,Cntrs,Director,</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [ArX,ArY,Cntrs,Director] = ArrowheadProcess(Xin1,Yin1,min_x,min_y,</a><span class="keyword">...</span>
+0002     idx,basemap,JumpData,RefOverlapData,ID,flx_idx)
+0003 <span class="comment">% ArrowheadProcess</span>
+0004 <span class="comment">% is a subfunction of NetDraw for identifiying the</span>
+0005 <span class="comment">% appropriate coordinates for drawing arrowheads on metabolic maps.</span>
+0006 <span class="comment">% Inputs:</span>
+0007 <span class="comment">% Xin1, Yin1: Reaction coordinates</span>
+0008 <span class="comment">% min_x, min_y: Minimum of coordinates on the current customized map</span>
+0009 <span class="comment">% basemap: KGML data of KEGG global metabolic pathway</span>
+0010 <span class="comment">% JumpData: Details (ID) for overlapping flux carrying reactions</span>
+0011 <span class="comment">% RefOverlapData: Details (ID) for all reactions in the current customized</span>
+0012 <span class="comment">% map.</span>
+0013 <span class="comment">% ID: Reaction directionality based on either KEGG or BiGG (string)</span>
+0014 <span class="comment">% flx_idx: Details (ID) for all flux carrying reactions</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Outputs:</span>
+0017 <span class="comment">% ArX,ArY: Appropriate coordinates for overlaying arrowheads on map.</span>
+0018 <span class="comment">% Cntrs: Centers' coordinates corresponding to ArX and ArY for MapTrimmer</span>
+0019 <span class="comment">% or MapTrimmerF functions.</span>
+0020 <span class="comment">% Director: Reaction directionality for arrowhead function.</span>
+0021 
+0022 <span class="comment">% O. Jamialahmadi</span>
+0023 <span class="comment">% TMU, Chem. Eng. Dept., Biotech. Group</span>
+0024 <span class="comment">% July 2016</span>
+0025 <span class="comment">%--------------------------------------------------------------------------</span>
+0026 
+0027 ArX = ({}); ArY = ArX; Cntrs = ArX; Jumpidx = []; Director = ArX;
+0028 
+0029 <span class="keyword">if</span> ~isempty(RefOverlapData)
+0030     [~,Idx1,~] = unique(RefOverlapData);
+0031     Chck1 = setdiff(1:size(RefOverlapData,1),Idx1);
+0032     Jumpidx = JumpData.Id;
+0033     RefJumpidx = Jumpidx;
+0034     <span class="keyword">for</span> m2 = 1:numel(Chck1)
+0035         WhrC = find(ismember(RefOverlapData,RefOverlapData{Chck1(m2)}));
+0036         RedundantIdx = idx(WhrC);
+0037         <span class="keyword">if</span> any(ismember(RedundantIdx,RefJumpidx))
+0038             Addme = setdiff(RedundantIdx,RefJumpidx);
+0039             <span class="keyword">for</span> m3 = 1:numel(Addme)
+0040                 CurrLen = numel(Jumpidx);
+0041                 Jumpidx{CurrLen+1} = Addme{m3};
+0042             <span class="keyword">end</span>
+0043         <span class="keyword">end</span>
+0044     <span class="keyword">end</span>
+0045     Jumpidx = unique(Jumpidx);
+0046 <span class="keyword">end</span>
+0047 <span class="keyword">if</span> strcmp(ID,<span class="string">'bigg'</span>) <span class="comment">% Rxns directionality based on BiGG-------------------</span>
+0048     Bgcoord = <a href="#_sub1" class="code" title="subfunction AllCoords = getBiGGrxns(idx,basemap)">getBiGGrxns</a>(idx,basemap);
+0049 <span class="keyword">end</span>
+0050 <span class="comment">% -------------------------------------------------------------------------</span>
+0051 <span class="keyword">for</span> m1 = 1:numel(idx)
+0052     <span class="keyword">if</span> ~isempty(Jumpidx)
+0053         <span class="keyword">if</span> any(ismember(idx{m1},Jumpidx))
+0054             ArX{m1} = <span class="string">''</span>; ArY{m1} = <span class="string">''</span>; Cntrs{m1} = <span class="string">''</span>; Director{m1} = <span class="string">''</span>;
+0055             <span class="keyword">continue</span>
+0056         <span class="keyword">end</span>
+0057     <span class="keyword">end</span>
+0058     [~,in1] = intersect(basemap.rc.rxnid,str2double(idx{m1}(7:end)));
+0059     Xin = Xin1{m1};
+0060     Yin = Yin1{m1};
+0061     <span class="keyword">if</span> isempty(in1)
+0062         ArX{m1} = <span class="string">''</span>; ArY{m1} = <span class="string">''</span>; Cntrs{m1} = <span class="string">''</span>; Director{m1} = <span class="string">''</span>;
+0063         <span class="keyword">continue</span>
+0064     <span class="keyword">end</span>
+0065     <span class="keyword">if</span> strcmp(ID,<span class="string">'bigg'</span>)
+0066         <span class="keyword">if</span> strcmp(Bgcoord{m1},<span class="string">'None'</span>)
+0067             <span class="keyword">continue</span>
+0068         <span class="keyword">end</span>
+0069         <span class="keyword">if</span> ~isempty(Bgcoord{m1})
+0070             ProdCoords = Bgcoord{m1}.P; SubCoords = Bgcoord{m1}.S;
+0071         <span class="keyword">else</span>
+0072             [ProdCoords,SubCoords] = <a href="#_sub3" class="code" title="subfunction [ProdCoords,SubCoords] = getCoords4KEGG(basemap,indx)">getCoords4KEGG</a>(basemap,in1);
+0073         <span class="keyword">end</span>
+0074     <span class="keyword">else</span>
+0075         [ProdCoords,SubCoords] = <a href="#_sub3" class="code" title="subfunction [ProdCoords,SubCoords] = getCoords4KEGG(basemap,indx)">getCoords4KEGG</a>(basemap,in1);
+0076     <span class="keyword">end</span>
+0077 
+0078     <span class="keyword">if</span> isempty(SubCoords)
+0079         MixCoords = ProdCoords;
+0080         Director{m1} = ones(size(MixCoords,1),1);
+0081     <span class="keyword">else</span>
+0082         MixCoords = [ProdCoords;SubCoords];
+0083         Director{m1} = [ones(size(ProdCoords,1),1);-1.*ones(size(SubCoords,1),1)];
+0084     <span class="keyword">end</span>
+0085     MixCoords(:,1) = MixCoords(:,1) - min_x - 18;
+0086     MixCoords(:,2) = MixCoords(:,2) - min_y;
+0087     X = (0); Y =(0); Cntr =(0);
+0088     <span class="keyword">for</span> cnt = 1:size(MixCoords,1)
+0089          DistancesToCpd = hypot(Xin - MixCoords(cnt,1), Yin - MixCoords(cnt,2));
+0090          ind3 = find(DistancesToCpd &gt;= 0.7*MixCoords(cnt,4)-1 &amp; DistancesToCpd &lt;= MixCoords(cnt,4));
+0091          <span class="keyword">if</span> isempty(ind3)
+0092              [~,ind3] = min(abs(DistancesToCpd));
+0093          <span class="keyword">end</span>
+0094          InrangeX = Xin(ind3); InrangeY = Yin(ind3);
+0095          DistancesToCpd1 = hypot(InrangeX - MixCoords(cnt,1), InrangeY - MixCoords(cnt,2));
+0096          [~,ind4] = min(abs(DistancesToCpd1));
+0097           X(cnt,2) = InrangeX(ind4); Y(cnt,2) = InrangeY(ind4);  
+0098          ind5 = find(DistancesToCpd &gt;= MixCoords(cnt,4)+7);
+0099          OutrangeX = Xin(ind5); OutrangeY = Yin(ind5);
+0100          DistancesToPint1_temp = hypot(OutrangeX - X(cnt,2), OutrangeY - Y(cnt,2));
+0101          [~,ind6] = min(abs(DistancesToPint1_temp));
+0102          X(cnt,1) = OutrangeX(ind6); Y(cnt,1) = OutrangeY(ind6);
+0103          Cntr(cnt,1) = MixCoords(cnt,1); Cntr(cnt,2) = MixCoords(cnt,2);
+0104     <span class="keyword">end</span>
+0105     ArX{m1} = X; ArY{m1} = Y; Cntrs{m1} = Cntr;
+0106 <span class="keyword">end</span>
+0107 <span class="keyword">if</span> ~isempty(flx_idx)
+0108     [ArX,ArY,Cntrs,Director] = <a href="#_sub4" class="code" title="subfunction [ArX,ArY,Cntrs,Director] = PostMod(ArX,ArY,Cntrs,Director,">PostMod</a>(ArX,ArY,Cntrs,Director,<span class="keyword">...</span>
+0109         idx,RefOverlapData,flx_idx);
+0110 <span class="keyword">end</span>
+0111 <span class="comment">% Subfunction =============================================================</span>
+0112 <a name="_sub1" href="#_subfunctions" class="code">function AllCoords = getBiGGrxns(idx,basemap)</a>
+0113 <span class="comment">% Read BiGG model ---------------------------------------------------------</span>
+0114 BiGGModel = getappdata(0,<span class="string">'BiGGModel'</span>); Mdl = getappdata(0,<span class="string">'Mdl'</span>);
+0115 <span class="keyword">if</span> isempty(BiGGModel) || isempty(Mdl)
+0116     [pname,fname1]=uigetfile({<span class="string">'*.*'</span>},<span class="string">'Select the model file (SBML)'</span>);
+0117     Testname=pname(strfind(pname,<span class="string">'.'</span>)+1:end);
+0118     <span class="keyword">if</span> ~strcmp(Testname,<span class="string">'xml'</span>)
+0119         msgbox(<span class="string">'Only xml file format!'</span>,<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0120         <span class="keyword">return</span>
+0121     <span class="keyword">else</span>
+0122         Idf = fopen([fname1,pname]);
+0123         D = textscan(Idf,<span class="string">'%s'</span>);
+0124         fclose(Idf);
+0125         CbModel = readCbModel([fname1,pname]);
+0126         [Metkegg,Metbigg] = <a href="KEGG2BiGGMets.html" class="code" title="function [Metkegg,Metbigg] = KEGG2BiGGMets(D,CbModel)">KEGG2BiGGMets</a>(D,CbModel);
+0127         BiGGModel.Metkegg = Metkegg;
+0128         BiGGModel.CbModel = CbModel;
+0129         BiGGModel.Metbigg = Metbigg;
+0130         setappdata(0,<span class="string">'BiGGModel'</span>,BiGGModel);
+0131     <span class="keyword">end</span>
+0132     Chk = which([pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>]);
+0133     <span class="keyword">if</span> isempty(Chk)
+0134         msgbox({[pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>,<span class="string">' cannot be found!'</span>];<span class="keyword">...</span>
+0135             <span class="string">'Make sure the file is present in BiGG2KEGG folder'</span>},<span class="string">'Error'</span>,<span class="string">'error'</span>);
+0136         <span class="keyword">return</span>
+0137     <span class="keyword">end</span>
+0138     Mdl = load(which([pname(1:strfind(pname,<span class="string">'.'</span>)-1),<span class="string">'KEGG.mat'</span>]));
+0139     setappdata(0,<span class="string">'Mdl'</span>,Mdl);
+0140 <span class="keyword">end</span>
+0141 
+0142 Metbigg = BiGGModel.Metbigg;
+0143 Metkegg = BiGGModel.Metkegg;
+0144 CbModel = BiGGModel.CbModel;
+0145 <span class="comment">% -------------------------------------------------------------------------</span>
+0146 modelmets = CbModel.mets;
+0147 modelmets = strrep(modelmets,<span class="string">'['</span>,<span class="string">'_'</span>); modelmets = strrep(modelmets,<span class="string">']'</span>,<span class="string">''</span>);
+0148 modelmets = regexp(modelmets,<span class="string">'\w*(?=_\w{1}\&gt;)'</span>,<span class="string">'match'</span>); <span class="comment">% Remove compartments</span>
+0149 modelmets = [modelmets{:}];
+0150 modelrxns = CbModel.rxns; S = CbModel.S; K = Mdl.B2Kegg.K; B = Mdl.B2Kegg.B;
+0151 Rev=CbModel.rev;
+0152 
+0153 <span class="keyword">for</span> m1 = 1:numel(idx)
+0154     Isrxn = B(ismember(K,idx{m1}(1:6))); 
+0155     <span class="keyword">if</span> ~isempty(Isrxn)<span class="comment">% If rxn has a corresponding BiGG ID</span>
+0156         IsMdlRxn = find(ismember(modelrxns,Isrxn(1)));
+0157         RevState = Rev(IsMdlRxn);
+0158         <span class="keyword">if</span> ~isempty(IsMdlRxn) <span class="comment">% If corresponding BiGG rxn exists in the model</span>
+0159             [~,in1] = intersect(basemap.rc.rxnid,str2double(idx{m1}(7:end)));
+0160             <span class="keyword">if</span> isempty(in1)
+0161                 AllCoords{m1} = <span class="string">'None'</span>;
+0162                 <span class="keyword">continue</span>
+0163             <span class="keyword">end</span>
+0164             MetIdx = find(S(:,IsMdlRxn));
+0165             Metsign = S(MetIdx,IsMdlRxn); Metsign(Metsign&gt;0)=1;Metsign(Metsign&lt;0)=-1;
+0166             ctr = 1; foundMets = ({}); MetsignEx = (0);
+0167             <span class="keyword">for</span> m2 = 1:numel(MetIdx)
+0168                 Whrmt = find(ismember(Metbigg,modelmets(MetIdx(m2))));
+0169                 <span class="keyword">for</span> m3 = 1:numel(Whrmt)
+0170                     foundMets{ctr} = Metkegg{Whrmt(m3)};
+0171                     MetsignEx(ctr) = Metsign(m2);
+0172                     ctr = ctr + 1;
+0173                 <span class="keyword">end</span>
+0174             <span class="keyword">end</span>
+0175             rxnSubs = foundMets(MetsignEx&lt;0);
+0176             rxnProds = foundMets(MetsignEx&gt;0);
+0177             ProdNames = basemap.rc.prod{in1};
+0178             SubNames = basemap.rc.sub{in1};
+0179             <span class="keyword">if</span> RevState <span class="comment">%Reversible rxn</span>
+0180                 <span class="keyword">if</span> any(ismember(rxnProds,SubNames)) || any(ismember(rxnSubs,ProdNames))
+0181                     metCoords = <a href="#_sub2" class="code" title="subfunction metCoords = getCoords(basemap,indx,Stat)">getCoords</a>(basemap,in1,<span class="string">'Rev_back'</span>);
+0182                 <span class="keyword">else</span>
+0183                     metCoords = <a href="#_sub2" class="code" title="subfunction metCoords = getCoords(basemap,indx,Stat)">getCoords</a>(basemap,in1,<span class="string">'Rev_forward'</span>);
+0184                 <span class="keyword">end</span>
+0185             <span class="keyword">else</span> <span class="comment">% Irreversible rxn</span>
+0186                 <span class="keyword">if</span> any(ismember(rxnProds,SubNames)) || any(ismember(rxnSubs,ProdNames))
+0187                     metCoords = <a href="#_sub2" class="code" title="subfunction metCoords = getCoords(basemap,indx,Stat)">getCoords</a>(basemap,in1,<span class="string">'Irr_back'</span>);
+0188                 <span class="keyword">elseif</span> any(ismember(rxnSubs,SubNames)) || any(ismember(rxnProds,ProdNames))
+0189                     metCoords = <a href="#_sub2" class="code" title="subfunction metCoords = getCoords(basemap,indx,Stat)">getCoords</a>(basemap,in1,<span class="string">'Irr_forward'</span>);
+0190                 <span class="keyword">else</span> <span class="comment">% All KEGG rxns are reversible!</span>
+0191                     metCoords = <a href="#_sub2" class="code" title="subfunction metCoords = getCoords(basemap,indx,Stat)">getCoords</a>(basemap,in1,<span class="string">'Rev_forward'</span>);
+0192                 <span class="keyword">end</span>
+0193             <span class="keyword">end</span>   
+0194             AllCoords{m1}.P = metCoords.P; AllCoords{m1}.S = metCoords.S;
+0195         <span class="keyword">end</span>
+0196     <span class="keyword">else</span>
+0197         AllCoords{m1} = [];
+0198     <span class="keyword">end</span>
+0199 <span class="keyword">end</span>
+0200 <span class="comment">% -------------------------------------------------------------------------</span>
+0201 <a name="_sub2" href="#_subfunctions" class="code">function metCoords = getCoords(basemap,indx,Stat)</a>
+0202 <span class="keyword">switch</span> Stat
+0203     <span class="keyword">case</span> <span class="string">'Rev_forward'</span> <span class="comment">%////////////////////////////////</span>
+0204         ProdId = basemap.rc.prodid{indx};
+0205         SubsId = basemap.rc.subid{indx};
+0206         [~,in1] = intersect(basemap.c.cpdid,ProdId);
+0207         [~,in2] = intersect(basemap.c.cpdid,SubsId);
+0208         ProdCoords = basemap.c.cpdxy(in1,:);
+0209         SubCoords = basemap.c.cpdxy(in2,:);
+0210         ProdCoords1 = []; SubCoords1 = [];
+0211         <span class="keyword">if</span> isempty(in1)
+0212             [~,in1] = intersect(basemap.c.glid,ProdId);
+0213             ProdCoords = basemap.c.glxy(in1,:);
+0214         <span class="keyword">elseif</span> numel(in1) &lt; numel(ProdId)
+0215             [~,in1] = intersect(basemap.c.glid,ProdId);
+0216             ProdCoords1 = basemap.c.glxy(in1,:);
+0217         <span class="keyword">end</span>
+0218         <span class="keyword">if</span> isempty(in2)
+0219             [~,in2] = intersect(basemap.c.glid,SubsId);
+0220             SubCoords = basemap.c.glxy(in2,:);
+0221         <span class="keyword">elseif</span> numel(in2) &lt; numel(SubsId)
+0222             [~,in2] = intersect(basemap.c.glid,SubsId);
+0223             SubCoords1 = basemap.c.glxy(in2,:);
+0224         <span class="keyword">end</span>
+0225         ProdCoords = [ProdCoords;ProdCoords1];
+0226         SubCoords = [SubCoords;SubCoords1];
+0227     <span class="keyword">case</span> <span class="string">'Rev_back'</span> <span class="comment">%////////////////////////////////</span>
+0228         ProdId = basemap.rc.prodid{indx};
+0229         SubsId = basemap.rc.subid{indx};
+0230         [~,in1] = intersect(basemap.c.cpdid,ProdId);
+0231         [~,in2] = intersect(basemap.c.cpdid,SubsId);
+0232         ProdCoords = basemap.c.cpdxy(in1,:);
+0233         SubCoords = basemap.c.cpdxy(in2,:);
+0234         ProdCoords1 = []; SubCoords1 = [];
+0235         <span class="keyword">if</span> isempty(in1)
+0236             [~,in1] = intersect(basemap.c.glid,ProdId);
+0237             ProdCoords = basemap.c.glxy(in1,:);
+0238         <span class="keyword">elseif</span> numel(in1) &lt; numel(ProdId)
+0239             [~,in1] = intersect(basemap.c.glid,ProdId);
+0240             ProdCoords1 = basemap.c.glxy(in1,:);
+0241         <span class="keyword">end</span>
+0242         <span class="keyword">if</span> isempty(in2)
+0243             [~,in2] = intersect(basemap.c.glid,SubsId);
+0244             SubCoords = basemap.c.glxy(in2,:);
+0245         <span class="keyword">elseif</span> numel(in2) &lt; numel(SubsId)
+0246             [~,in2] = intersect(basemap.c.glid,SubsId);
+0247             SubCoords1 = basemap.c.glxy(in2,:);
+0248         <span class="keyword">end</span>
+0249         ProdCoordsR = [ProdCoords;ProdCoords1];
+0250         SubCoordsR = [SubCoords;SubCoords1];
+0251         SubCoords = ProdCoordsR; ProdCoords = SubCoordsR; <span class="comment">% Switch coords</span>
+0252     <span class="keyword">case</span> <span class="string">'Irr_forward'</span> <span class="comment">%////////////////////////////</span>
+0253         ProdId = basemap.rc.prodid{indx};
+0254         [~,in2] = intersect(basemap.c.cpdid,ProdId);
+0255         ProdCoords = basemap.c.cpdxy(in2,:);
+0256         ProdCoords1 = [];
+0257         <span class="keyword">if</span> isempty(in2)
+0258             [~,in2] = intersect(basemap.c.glid,ProdId);
+0259             ProdCoords = basemap.c.glxy(in2,:);
+0260         <span class="keyword">elseif</span> numel(in2) &lt; numel(ProdId)
+0261             [~,in2] = intersect(basemap.c.glid,ProdId);
+0262             ProdCoords1 = basemap.c.glxy(in2,:);
+0263         <span class="keyword">end</span>
+0264         ProdCoords = [ProdCoords;ProdCoords1];
+0265         SubCoords = [];
+0266     <span class="keyword">case</span> <span class="string">'Irr_back'</span> <span class="comment">%//////////////////////////////</span>
+0267         ProdId = basemap.rc.subid{indx}; <span class="comment">% Switch sub/prod</span>
+0268         [~,in2] = intersect(basemap.c.cpdid,ProdId);
+0269         ProdCoords = basemap.c.cpdxy(in2,:);
+0270         ProdCoords1 = [];
+0271         <span class="keyword">if</span> isempty(in2)
+0272             [~,in2] = intersect(basemap.c.glid,ProdId);
+0273             ProdCoords = basemap.c.glxy(in2,:);
+0274         <span class="keyword">elseif</span> numel(in2) &lt; numel(ProdId)
+0275             [~,in2] = intersect(basemap.c.glid,ProdId);
+0276             ProdCoords1 = basemap.c.glxy(in2,:);
+0277         <span class="keyword">end</span>
+0278         ProdCoords = [ProdCoords;ProdCoords1]; SubCoords = [];
+0279 <span class="keyword">end</span>
+0280 metCoords.P = ProdCoords; metCoords.S = SubCoords;
+0281 <span class="comment">%--------------------------------------------------------------------------</span>
+0282 <a name="_sub3" href="#_subfunctions" class="code">function [ProdCoords,SubCoords] = getCoords4KEGG(basemap,indx)</a>
+0283 ProdId = basemap.rc.prodid{indx};
+0284 SubsId = basemap.rc.subid{indx};
+0285 [~,in1] = intersect(basemap.c.cpdid,ProdId);
+0286 [~,in2] = intersect(basemap.c.cpdid,SubsId);
+0287 ProdCoords = basemap.c.cpdxy(in1,:);
+0288 SubCoords = basemap.c.cpdxy(in2,:);
+0289 ProdCoords1 = []; SubCoords1 = [];
+0290 <span class="keyword">if</span> isempty(in1)
+0291     [~,in1] = intersect(basemap.c.glid,ProdId);
+0292     ProdCoords = basemap.c.glxy(in1,:);
+0293 <span class="keyword">elseif</span> numel(in1) &lt; numel(ProdId)
+0294     [~,in1] = intersect(basemap.c.glid,ProdId);
+0295     ProdCoords1 = basemap.c.glxy(in1,:);
+0296 <span class="keyword">end</span>
+0297 <span class="keyword">if</span> isempty(in2)
+0298     [~,in2] = intersect(basemap.c.glid,SubsId);
+0299     SubCoords = basemap.c.glxy(in2,:);
+0300 <span class="keyword">elseif</span> numel(in2) &lt; numel(SubsId)
+0301     [~,in2] = intersect(basemap.c.glid,SubsId);
+0302     SubCoords1 = basemap.c.glxy(in2,:);
+0303 <span class="keyword">end</span>
+0304 ProdCoords = [ProdCoords;ProdCoords1];
+0305 SubCoords = [SubCoords;SubCoords1];
+0306 <span class="comment">%--------------------------------------------------------------------------</span>
+0307 <a name="_sub4" href="#_subfunctions" class="code">function [ArX,ArY,Cntrs,Director] = PostMod(ArX,ArY,Cntrs,Director,</a><span class="keyword">...</span>
+0308     idx,RefOverlapData,flx_idx)
+0309 
+0310 [~,Idx1,~] = unique(RefOverlapData);
+0311 Chck1 = setdiff(1:size(RefOverlapData,1),Idx1);
+0312 <span class="keyword">for</span> ctr = 1:numel(Chck1)
+0313      WhrC = find(ismember(RefOverlapData,RefOverlapData{Chck1(ctr)}));
+0314      <span class="keyword">if</span> any(ismember(idx(WhrC),flx_idx)) <span class="comment">% Overlap with flux carrying rxns</span>
+0315          WhchrxnID = find(ismember(idx(WhrC),flx_idx));
+0316          WhchX = ArX(WhrC(WhchrxnID)); sizeX = (0);
+0317          WhchY = ArY(WhrC(WhchrxnID));
+0318          WhchC = Cntrs(WhrC(WhchrxnID));
+0319          WhchD = Director(WhrC(WhchrxnID));
+0320          <span class="keyword">for</span> i1 = 1:numel(WhchX)
+0321              sizeX(i1) = size(WhchX{i1},1);
+0322          <span class="keyword">end</span>
+0323          [~,maxId] = max(sizeX);
+0324          <span class="keyword">for</span> i1 = 1:numel(WhrC)
+0325              ArX{WhrC(i1)} = WhchX{maxId};
+0326              ArY{WhrC(i1)} = WhchY{maxId};
+0327              Cntrs{WhrC(i1)} = WhchC{maxId};
+0328              Director{WhrC(i1)} = WhchD{maxId};
+0329          <span class="keyword">end</span> 
+0330      <span class="keyword">end</span>    
+0331 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 16-Jul-2016 20:21:30 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
